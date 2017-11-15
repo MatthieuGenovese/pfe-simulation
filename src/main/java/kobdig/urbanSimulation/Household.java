@@ -30,6 +30,7 @@ public class Household {
      */
     public static final String CHANGE = "ch";
 
+
     /**
      *  Sell
      */

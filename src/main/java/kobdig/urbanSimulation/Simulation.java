@@ -274,13 +274,15 @@ public class Simulation {
                 }
 
                 if (goal.contains(Household.LANDLORD)){
-                    household.invest(household.getProperty());
-                    freeProperties.remove(household.getProperty());
-                    forRentProperties.add(household.getProperty());
-                    Investor newInvestor = new Investor(investorAgent, household,household.getProperty());
-                    newInvestor.getProperty().setState(Property.SEEKING_TENANT);
-                    investors.add(newInvestor);
-                    household.setProperty(null);
+                    if(household.getProperty() != null) {
+                        household.invest(household.getProperty());
+                        freeProperties.remove(household.getProperty());
+                        forRentProperties.add(household.getProperty());
+                        Investor newInvestor = new Investor(investorAgent, household, household.getProperty());
+                        newInvestor.getProperty().setState(Property.SEEKING_TENANT);
+                        investors.add(newInvestor);
+                        household.setProperty(null);
+                    }
                 }
                 else if (goal.contains(Household.SELL)){
                     //TODO: Implement the seller part of the property
@@ -1236,7 +1238,5 @@ public class Simulation {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 }
