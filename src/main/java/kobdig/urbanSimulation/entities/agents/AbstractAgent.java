@@ -1,4 +1,4 @@
-package kobdig.urbanSimulation.entities;
+package kobdig.urbanSimulation.entities.agents;
 
 import kobdig.agent.Agent;
 import kobdig.agent.Fact;

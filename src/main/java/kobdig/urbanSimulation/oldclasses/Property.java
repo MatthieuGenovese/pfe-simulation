@@ -1,5 +1,6 @@
-package kobdig.urbanSimulation;
+package kobdig.urbanSimulation.oldclasses;
 
+import kobdig.urbanSimulation.entities.environement.AdministrativeDivision;
 import org.postgis.PGgeometry;
 
 /**

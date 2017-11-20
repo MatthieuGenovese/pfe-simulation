@@ -1,7 +1,8 @@
-package kobdig.urbanSimulation.entities;
+package kobdig.urbanSimulation.entities.agents;
 
 
-import kobdig.urbanSimulation.Property;
+
+import kobdig.urbanSimulation.entities.environement.Property;
 
 import java.util.ArrayList;
 

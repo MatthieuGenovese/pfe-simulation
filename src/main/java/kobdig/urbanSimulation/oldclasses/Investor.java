@@ -4,8 +4,7 @@ import kobdig.agent.Agent;
 import kobdig.agent.Fact;
 import kobdig.gui.FactParser;
 import kobdig.logic.TruthDegree;
-import kobdig.urbanSimulation.Property;
-import kobdig.urbanSimulation.entities.Household;
+import kobdig.urbanSimulation.entities.agents.Household;
 
 import java.util.ArrayList;
 

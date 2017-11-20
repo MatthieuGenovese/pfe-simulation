@@ -1,7 +1,8 @@
-package kobdig.urbanSimulation.entities;
+package kobdig.urbanSimulation.entities.agents;
 
 import kobdig.agent.Agent;
-import kobdig.urbanSimulation.Property;
+import kobdig.urbanSimulation.entities.IActionnable;
+import kobdig.urbanSimulation.entities.environement.Property;
 
 /**
  * Created by Matthieu on 20/11/2017.
@@ -13,7 +14,6 @@ public class Investor extends AbstractAgentBuy implements IActionnable {
     public static final String NOT_SELL = "~s";
     public static final String LANDLORD = "l";
     private Household household;
-    private kobdig.urbanSimulation.oldclasses.Investor investor;
     private double investDegree;
     private double speculate;
     private double currentRent;

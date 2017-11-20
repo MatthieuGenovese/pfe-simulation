@@ -4,10 +4,8 @@ import kobdig.agent.Agent;
 import kobdig.agent.Fact;
 import kobdig.gui.FactParser;
 import kobdig.logic.TruthDegree;
-import kobdig.urbanSimulation.Property;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * Created by Meili on 21/06/2016.

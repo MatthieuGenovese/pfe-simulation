@@ -1,4 +1,4 @@
-package kobdig.urbanSimulation;
+package kobdig.urbanSimulation.entities.environement;
 
 import org.postgis.PGgeometry;
 
@@ -8,47 +8,24 @@ import java.util.ArrayList;
  * Created by Meili on 7/25/16.
  */
 public class AdministrativeDivision {
-
-    /**
-     * The id
-     */
     private String id;
-
-    /**
-     * The id
-     */
     private int code;
-
-    /**
-     * The group of lands in this division
-     */
     private ArrayList<Land> lands;
-
-    /**
-     * The geometry reference
-     */
+    private ArrayList<Property> properties;
+    private ArrayList<Equipment> equipments;
+    private ArrayList<TransportNetwork> networks;
     private PGgeometry geom;
-
-    /**
-     * On sale properties
-     */
     private double onSaleProperties;
-
-    /**
-     * Rented properties
-     */
     private double rentedProperties;
 
-    /**
-     * The equipment constructor
-     * @param id The id
-     * @param geom The geom reference
-     */
     public AdministrativeDivision(String id, int code, PGgeometry geom){
         this.id = id;
         this.code = code;
         this. geom = geom;
         this.lands = new ArrayList<>();
+        this.networks = new ArrayList<>();
+        this.properties = new ArrayList<>();
+        this.equipments = new ArrayList<>();
     }
 
     public String getId() {
@@ -77,6 +54,30 @@ public class AdministrativeDivision {
 
     public ArrayList<Land> getLands() {
         return lands;
+    }
+
+    public ArrayList<Equipment> getEquipments(){
+        return equipments;
+    }
+
+    public void addEquipement(Equipment equip){
+        equipments.add(equip);
+    }
+
+    public ArrayList<Property> getProperties() {
+        return properties;
+    }
+
+    public void addProperty(Property prop){
+        properties.add(prop);
+    }
+
+    public ArrayList<TransportNetwork> getNetworks() {
+        return networks;
+    }
+
+    public void addNetwork(TransportNetwork network){
+        networks.add(network);
     }
 
     public void addLand(Land land) {

@@ -1,4 +1,4 @@
-package kobdig.urbanSimulation;
+package kobdig.urbanSimulation.entities.environement;
 
 import org.postgis.PGgeometry;
 
@@ -7,34 +7,10 @@ import org.postgis.PGgeometry;
  */
 public class TransportNetwork {
 
-    // ATTRIBUTES
-
-    /**
-     * The id
-     */
     private String id;
-
-    /**
-     * The type of equipment
-     */
     private String level;
-
-    /**
-     * Division which it belongs
-     */
     private AdministrativeDivision division;
-
-    /**
-     * The geometry reference
-     */
     private PGgeometry geom;
-
-    /**
-     * The equipment constructor
-     * @param id The id
-     * @param level The level
-     * @param geom The geom reference
-     */
     public TransportNetwork(String id, String level, PGgeometry geom){
         this.id = id;
         this.level = level;

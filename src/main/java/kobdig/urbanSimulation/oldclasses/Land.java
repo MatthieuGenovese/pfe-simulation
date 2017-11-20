@@ -1,52 +1,19 @@
-package kobdig.urbanSimulation;
+package kobdig.urbanSimulation.oldclasses;
 
+import kobdig.urbanSimulation.entities.environement.AdministrativeDivision;
 import org.postgis.PGgeometry;
 
 /**
  * Created by Meili on 7/19/16.
  */
 public class Land {
-
-    // ATTRIBUTES
-
-    /**
-     * ID
-     */
     private String id;
-
-    /**
-     * Latitude reference
-     */
     private double latitude;
-
-    /**
-     * Longitude reference
-     */
     private double longitude;
-
-    /**
-     * Division to which it belongs
-     */
     private AdministrativeDivision division;
-
-    /**
-     * The land's price
-     */
     private double price;
-
-    /**
-     * The land's utility
-     */
     private double utility;
-
-    /**
-     * The geometry reference
-     */
     private PGgeometry geom;
-
-    /**
-     * True if the utility function is updated
-     */
     private boolean updated;
 
     public Land(String id, double latitude, double longitude, double price, PGgeometry geom) {

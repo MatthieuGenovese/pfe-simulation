@@ -1,10 +1,8 @@
-package kobdig.urbanSimulation.entities;
+package kobdig.urbanSimulation.entities.agents;
 
 import kobdig.agent.Agent;
-import kobdig.agent.Fact;
-import kobdig.gui.FactParser;
-import kobdig.logic.TruthDegree;
-import kobdig.urbanSimulation.Property;
+import kobdig.urbanSimulation.entities.IActionnable;
+import kobdig.urbanSimulation.entities.environement.Property;
 
 import java.util.ArrayList;
 

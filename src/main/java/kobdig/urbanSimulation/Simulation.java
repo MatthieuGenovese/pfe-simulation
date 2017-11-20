@@ -2,156 +2,42 @@ package kobdig.urbanSimulation;
 
 import kobdig.agent.Agent;
 import kobdig.agent.Fact;
-import kobdig.urbanSimulation.entities.Household;
-import kobdig.urbanSimulation.entities.Investor;
-import kobdig.urbanSimulation.entities.Promoter;
+import kobdig.urbanSimulation.entities.agents.Household;
+import kobdig.urbanSimulation.entities.agents.Investor;
+import kobdig.urbanSimulation.entities.agents.Promoter;
+import kobdig.urbanSimulation.entities.environement.*;
 import org.postgis.PGgeometry;
 import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 /**
  * Created by Meili on 20/06/16.
  */
 public class Simulation {
 
-    // CONSTANTS
-
-    /**
-     * Temporally income gap
-     */
     public static final double INCOME_GAP = 0.3;
-
-    /**
-     * Temporally income gap
-     */
     public static final String NETWORK = "network";
 
-    /**
-     * Temporally income gap
-     */
     public static final String EQUIPMENT = "equipment";
-
-    // VARIABLES
-
-    /**
-     * The household agents involved in the simulation
-     */
     protected static ArrayList<Household> households;
-
-    /**
-     * The investors agents involved in the simulation
-     */
     protected static ArrayList<Investor> investors;
-
-    /**
-     * The promoters agents involved in the simulation
-     */
     protected static ArrayList<Promoter> promoters;
-
-    /**
-     * The properties involved in the simulation
-     */
-    protected static Map<AdministrativeDivision,ArrayList<Property>> properties;
-
-    /**
-     * The properties involved in the simulation
-     */
     protected static ArrayList<Property> freeProperties;
-
-    /**
-     * The properties involved in the simulation
-     */
     protected static ArrayList<Property> forRentProperties;
-
-    /**
-     * The for sale land
-     */
     protected static ArrayList<Land> forSaleLand;
-
-    /**
-     * Equipments
-     */
-    protected static Map<AdministrativeDivision,ArrayList<Equipment>> equipments;
-
-    /**
-     * TransportNetwork
-     */
-    protected static Map<AdministrativeDivision,ArrayList<TransportNetwork>> primaryNetwork;
-
-    /**
-     * The land
-     */
-    protected static Map<AdministrativeDivision,ArrayList<Land>> lands;
-
-    /**
-     * The divisions
-     */
     protected static AdministrativeDivision[] divisions;
-
-    /**
-     * The household's agent
-     */
-    protected static Agent householdAgent;
-
-    /**
-     * Equipments length
-     */
     protected static int equipmentsLength;
-
-    /**
-     * Network length
-     */
     protected static int networkLength;
-
-    /**
-     * The investor's agent
-     */
     protected static Agent investorAgent;
-
-    /**
-     * The promoter's agent
-     */
-    protected static Agent promoterAgent;
-
-    /**
-     * The time reference in the simulation
-     */
     protected static int time;
-
-    /**
-     * The number of simulations to generate
-     */
     protected static int numSim;
-
-    /**
-     * The ID manager
-     */
     protected static int[] idManager;
-
-    /**
-     * Connection
-     */
     protected static Connection conn;
-
-    /**
-     * Filtered equipments
-     */
     protected static String filteredEquipments;
-
-    /**
-     * Filtered network
-     */
     protected static String filteredNetwork;
 
-    /**
-     * Generates a household step in the simulation for an specific household
-     * @param household The household
-     * @param time The time in the simulation
-     */
     public static void householdUpdateBeliefs(Household household, int time) {
 
         household.step(time);
@@ -452,11 +338,10 @@ public class Simulation {
                         int id = idManager[0]++;
                         construction = new Property(Integer.toString(id),taken.getLatitude(),
                                 taken.getLongitude(),(taken.getPrice() + 150), taken.getPrice()/10, taken.getPrice(),
-                                taken.getGeom());
+                                taken.getGeom(), taken);
                         construction.setDivision(taken.getDivision());
-                        properties.get(taken.getDivision()).add(construction);
+                        taken.getDivision().addProperty(construction);
                         construction.setState(Property.FOR_SALE);
-                        construction.setLand(taken);
                         freeProperties.add(construction);
                     }
                     catch (Exception e) {}
@@ -465,254 +350,6 @@ public class Simulation {
         }
     }
 
-    /**
-     *
-     * Instantiates all the households in the file
-     * @param conn The connection from the database
-     * @throws SQLException
-     */
-    public static void createHouseholds(Connection conn) throws SQLException {
-        Statement s = conn.createStatement();
-        ResultSet r = s.executeQuery("select * from households limit 60");
-        while( r.next() ) {
-            int id = r.getInt(1);
-            String lastname = r.getString(2);
-            double purchasingPower = r.getDouble(3);
-            double netMonthlyIncome = r.getDouble(4);
-            Household household = new Household(Integer.toString(id), householdAgent,purchasingPower,
-                    netMonthlyIncome);
-            household.updateBelief("not r:1");
-            household.updateBelief("not o:1");
-            households.add(household);
-        }
-        r.close();
-        s.close();
-    }
-
-    /**
-     * Instantiates all the investors in the file
-     * @param conn The connection from the database
-     * @throws IOException If error I/O Error
-     */
-    public static void createInvestors(Connection conn) throws SQLException{
-        Statement s = conn.createStatement();
-        ResultSet r = s.executeQuery("select * from investors");
-        while( r.next() ) {
-            int id = r.getInt(1);
-            double purchasingPower = r.getDouble(2);
-            Investor investor = new Investor(Integer.toString(id), investorAgent, purchasingPower, 0.0);
-            investors.add(investor);
-        }
-        r.close();
-        s.close();
-    }
-
-    /**
-     * Instantiates all the promoters in the file
-     * @param conn The connection from the database
-     * @throws IOException If error I/O Error
-     */
-    public static void createPromoters(Connection conn) throws SQLException {
-        Statement s = conn.createStatement();
-        ResultSet r = s.executeQuery("select * from promoters");
-        while( r.next() ) {
-            int id = r.getInt(1);
-            double purchasingPower = r.getDouble(2);
-            Promoter promoter = new Promoter(Integer.toString(id), promoterAgent, purchasingPower);
-            promoters.add(promoter);
-        }
-        r.close();
-        s.close();
-    }
-
-    /**
-     * Instantiates all the properties in the database
-     * @param conn The connection from the database
-     * @throws SQLException
-     */
-    public static void createProperties(Connection conn) throws SQLException {
-        Statement s = conn.createStatement();
-        ResultSet r = s.executeQuery("select * from properties");
-        while( r.next() ) {
-            int id = r.getInt(1);
-            double lat = r.getDouble(3);
-            double lon = r.getDouble(4);
-            double price = r.getDouble(5);
-            double rent = r.getDouble(6);
-            double value = r.getDouble(7);
-            PGgeometry geom = (PGgeometry)r.getObject(8);
-            Property property = new Property(Integer.toString(id),lat, lon, price, rent, value, geom);
-            for (AdministrativeDivision division : divisions) {
-                if(division != null){
-                    Statement s1 = conn.createStatement();
-                    String query = "SELECT ST_Contains(upzs.geom,land.geom) FROM (SELECT geom FROM upz WHERE gid = " +
-                            division.getId() + ") AS upzs, (SELECT geom FROM land WHERE gid = " + id + ") AS land;";
-                    ResultSet r1 = s1.executeQuery(query);
-                    String c = null;
-                    if(r1.next()) c = r1.getString(1);
-                    if (c != null && c.equals("t")) {
-                        property.setDivision(division);
-                        properties.get(division).add(property);
-                        break;
-                    }
-                    s1.close();
-                    r1.close();
-                }
-            }
-            property.setState("For sale");
-            freeProperties.add(property);
-        }
-        r.close();
-        s.close();
-    }
-
-
-    /**
-     * Instantiates all the land in the database
-     * @param conn The connection from the database
-     * @throws SQLException
-     */
-    public static void createLand(Connection conn) throws SQLException {
-        Statement s = conn.createStatement();
-        ResultSet r = s.executeQuery("select * from land");
-        while( r.next() ) {
-            int id = r.getInt(1);
-            double lat = r.getDouble(2);
-            double lon = r.getDouble(3);
-            double price = r.getDouble(4);
-            PGgeometry geom = (PGgeometry)r.getObject(5);
-            int codigo_upz = r.getInt(6);
-            Land land = new Land(Integer.toString(id), lat, lon, price, geom);
-            if (codigo_upz != 0) {
-                land.setDivision(divisions[codigo_upz]);
-                lands.get(divisions[codigo_upz]).add(land);
-                forSaleLand.add(land);
-            }
-////            Get divisions for each land
-//            for (AdministrativeDivision division : divisions) {
-//                if (division != null) {
-//                    Statement s1 = conn.createStatement();
-//                    String query = "SELECT ST_Contains(upzs.geom,land.geom) FROM (SELECT geom FROM upz WHERE gid = " +
-//                            division.getId() + ") AS upzs, (SELECT geom FROM land WHERE gid = " + id + ") AS land;";
-//                    ResultSet r1 = s1.executeQuery(query);
-//                    String c = null;
-//                    if (r1.next()) c = r1.getString(1);
-//                    if (c != null && c.equals("t")) {
-//                        land.setDivision(division);
-//                        lands.get(division).add(land);
-//                        Statement s2 = conn.createStatement();
-//                        s2.executeUpdate("UPDATE land SET codigo_upz = '" + division.getCode() + "' WHERE gid = '" +
-//                                land.getId() + "';");
-//                        break;
-//                    }
-//                    s1.close();
-//                    r1.close();
-//                }
-//            }
-//            forSaleLand.add(land);
-        }
-        r.close();
-        s.close();
-    }
-
-    /**
-     * Instantiates all the divisions in the database
-     * @param conn The connection from the database
-     * @throws SQLException
-     */
-    public static void createDivisions(Connection conn) throws SQLException {
-        Statement s = conn.createStatement();
-        ResultSet r = s.executeQuery("select gid,codigo_upz,geom from upz");
-        while( r.next() ) {
-            int id = r.getInt(1);
-            int code = r.getInt(2);
-            PGgeometry geom = (PGgeometry)r.getObject(3);
-            AdministrativeDivision division = new AdministrativeDivision(Integer.toString(id),code, geom);
-            equipments.put(division, new ArrayList<Equipment>());
-            properties.put(division, new ArrayList<Property>());
-            lands.put(division, new ArrayList<Land>());
-            primaryNetwork.put(division, new ArrayList<TransportNetwork>());
-            divisions[code] = division;
-        }
-        r.close();
-        s.close();
-    }
-
-    /**
-     * Instantiates the transport network from the database
-     * @param conn The connection from the database
-     * @throws SQLException
-     */
-    public static void createTransportNetwork(Connection conn) throws SQLException {
-        Statement s = conn.createStatement();
-        ResultSet r = s.executeQuery("select a.gid,a.geom from " + filteredNetwork + ")) a");
-        while( r.next() ) {
-            networkLength++;
-            int id = r.getInt(1);
-            PGgeometry geom = (PGgeometry)r.getObject(2);
-            TransportNetwork network = new TransportNetwork(Integer.toString(id), "primary", geom);
-            Statement s1 = conn.createStatement();
-            String query = "SELECT codigo_upz FROM interseccion_upz_redprimaria where id_redprimaria = '" + id + "';";
-            ResultSet r1 = s1.executeQuery(query);
-            while(r1.next()) {
-                int codigo_upz = r1.getInt(1);
-                if (codigo_upz != 0) {
-                    network.setDivision(divisions[codigo_upz]);
-                    primaryNetwork.get(divisions[codigo_upz]).add(network);
-                }
-            }
-            s1.close();
-            r1.close();
-//            Get divisions for each network
-//            for (AdministrativeDivision division : divisions) {
-//                if (division != null) {
-//                    Statement s1 = conn.createStatement();
-//                    String query = "SELECT ST_Intersects(upzs.geom,network.geom) FROM (SELECT geom FROM upz WHERE gid = " +
-//                            division.getId() + ") AS upzs, (SELECT geom FROM red_primaria WHERE gid = " + id + ") AS network;";
-//                    ResultSet r1 = s1.executeQuery(query);
-//                    String c = null;
-//                    if (r1.next()) c = r1.getString(1);
-//                    if (c != null && c.equals("t")) {
-//                        network.setDivision(division);
-//                        primaryNetwork.get(division).add(network);
-//                        Statement s2 = conn.createStatement();
-//                        s2.executeUpdate("INSERT INTO interseccion_upz_redprimaria (\"id_redprimaria\",\"codigo_upz\") " +
-//                                "VALUES ('" + network.getId() + "','" + division.getCode() + "');");
-//                    }
-//                    r1.close();
-//                    s1.close();
-//                }
-//            }
-        }
-        r.close();
-        s.close();
-    }
-
-    /**
-     * Instantiates all the equipments in the database
-     * @param conn The connection from the database
-     * @throws SQLException
-     */
-    public static void createEquipments(Connection conn) throws SQLException {
-        Statement s = conn.createStatement();
-        ResultSet r = s.executeQuery("select a.id,a.codigo_upz,a.geom,a.nombre,a.tipo from " + filteredEquipments + ")) a");
-        while( r.next() ) {
-            int id = r.getInt(1);
-            int codigo_upz = r.getInt(2);
-            PGgeometry geom = (PGgeometry)r.getObject(3);
-            String nombre = r.getString(4);
-            String tipo = r.getString(5);
-            Equipment equip = new Equipment(Integer.toString(id), tipo, geom);
-            int codigoUPZ = r.getInt(2);
-            if(codigoUPZ != 0 && codigoUPZ  <= 117) {
-                equip.setDivision(divisions[codigoUPZ]);
-                equipments.get(divisions[codigoUPZ]).add(equip);
-                equipmentsLength++;
-            }
-        }
-        r.close();
-        s.close();
-    }
 
     /**
      * Purchases a land
@@ -1006,7 +643,7 @@ public class Simulation {
             if (division != null) {
                 double rentInDivision = 0.0;
                 double saleInDivision = 0.0;
-                for (Property property : properties.get(division)) {
+                for (Property property : division.getProperties()) {
                     if (property.getState().equals(Property.OCCUPIED)) {
                         countSale++;
                         saleInDivision++;
@@ -1047,7 +684,7 @@ public class Simulation {
     public static void writeResults(Connection conn, int time) throws SQLException{
         for (AdministrativeDivision division : divisions) {
             if (division != null) {
-                for (Property property : properties.get(division)) {
+                for (Property property : division.getProperties()) {
                     Statement s = conn.createStatement();
                     String query = "INSERT INTO properties_state (\"step\",\"idProperty\",\"price\",\"rent\",\"value\",\"state\"" +
                             ",\"geom\",\"codigo_upz\") VALUES ('" + time + "','" + property.getId() + "','" + property.getCurrentPrice() + "','" +
@@ -1060,120 +697,91 @@ public class Simulation {
         }
     }
 
-    /**
-     * Creates a connection to the database
-     * @param conn The resultant connection
-     * @throws ClassNotFoundException
-     * @throws SQLException
-     */
-    public static Connection createConnection(Connection conn) throws ClassNotFoundException, SQLException {
-        //  Load the JDBC driver and establish a connection.
-        Class.forName("org.postgresql.Driver");
-        String url = "jdbc:postgresql://localhost:5432/tomsa";
-        conn = DriverManager.getConnection(url, "tomsa", "tomsa");
-        //  Add the geometry types to the connection.
-        ((org.postgresql.PGConnection)conn).addDataType("geometry",Class.forName("org.postgis.PGgeometry"));
-        ((org.postgresql.PGConnection)conn).addDataType("box3d",Class.forName("org.postgis.PGbox3d"));
+    public static ArrayList<Household> getHouseholds() {
+        return households;
+    }
 
-        try{
-            Statement s1 = conn.createStatement();
-            s1.executeUpdate("DROP TABLE properties_state");
-            s1.close();
-        } catch (SQLException e) {
-            System.out.println("Creating results table...");
-        }
+    public static void setHouseholds(ArrayList<Household> households) {
+        Simulation.households = households;
+    }
 
-        try{
-            Statement s1 = conn.createStatement();
-            s1.executeUpdate("DROP TABLE indicator1");
-            s1.close();
-        } catch (SQLException e) {
-            System.out.println("Creating indicator1 table...");
-        }
+    public static ArrayList<Investor> getInvestors() {
+        return investors;
+    }
 
-        try{
-            Statement s1 = conn.createStatement();
-            s1.executeUpdate("DROP TABLE indicator2");
-            s1.close();
-        } catch (SQLException e) {
-            System.out.println("Creating indicator1 table...");
-        }
+    public static void setInvestors(ArrayList<Investor> investors) {
+        Simulation.investors = investors;
+    }
 
-        Statement s2 = conn.createStatement();
-        String query = "CREATE TABLE \"properties_state\" (gid serial,\"step\" numeric,\"idProperty\" numeric,\"price\""+
-                "numeric,\"rent\" numeric,\"value\" numeric,\"state\" varchar(200),\"codigo_upz\" numeric)";
-        s2.executeUpdate(query);
-        s2.close();
+    public static ArrayList<Promoter> getPromoters() {
+        return promoters;
+    }
 
-        Statement s3 = conn.createStatement();
-        query = "ALTER TABLE \"properties_state\" ADD PRIMARY KEY (gid)";
-        s3.executeUpdate(query);
-        s3.close();
+    public static void setPromoters(ArrayList<Promoter> promoters) {
+        Simulation.promoters = promoters;
+    }
 
-        Statement s4 = conn.createStatement();
-        query = "SELECT AddGeometryColumn('','properties_state','geom','0','POINT',2)";
-        s4.executeQuery(query);
-        s4.close();
+    public static AdministrativeDivision[] getDivisions() {
+        return divisions;
+    }
 
-        Statement s5 = conn.createStatement();
-        query = "CREATE TABLE \"indicator1\" (gid serial,\"step\" numeric,\"ROP\" numeric)";
-        s5.executeUpdate(query);
-        s5.close();
+    public static void setDivisions(AdministrativeDivision[] divisions) {
+        Simulation.divisions = divisions;
+    }
 
-        Statement s6 = conn.createStatement();
-        query = "CREATE TABLE \"indicator2\" (gid serial,\"step\" numeric,\"idUPZ\" numeric,\"si\" numeric)";
-        s6.executeUpdate(query);
-        s6.close();
+    public static int getNumSim() {
+        return numSim;
+    }
 
-        return conn;
+    public static void setNumSim(int numSim) {
+        Simulation.numSim = numSim;
+    }
+
+    public static int[] getIdManager() {
+        return idManager;
+    }
+
+    public static void setIdManager(int[] idManager) {
+        Simulation.idManager = idManager;
+    }
+
+    public static String getFilteredEquipments() {
+        return filteredEquipments;
+    }
+
+    public static void setFilteredEquipments(String filteredEquipments) {
+        Simulation.filteredEquipments = filteredEquipments;
+    }
+
+    public static String getFilteredNetwork() {
+        return filteredNetwork;
+    }
+
+    public static void setFilteredNetwork(String filteredNetwork) {
+        Simulation.filteredNetwork = filteredNetwork;
     }
 
     public static void main(String[] args){
         System.out.println("Testing the kobdig.urbanSimulation Simulator...");
-        households = new ArrayList<>();
-        investors = new ArrayList<>();
-        promoters = new ArrayList<>();
-        properties = new HashMap<>();
+        EntitiesCreator builder = new EntitiesCreator();
+        builder.createAll();
         freeProperties = new ArrayList<>();
         forRentProperties = new ArrayList<>();
-        forSaleLand = new ArrayList<>();
-        lands = new HashMap<>();
-        divisions = new AdministrativeDivision[200];
-        equipments = new HashMap<>();
-        primaryNetwork = new HashMap<>();
-        idManager = new int[5];
-        String pwd = new File("").getAbsolutePath();
-
-        filteredEquipments = "(SELECT * FROM equipamentos WHERE codigo_upz IN (85,81,80,46,112,116,31,30,29,28,27";
-        filteredNetwork = "(SELECT * FROM red_primaria WHERE gid IN (176,784,794,793,798,796,822,819,856,852,849,885,894," +
-                "891,937,932,938,984,990,986,1029,1028,1076,1077,1113,1114,1117,1165,1164,1218,1221,1220,1280,1281,1284," +
-                "1332,1330,1373,1368,1374,1418,1416,1455,1453,1487,1533,1527,51,48,52,64,63,76,94,91,90,96,102,101,106," +
-                "110,109,114,113,118,117,122";
+        households = builder.getHouseholds();
+        investors = builder.getInvestors();
+        divisions = builder.getDivisions();
+        promoters = builder.getPromoters();
+        networkLength = builder.getNetworkLength();
+        equipmentsLength = builder.getEquipmentsLength();
+        forSaleLand = builder.getForSaleLand();
+        idManager = builder.getIdManager();
+        numSim = builder.getNumSim();
+        filteredEquipments = builder.getFilteredEquipments();
+        filteredNetwork = builder.getFilteredNetwork();
+        investorAgent = builder.getInvestorAgent();
 
         try {
-            conn = createConnection(conn);
-            numSim = 30;
-
-            // Get initializer files
-            File householdAgentFile = new File(pwd + "/docs/householdAgent.apl");
-            File investorAgentFile = new File(pwd + "/docs/investorAgent.apl");
-            File promoterAgentFile = new File(pwd + "/docs/promoterAgent.apl");
-
-            // Instantiates all the classes
-
-            try {
-                householdAgent = new Agent(new FileInputStream(householdAgentFile));
-                investorAgent = new Agent(new FileInputStream(investorAgentFile));
-                promoterAgent = new Agent(new FileInputStream(promoterAgentFile));
-
-                createDivisions(conn);
-                createTransportNetwork(conn);
-                createEquipments(conn);
-                //createProperties(conn);
-                createHouseholds(conn);
-                createInvestors(conn);
-                createPromoters(conn);
-                createLand(conn);
+            conn = builder.createConnection();
 
                 writeIndicators(conn, 0);
                 writeResults(conn, 0);
@@ -1188,33 +796,22 @@ public class Simulation {
                 	
                 	System.out.println("Step " + time);
 
-                    // Updates market values
-
-                	// if ((time -1) == 10) {
-                	//     updateEquipmentsOrNetworkToConsider(NETWORK, "985,974,973,1022,1020,1018,1015,1014,1013,1011," +
-                	//             "1002,1001,1006,1005,996,994,442,443,443,435,434,427,425,420,419,417,416,415,412,411,487," +
-                	//             "483,472,471,468,463,530,578");
-                	// }
 
                     for (AdministrativeDivision division : divisions) {
                         if (division != null) {
-                            ArrayList<Land> landDiv = lands.get(division);
+                            ArrayList<Land> landDiv = division.getLands();
                             for (Land land : landDiv) land.step(time - 1);
-                            for (Property property : properties.get(division)) property.step(time - 1);
+                            for (Property property : division.getProperties()) property.step(time - 1);
                         }
                     }
 
                     for (Promoter promoter : promoters) {
-                        // Updates promoter's beliefs
                         promoterUpdateBeliefs(promoter, time-1);
-                        // Updates promoter's new intentions
                         promoterIntentionStep(conn, promoter);
                     }
 
                     for (Investor investor : investors) {
-                        // Updates household's beliefs
                         investorUpdateBeliefs(investor, time-1);
-                        // Generates household's new intentions
                         investorIntentionStep(conn, investor);
                     }
 
@@ -1233,15 +830,12 @@ public class Simulation {
 
                 }
 
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
             conn.close();
-        } catch (Exception e) {
+
+
+            } catch (SQLException e1) {
+            e1.printStackTrace();
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
