@@ -2,6 +2,9 @@ package kobdig.urbanSimulation;
 
 import kobdig.agent.Agent;
 import kobdig.agent.Fact;
+import kobdig.urbanSimulation.entities.Household;
+import kobdig.urbanSimulation.entities.Investor;
+import kobdig.urbanSimulation.entities.Promoter;
 import org.postgis.PGgeometry;
 import java.io.*;
 import java.sql.*;
@@ -371,8 +374,11 @@ public class Simulation {
                         freeProperties.remove(taken);
                         forRentProperties.add(taken);
                         taken.setState(Property.SEEKING_TENANT);
-                        Investor newInvestor = new Investor(investorAgent, investor, taken);
-                        investors.add(newInvestor);
+                        //Investor newInvestor = new Investor(investorAgent, investor, taken);
+                        investor.setAgent(investorAgent);
+                        investor.setProperty(taken);
+                        investor.setOwner(true);
+                        investors.add(investor);
                     }
                 }
                 else{
@@ -473,7 +479,7 @@ public class Simulation {
             String lastname = r.getString(2);
             double purchasingPower = r.getDouble(3);
             double netMonthlyIncome = r.getDouble(4);
-            Household household = new Household(Integer.toString(id), householdAgent,lastname,purchasingPower,
+            Household household = new Household(Integer.toString(id), householdAgent,purchasingPower,
                     netMonthlyIncome);
             household.updateBelief("not r:1");
             household.updateBelief("not o:1");
@@ -494,7 +500,7 @@ public class Simulation {
         while( r.next() ) {
             int id = r.getInt(1);
             double purchasingPower = r.getDouble(2);
-            Investor investor = new Investor(Integer.toString(id), investorAgent, purchasingPower);
+            Investor investor = new Investor(Integer.toString(id), investorAgent, purchasingPower, 0.0);
             investors.add(investor);
         }
         r.close();

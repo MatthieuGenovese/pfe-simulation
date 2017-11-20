@@ -1,9 +1,11 @@
-package kobdig.urbanSimulation;
+package kobdig.urbanSimulation.oldclasses;
 
 import kobdig.agent.Agent;
 import kobdig.agent.Fact;
 import kobdig.gui.FactParser;
 import kobdig.logic.TruthDegree;
+import kobdig.urbanSimulation.Property;
+import kobdig.urbanSimulation.entities.Household;
 
 import java.util.ArrayList;
 
@@ -143,19 +145,14 @@ public class Investor {
         this.owner = true;
     }
 
-    /**
-     * Investor's Investor constructor
-     * @param agent The BDI agent that represents the investor
-     * @param investor The investor associated
-     */
-    public Investor(Agent agent, Investor investor, Property property){
+   /* public Investor(Agent agent, Investor investor, Property property){
         this.agent = agent;
         this.investor = investor;
         this.currentPurchasingPower = investor.getCurrentPurchasingPower();
         this.currentNetMonthlyIncome = investor.getCurrentNetMonthlyIncome();
         this.property = property;
         this.owner = true;
-    }
+    }*/
 
 
     // GETTERS AND SETTERS

@@ -1,9 +1,10 @@
-package kobdig.urbanSimulation;
+package kobdig.urbanSimulation.oldclasses;
 
 import kobdig.agent.Agent;
 import kobdig.agent.Fact;
 import kobdig.gui.FactParser;
 import kobdig.logic.TruthDegree;
+import kobdig.urbanSimulation.Land;
 
 import java.util.ArrayList;
 
@@ -12,51 +13,14 @@ import java.util.ArrayList;
  */
 public class Promoter {
 
-    // CONSTANTS
-
-    /**
-     * Buy land
-     */
     public static final String BUY_LAND = "bl";
 
-    /**
-     * Sell off plans
-     */
     public static final String SELL_OFF_PLANS = "sop";
-
-    //ATTRIBUTES
-
-    /**
-     * Unique ID for the promoter
-     */
     private String id;
-
-    /**
-     * The agent associated to the promoter
-     */
     private Agent agent;
-
-    /**
-     * The purchasable land list
-     */
     private ArrayList<Land> purchasableLand;
-
-    /**
-     * Purchasing power
-     */
     private double purchasingPower;
-
-    /**
-     * Degree of risk averse
-     */
     private double riskAverse;
-
-    /**
-     * The Promoter's constructor
-     * @param id The promoter's Id
-     * @param agent The promoter's agent
-     * @param purchasingPower The purchasing power
-     */
     public Promoter(String id, Agent agent, double purchasingPower){
         this.id = id;
         this.agent = agent;
@@ -85,12 +49,6 @@ public class Promoter {
         this.purchasingPower = purchasingPower;
     }
 
-    // METHODS
-
-    /**
-     * Updates the agent's beliefs, desires and goals considering a given fact
-     * @param stringFact The fact
-     */
     public void updateBelief(String stringFact){
         FactParser parser = new FactParser(stringFact);
         Fact fact = parser.getFact();
@@ -99,10 +57,6 @@ public class Promoter {
         agent.updateDesires();
         agent.updateGoals();
     }
-
-    /**
-     * Generates a step in the simulation
-     */
     public void step(int time){
 
         double rnd1 = Math.random();

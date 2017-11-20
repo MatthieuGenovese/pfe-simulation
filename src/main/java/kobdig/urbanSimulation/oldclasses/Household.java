@@ -1,9 +1,10 @@
-package kobdig.urbanSimulation;
+package kobdig.urbanSimulation.oldclasses;
 
 import kobdig.agent.Agent;
 import kobdig.agent.Fact;
 import kobdig.gui.FactParser;
 import kobdig.logic.TruthDegree;
+import kobdig.urbanSimulation.Property;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -13,137 +14,30 @@ import java.util.Iterator;
  */
 public class Household {
 
-    // CONSTANTS
-
-    /**
-     *  Buy
-     */
     public static final String BUY = "b";
-
-    /**
-     *  Rent
-     */
     public static final String RENT = "r";
-
-    /**
-     *  Change
-     */
     public static final String CHANGE = "ch";
-
-
-    /**
-     *  Sell
-     */
     public static final String SELL = "s";
-
-    /**
-     *  Landlord
-     */
     public static final String LANDLORD = "l";
-
-    /**
-     *  Not Landlord
-     */
     public static final String NOT_LANDLORD = "~l";
-
-    /**
-     *  Owner
-     */
     public static final String OWNER = "o";
-
-    // ATTRIBUTES
-
-    /**
-     * Unique ID for the household
-     */
     private String id;
-
-    /**
-     * The agent associated to the household
-     */
     private Agent agent;
-
-    /**
-     * Household's lastname
-     */
     private String lastname;
-
-    /**
-     * ID of the household's property
-     */
     private Property property;
-
-    /**
-     * A list of purchasable properties given household's characteristics
-     */
     private ArrayList<Property> purchasableProperties;
-
-    /**
-     * A list of rentable properties given household's characteristics
-     */
     private ArrayList<Property> rentableProperties;
-
-    /**
-     * Indicates if the household owns its dwelling or not
-     */
     private boolean ownerOccupied;
-
-    /**
-     * The degree with which the household desires to invest
-     */
     private boolean renting;
-
-    /**
-     * Purchasing power to buy home
-     */
     private double previousPurchasingPower;
-
-    /**
-     * Net monthly income to pay rent
-     */
     private double previousNetMonthlyIncome;
-
-    /**
-     * Purchasing power to buy home
-     */
     private double currentPurchasingPower;
-
-    /**
-     * Net monthly income to pay rent
-     */
     private double currentNetMonthlyIncome;
-
-    /**
-     * The quality coefficient in the utility function associated to the household
-     */
     private double qualityCoefficient;
-
-    /**
-     * The centrality coefficient in the utility function associated to the household
-     */
     private double centralityCoefficient;
-
-    /**
-     * The proximity coefficient in the utility function associated to the household
-     */
     private double proximityCoefficient;
-
-    /**
-     * The degree with which the household desires to invest
-     */
     private double investDegree;
 
-
-    // CONSTRUCTOR
-
-    /**
-     * Household's constructor
-     * @param id The household's id
-     * @param agent The BDI agent that represents the household
-     * @param lastname The household's last name
-     * @param purchasingPower The household's current purchasing power
-     * @param netMonthlyIncome The household's current net monthly income
-     */
     public Household(String id, Agent agent, String lastname, double purchasingPower, double netMonthlyIncome) {
         this.id = id;
         this.agent = agent;
