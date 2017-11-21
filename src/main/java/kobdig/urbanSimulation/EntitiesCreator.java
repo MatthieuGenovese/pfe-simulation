@@ -23,6 +23,8 @@ public class EntitiesCreator {
     private ArrayList<Promoter> promoters;
     private ArrayList<Land> forSaleLand;
     private AdministrativeDivision[] divisions;
+    private ArrayList<Property> freeProperties;
+    private ArrayList<Property> forRentProperties;
     private String filteredEquipments, filteredNetwork;
     private Connection conn;
     private Agent householdAgent, investorAgent, promoterAgent;
@@ -30,12 +32,22 @@ public class EntitiesCreator {
     private int[] idManager;
 
     public EntitiesCreator(){
+        freeProperties = new ArrayList<>();
+        forRentProperties = new ArrayList<>();
         households = new ArrayList<>();
         investors = new ArrayList<>();
         promoters = new ArrayList<>();
         forSaleLand = new ArrayList<>();
         divisions = new AdministrativeDivision[200];
         idManager = new int[5];
+    }
+
+    public ArrayList<Property> getFreeProperties() {
+        return freeProperties;
+    }
+
+    public ArrayList<Property> getForRentProperties() {
+        return forRentProperties;
     }
 
     public ArrayList<Household> getHouseholds() {
@@ -316,6 +328,10 @@ public class EntitiesCreator {
         }
         r.close();
         s.close();
+    }
+
+    public Connection getConn(){
+        return conn;
     }
 
 }
