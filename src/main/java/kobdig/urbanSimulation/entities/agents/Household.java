@@ -159,5 +159,68 @@ public class Household extends AbstractAgentBuy implements IActionnable {
         setCurrentNetMonthlyIncome(currentNetMonthlyIncome);
     }
 
+    public void householdUpdateBeliefs(int time, ArrayList<Property> freeProperties, ArrayList<Property> forRentProperties) {
+
+        step(time);
+        Property cheapestProperty = null;
+        double cheapestPrice = Double.POSITIVE_INFINITY;
+
+        // Updates de affordBuying and affordRenting beliefs and gets the cheapest property
+        int purchFound = 0;
+        int rentFound = 0;
+
+        for (Property property : freeProperties) {
+            if (property.getCurrentPrice() < cheapestPrice) {
+                cheapestPrice = property.getCurrentPrice();
+                cheapestProperty = property;
+            }
+
+            if (getCurrentPurchasingPower() >= property.getCurrentPrice()) {
+                addPurchasableProperty(property);
+                purchFound++;
+            }
+
+        }
+
+        for (Property property : forRentProperties) {
+            if(getCurrentNetMonthlyIncome() >= property.getCurrentCapitalizedRent()){
+                addRentableProperty(property);
+                rentFound++;
+            }
+        }
+        if(purchFound > 0){
+           updateBelief("ab:" + Double.toString(purchFound/(0.0 + freeProperties.size())));
+        }
+        else{
+           updateBelief("not ab:1");
+        }
+        if(rentFound > 0){
+            updateBelief("ar:" + Double.toString(rentFound/(0.0 + forRentProperties.size())));
+        }
+        else{
+            updateBelief("not ar:1");
+        }
+
+        // Updates the buyingRentable belief
+        // TODO: Improve this approach
+        if(cheapestPrice < Double.POSITIVE_INFINITY){
+            if(getCurrentPurchasingPower() > cheapestPrice){
+                double rnd = Math.random();
+                if (rnd < 0.5){
+                    updateBelief("br:" + cheapestProperty.getCurrentCapitalizedRent()/(0.0 +
+                            cheapestProperty.getCurrentPotentialRent()));
+                }
+                else updateBelief("not br:1");
+            }
+        }
+//        System.out.println("_____________________Belief Step___________________");
+//        Iterator<Fact> iter = household.getAgent().beliefs().factIterator();
+//        System.out.println("Simulation step: " + time + " Household no." + household.getId());
+//        while (iter.hasNext()){
+//            System.out.println(iter.next().formula().toString());
+//        }
+//        System.out.println("________________________________________");
+    }
+
 
 }

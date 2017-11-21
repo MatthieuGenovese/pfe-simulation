@@ -38,68 +38,7 @@ public class Simulation {
     protected static String filteredEquipments;
     protected static String filteredNetwork;
 
-    public static void householdUpdateBeliefs(Household household, int time) {
 
-        household.step(time);
-        Property cheapestProperty = null;
-        double cheapestPrice = Double.POSITIVE_INFINITY;
-
-        // Updates de affordBuying and affordRenting beliefs and gets the cheapest property
-        int purchFound = 0;
-        int rentFound = 0;
-
-        for (Property property : freeProperties) {
-            if (property.getCurrentPrice() < cheapestPrice) {
-                cheapestPrice = property.getCurrentPrice();
-                cheapestProperty = property;
-            }
-
-            if (household.getCurrentPurchasingPower() >= property.getCurrentPrice()) {
-                household.addPurchasableProperty(property);
-                purchFound++;
-            }
-
-        }
-
-        for (Property property : forRentProperties) {
-            if(household.getCurrentNetMonthlyIncome() >= property.getCurrentCapitalizedRent()){
-                household.addRentableProperty(property);
-                rentFound++;
-            }
-        }
-        if(purchFound > 0){
-            household.updateBelief("ab:" + Double.toString(purchFound/(0.0 + freeProperties.size())));
-        }
-        else{
-            household.updateBelief("not ab:1");
-        }
-        if(rentFound > 0){
-            household.updateBelief("ar:" + Double.toString(rentFound/(0.0 + forRentProperties.size())));
-        }
-        else{
-            household.updateBelief("not ar:1");
-        }
-
-        // Updates the buyingRentable belief
-        // TODO: Improve this approach
-        if(cheapestPrice < Double.POSITIVE_INFINITY){
-            if(household.getCurrentPurchasingPower() > cheapestPrice){
-                double rnd = Math.random();
-                if (rnd < 0.5){
-                    household.updateBelief("br:" + cheapestProperty.getCurrentCapitalizedRent()/(0.0 +
-                            cheapestProperty.getCurrentPotentialRent()));
-                }
-                else household.updateBelief("not br:1");
-            }
-        }
-//        System.out.println("_____________________Belief Step___________________");
-//        Iterator<Fact> iter = household.getAgent().beliefs().factIterator();
-//        System.out.println("Simulation step: " + time + " Household no." + household.getId());
-//        while (iter.hasNext()){
-//            System.out.println(iter.next().formula().toString());
-//        }
-//        System.out.println("________________________________________");
-    }
 
     /**
      * Generates a household intention step in the simulation
@@ -817,7 +756,7 @@ public class Simulation {
 
                     for (Household household : households) {
                         // Updates household's beliefs
-                        householdUpdateBeliefs(household, time-1);
+                        household.householdUpdateBeliefs(time-1, freeProperties, forRentProperties);
                         // Generates household's new intentions
                         householdIntentionStep(conn, household);
                     }

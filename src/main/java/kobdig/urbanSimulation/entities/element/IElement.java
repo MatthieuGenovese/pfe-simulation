@@ -1,11 +1,11 @@
-package kobdig.urbanSimulation.entities.environement;
+package kobdig.urbanSimulation.entities.element;
 
 import org.postgis.PGgeometry;
 
 /**
  * Created by Matthieu on 20/11/2017.
  */
-public interface IEnvironment {
+public interface IElement {
 
     //Administrative Division
     public String getId();
