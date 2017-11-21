@@ -115,54 +115,54 @@ public class Simulation {
         }
     }
 
-    public static void main(String[] args){
+    public void start(){
         System.out.println("Testing the kobdig.urbanSimulation Simulator...");
         EntitiesCreator builder = new EntitiesCreator();
         builder.createAll();
 
         try {
-                writeIndicators(builder, 0);
-                writeResults(builder, 0);
+            writeIndicators(builder, 0);
+            writeResults(builder, 0);
 
-                Statement s = builder.getConn().createStatement();
-                ResultSet r = s.executeQuery("SELECT MAX(gid) FROM properties;");
-                if(r.next())  builder.getIdManager()[0] = r.getInt(1) + 1;
-                s.close();
-                r.close();
+            Statement s = builder.getConn().createStatement();
+            ResultSet r = s.executeQuery("SELECT MAX(gid) FROM properties;");
+            if(r.next())  builder.getIdManager()[0] = r.getInt(1) + 1;
+            s.close();
+            r.close();
 
-                for (int time = 1; time <= builder.getNumSim(); time++) {
-                	
-                	System.out.println("Step " + time);
+            for (int time = 1; time <= builder.getNumSim(); time++) {
+
+                System.out.println("Step " + time);
 
 
-                    for (AdministrativeDivision division : builder.getDivisions()) {
-                        if (division != null) {
-                            ArrayList<Land> landDiv = division.getLands();
-                            for (Land land : landDiv) land.step(time - 1);
-                            for (Property property : division.getProperties()) property.step(time - 1);
-                        }
+                for (AdministrativeDivision division : builder.getDivisions()) {
+                    if (division != null) {
+                        ArrayList<Land> landDiv = division.getLands();
+                        for (Land land : landDiv) land.step(time - 1);
+                        for (Property property : division.getProperties()) property.step(time - 1);
                     }
-
-                    for(AbstractAgent agent : builder.getAgents()){
-                        agent.agentUpdateBeliefs(builder, time);
-                        agent.agentIntentionsStep(builder);
-                    }
-
-                    for (Investor investor : builder.getInvestors()) {
-                        investor.agentUpdateBeliefs(builder, time-1);
-                        investor.agentIntentionsStep(builder);
-                    }
-
-                    System.err.println(time-1 + ". - free " + builder.getFreeProperties().size() + " for rent " + builder.getForRentProperties().size() + " total " +
-                            (builder.getFreeProperties().size() + builder.getForRentProperties().size()) );
-
-                    writeIndicators(builder, time-1);
-                    writeResults(builder, time-1);
-
                 }
 
+                for(AbstractAgent agent : builder.getAgents()){
+                    agent.agentUpdateBeliefs(builder, time);
+                    agent.agentIntentionsStep(builder);
+                }
+
+                for (Investor investor : builder.getInvestors()) {
+                    investor.agentUpdateBeliefs(builder, time-1);
+                    investor.agentIntentionsStep(builder);
+                }
+
+                System.err.println(time-1 + ". - free " + builder.getFreeProperties().size() + " for rent " + builder.getForRentProperties().size() + " total " +
+                        (builder.getFreeProperties().size() + builder.getForRentProperties().size()) );
+
+                writeIndicators(builder, time-1);
+                writeResults(builder, time-1);
+
+            }
+
             builder.getConn().close();
-            } catch (SQLException e1) {
+        } catch (SQLException e1) {
             e1.printStackTrace();
         }
     }
