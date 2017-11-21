@@ -1,6 +1,7 @@
 package kobdig.urbanSimulation.entities.agents;
 
 import kobdig.agent.Agent;
+import kobdig.urbanSimulation.EntitiesCreator;
 import kobdig.urbanSimulation.entities.IActionnable;
 import kobdig.urbanSimulation.entities.environement.Land;
 
@@ -17,8 +18,8 @@ public class Promoter extends AbstractAgent implements IActionnable {
     private double purchasingPower;
     private double riskAverse;
 
-    public Promoter(String id, Agent agent, double purchasingPower){
-        super(id, agent);
+    public Promoter(EntitiesCreator entitiesCreator, String id, Agent agent, double purchasingPower){
+        super(entitiesCreator, id, agent);
         this.purchasableLand = new ArrayList<>();
         this.purchasingPower = purchasingPower;
         this.riskAverse = Math.random();

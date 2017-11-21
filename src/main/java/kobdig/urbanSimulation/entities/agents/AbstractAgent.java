@@ -4,6 +4,7 @@ import kobdig.agent.Agent;
 import kobdig.agent.Fact;
 import kobdig.gui.FactParser;
 import kobdig.logic.TruthDegree;
+import kobdig.urbanSimulation.EntitiesCreator;
 
 /**
  * Created by Matthieu on 20/11/2017.
@@ -12,10 +13,12 @@ public class AbstractAgent implements IAgent {
 
     private Agent agent;
     private String id;
+    private EntitiesCreator entitiesCreator;
 
-    public AbstractAgent(String id, Agent agent){
+    public AbstractAgent(EntitiesCreator entitiesCreator, String id, Agent agent){
         this.id=id;
         this.agent = agent;
+        this.entitiesCreator = entitiesCreator;
     }
 
     public Agent getAgent() {
@@ -32,6 +35,14 @@ public class AbstractAgent implements IAgent {
 
     public void setId(String id){
         this.id = id;
+    }
+
+    public EntitiesCreator getEntitiesCreator() {
+        return entitiesCreator;
+    }
+
+    public void setEntitiesCreator(EntitiesCreator entitiesCreator) {
+        this.entitiesCreator = entitiesCreator;
     }
 
     public void updateBelief(String stringFact){

@@ -1,6 +1,7 @@
 package kobdig.urbanSimulation.entities.agents;
 
 import kobdig.agent.Agent;
+import kobdig.urbanSimulation.EntitiesCreator;
 import kobdig.urbanSimulation.entities.IActionnable;
 import kobdig.urbanSimulation.entities.environement.Property;
 
@@ -25,8 +26,8 @@ public class Household extends AbstractAgentBuy implements IActionnable {
     private double proximityCoefficient;
     private double investDegree;
 
-    public Household(String id, Agent agent, double purchasingPower, double netMonthlyIncome) {
-        super(id, agent, purchasingPower, netMonthlyIncome);
+    public Household(EntitiesCreator entitiesCreator, String id, Agent agent, double purchasingPower, double netMonthlyIncome) {
+        super(entitiesCreator, id, agent, purchasingPower, netMonthlyIncome);
         this.rentableProperties = new ArrayList<>();
         this.renting = false;
         this.ownerOccupied = false;
@@ -221,6 +222,8 @@ public class Household extends AbstractAgentBuy implements IActionnable {
 //        }
 //        System.out.println("________________________________________");
     }
+
+
 
 
 }

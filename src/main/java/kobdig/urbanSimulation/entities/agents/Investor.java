@@ -1,8 +1,10 @@
 package kobdig.urbanSimulation.entities.agents;
 
 import kobdig.agent.Agent;
+import kobdig.urbanSimulation.EntitiesCreator;
 import kobdig.urbanSimulation.entities.IActionnable;
 import kobdig.urbanSimulation.entities.environement.Property;
+import org.omg.IOP.ENCODING_CDR_ENCAPS;
 
 /**
  * Created by Matthieu on 20/11/2017.
@@ -27,16 +29,16 @@ public class Investor extends AbstractAgentBuy implements IActionnable {
      * @param agent The BDI agent that represents the investor
      * @param purchasingPower The current purchasing power
      */
-    public Investor(String id, Agent agent, double purchasingPower, double netMonthlyIncome){
-        super(id, agent, purchasingPower, netMonthlyIncome);
+    public Investor(EntitiesCreator entitiesCreator, String id, Agent agent, double purchasingPower, double netMonthlyIncome){
+        super(entitiesCreator, id, agent, purchasingPower, netMonthlyIncome);
         this.investDegree = Math.random();
         this.speculate = Math.random();
         this.owner = false;
         this.currentRent = 0;
     }
 
-    public Investor(Agent agent, Household household, Property property){
-        super(household.getId(), agent, household.getCurrentPurchasingPower(), household.getCurrentNetMonthlyIncome());
+    public Investor(EntitiesCreator entitiesCreator, Agent agent, Household household, Property property){
+        super(entitiesCreator, household.getId(), agent, household.getCurrentPurchasingPower(), household.getCurrentNetMonthlyIncome());
         setProperty(property);
         this.household = household;
         this.owner = true;

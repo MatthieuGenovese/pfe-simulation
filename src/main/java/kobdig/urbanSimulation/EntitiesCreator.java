@@ -208,7 +208,7 @@ public class EntitiesCreator {
             String lastname = r.getString(2);
             double purchasingPower = r.getDouble(3);
             double netMonthlyIncome = r.getDouble(4);
-            Household household = new Household(Integer.toString(id), householdAgent, purchasingPower,
+            Household household = new Household(this, Integer.toString(id), householdAgent, purchasingPower,
                     netMonthlyIncome);
             household.updateBelief("not r:1");
             household.updateBelief("not o:1");
@@ -224,7 +224,7 @@ public class EntitiesCreator {
         while (r.next()) {
             int id = r.getInt(1);
             double purchasingPower = r.getDouble(2);
-            Investor investor = new Investor(Integer.toString(id), investorAgent, purchasingPower, 0.0);
+            Investor investor = new Investor(this, Integer.toString(id), investorAgent, purchasingPower, 0.0);
             investors.add(investor);
         }
         r.close();
@@ -237,7 +237,7 @@ public class EntitiesCreator {
         while (r.next()) {
             int id = r.getInt(1);
             double purchasingPower = r.getDouble(2);
-            Promoter promoter = new Promoter(Integer.toString(id), promoterAgent, purchasingPower);
+            Promoter promoter = new Promoter(this, Integer.toString(id), promoterAgent, purchasingPower);
             promoters.add(promoter);
         }
         r.close();
@@ -333,5 +333,4 @@ public class EntitiesCreator {
     public Connection getConn(){
         return conn;
     }
-
 }

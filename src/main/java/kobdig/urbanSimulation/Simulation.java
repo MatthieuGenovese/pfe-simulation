@@ -6,8 +6,6 @@ import kobdig.urbanSimulation.entities.agents.Household;
 import kobdig.urbanSimulation.entities.agents.Investor;
 import kobdig.urbanSimulation.entities.agents.Promoter;
 import kobdig.urbanSimulation.entities.environement.*;
-import org.postgis.PGgeometry;
-import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -21,30 +19,13 @@ public class Simulation {
     public static final String NETWORK = "network";
 
     public static final String EQUIPMENT = "equipment";
-    protected static ArrayList<Household> households;
-    protected static ArrayList<Investor> investors;
-    protected static ArrayList<Promoter> promoters;
-    protected static ArrayList<Property> freeProperties;
-    protected static ArrayList<Property> forRentProperties;
-    protected static ArrayList<Land> forSaleLand;
-    protected static AdministrativeDivision[] divisions;
-    protected static int equipmentsLength;
-    protected static int networkLength;
     protected static Agent investorAgent;
-    protected static int time;
-    protected static int numSim;
-    protected static int[] idManager;
-    protected static Connection conn;
-    protected static String filteredEquipments;
-    protected static String filteredNetwork;
-
-
 
     /**
      * Generates a household intention step in the simulation
      * @param household The household
      */
-    public static void householdIntentionStep(EntitiesCreator entitiesCreator, Household household, int time) {
+    public static void householdIntentionStep(Household household, int time) {
 
         System.out.println("____________________Interntion Step____________________");
         Iterator<Fact> iter = household.getAgent().goals().factIterator();
@@ -59,9 +40,9 @@ public class Simulation {
             String goal = iter.next().formula().toString();
             // If the goal is to buy
             if (goal.contains(Household.BUY) && goal.contains(Household.OWNER)){
-                Property taken = buyProperty(entitiesCreator, household);
+                Property taken = buyProperty(household.getEntitiesCreator(), household);
                 if (taken != null) {
-                    entitiesCreator.getFreeProperties().remove(taken);
+                    household.getEntitiesCreator().getFreeProperties().remove(taken);
                     taken.setState(Property.OCCUPIED);
                     household.setOwnerOccupied(true);
                 }
@@ -69,23 +50,23 @@ public class Simulation {
 
             // If the goal is to invest
             else if (goal.contains(Household.BUY) && !goal.contains(Household.NOT_LANDLORD) && goal.contains(Household.LANDLORD)){
-                Property taken = invest(entitiesCreator, household);
+                Property taken = invest(household.getEntitiesCreator(), household);
                 if (taken != null) {
                     taken.setState(Property.SEEKING_TENANT);
-                    entitiesCreator.getFreeProperties().remove(taken);
-                    entitiesCreator.getForRentProperties().add(taken);
+                    household.getEntitiesCreator().getFreeProperties().remove(taken);
+                    household.getEntitiesCreator().getForRentProperties().add(taken);
                     taken.setUpdated(false);
-                    Investor newInvestor = new Investor(investorAgent, household,taken);
-                    entitiesCreator.getInvestors().add(newInvestor);
+                    Investor newInvestor = new Investor(household.getEntitiesCreator(), investorAgent, household,taken);
+                    household.getEntitiesCreator().getInvestors().add(newInvestor);
                     household.setProperty(null);
                 }
             }
 
             // If the goal is to rent
             if (goal.contains(Household.RENT)){
-                Property taken = rentProperty(entitiesCreator, household);
+                Property taken = rentProperty(household);
                 if (taken != null) {
-                    entitiesCreator.getForRentProperties().remove(taken);
+                    household.getEntitiesCreator().getForRentProperties().remove(taken);
                     taken.setState(Property.RENTED);
                     household.setProperty(null);
                     household.setRenting(true);
@@ -95,27 +76,27 @@ public class Simulation {
             // If the goal is to change and either sell or invest
             if (goal.contains(Household.CHANGE)){
 
-                Property taken = buyProperty(entitiesCreator, household);
+                Property taken = buyProperty(household.getEntitiesCreator(), household);
                 if (taken != null) {
-                    entitiesCreator.getFreeProperties().remove(taken);
+                    household.getEntitiesCreator().getFreeProperties().remove(taken);
                     taken.setState(Property.OCCUPIED);
                 }
 
                 if (goal.contains(Household.LANDLORD)){
                     if(household.getProperty() != null) {
                         household.invest(household.getProperty());
-                        entitiesCreator.getFreeProperties().remove(household.getProperty());
-                        entitiesCreator.getForRentProperties().add(household.getProperty());
-                        Investor newInvestor = new Investor(investorAgent, household, household.getProperty());
+                        household.getEntitiesCreator().getFreeProperties().remove(household.getProperty());
+                        household.getEntitiesCreator().getForRentProperties().add(household.getProperty());
+                        Investor newInvestor = new Investor(household.getEntitiesCreator(), investorAgent, household, household.getProperty());
                         newInvestor.getProperty().setState(Property.SEEKING_TENANT);
-                        entitiesCreator.getInvestors().add(newInvestor);
+                        household.getEntitiesCreator().getInvestors().add(newInvestor);
                         household.setProperty(null);
                     }
                 }
                 else if (goal.contains(Household.SELL)){
                     //TODO: Implement the seller part of the property
                     if (household.getProperty() != null) {
-                        entitiesCreator.getFreeProperties().add(household.getProperty());
+                        household.getEntitiesCreator().getFreeProperties().add(household.getProperty());
                         household.getProperty().setState(Property.FOR_SALE);
                         household.setProperty(null);
                     }
@@ -131,7 +112,7 @@ public class Simulation {
      * @param investor The investor
      * @param time The time in the simulation
      */
-    public static void investorUpdateBeliefs(EntitiesCreator entitiesCreator, Investor investor, int time) {
+    public static void investorUpdateBeliefs(Investor investor, int time) {
 
         investor.step(time);
         Property cheapestProperty = null;
@@ -140,7 +121,7 @@ public class Simulation {
         // Updates de affordBuying and affordRenting beliefs and gets the cheapest property
         int purchFound = 0;
 
-        for (Property property : entitiesCreator.getFreeProperties()) {
+        for (Property property : investor.getEntitiesCreator().getFreeProperties()) {
             if (property.getCurrentPrice() < cheapestPrice) {
                 cheapestPrice = property.getCurrentPrice();
                 cheapestProperty = property;
@@ -152,7 +133,9 @@ public class Simulation {
             }
         }
 
-        if(purchFound > 0) investor.updateBelief("ab:" + Double.toString(purchFound/(0.0 + entitiesCreator.getFreeProperties().size())));
+        if(purchFound > 0){
+            investor.updateBelief("ab:" + Double.toString(purchFound/(0.0 + investor.getEntitiesCreator().getFreeProperties().size())));
+        }
 
         else investor.updateBelief("not ab:1");
 
@@ -185,7 +168,7 @@ public class Simulation {
      * Generates a investor intention step in the simulation
      * @param investor The investor
      */
-    public static void investorIntentionStep(EntitiesCreator entitiesCreator, Investor investor) {
+    public static void investorIntentionStep(Investor investor) {
 
         Iterator<Fact> iter = investor.getAgent().goals().factIterator();
         while(iter.hasNext()) {
@@ -194,23 +177,23 @@ public class Simulation {
             // If the goal is to invest
             if (goal.contains(Investor.BUY) && goal.contains(Investor.LANDLORD)){
                 if (investor.getProperty() != null) {
-                    Property taken = invest(entitiesCreator, investor);
+                    Property taken = invest(investor.getEntitiesCreator(), investor);
                     if (taken != null) {
-                        entitiesCreator.getFreeProperties().remove(taken);
-                        entitiesCreator.getForRentProperties().add(taken);
+                        investor.getEntitiesCreator().getFreeProperties().remove(taken);
+                        investor.getEntitiesCreator().getForRentProperties().add(taken);
                         taken.setState(Property.SEEKING_TENANT);
                         //Investor newInvestor = new Investor(investorAgent, investor, taken);
                         investor.setAgent(investorAgent);
                         investor.setProperty(taken);
                         investor.setOwner(true);
-                        entitiesCreator.getInvestors().add(investor);
+                        investor.getEntitiesCreator().getInvestors().add(investor);
                     }
                 }
                 else{
-                    Property taken = invest(entitiesCreator, investor);
+                    Property taken = invest(investor.getEntitiesCreator(), investor);
                     if (taken != null) {
-                        entitiesCreator.getFreeProperties().remove(taken);
-                        entitiesCreator.getForRentProperties().add(taken);
+                        investor.getEntitiesCreator().getFreeProperties().remove(taken);
+                        investor.getEntitiesCreator().getForRentProperties().add(taken);
                         taken.setState(Property.SEEKING_TENANT);
                     }
                 }
@@ -234,20 +217,20 @@ public class Simulation {
      * @param promoter The promoter
      * @param time The time in the simulation
      */
-    public static void promoterUpdateBeliefs(EntitiesCreator entitiesCreator, Promoter promoter, int time) {
+    public static void promoterUpdateBeliefs(Promoter promoter, int time) {
 
         promoter.step(time);
         int purchFound = 0;
 
         // Updates affordBuyingLand
-        for (Land land : entitiesCreator.getForSaleLand()) {
+        for (Land land : promoter.getEntitiesCreator().getForSaleLand()) {
             if(promoter.getPurchasingPower() >= land.getPrice()){
                 promoter.addPurchasableLand(land);
                 purchFound++;
             }
         }
         
-        if(purchFound > 0) promoter.updateBelief("abl:" + Double.toString(purchFound/(0.0 + entitiesCreator.getForSaleLand().size())));
+        if(purchFound > 0) promoter.updateBelief("abl:" + Double.toString(purchFound/(0.0 + promoter.getEntitiesCreator().getForSaleLand().size())));
 
         else promoter.updateBelief("not abl:1");
 
@@ -263,25 +246,25 @@ public class Simulation {
      * Generates a promoter intention step in the simulation
      * @param promoter The promoter
      */
-    public static void promoterIntentionStep(EntitiesCreator entitiesCreator, Promoter promoter) {
+    public static void promoterIntentionStep(Promoter promoter) {
         Iterator<Fact> iter = promoter.getAgent().goals().factIterator();
         while(iter.hasNext()) {
             String goal = iter.next().formula().toString();
             //if (goal.contains(Promoter.BUY_LAND) && goal.contains(Promoter.SELL_OFF_PLANS)){
             if (goal.contains(Promoter.BUY_LAND)){    
-            	Land taken = buyLand(entitiesCreator, promoter);
+            	Land taken = buyLand(promoter.getEntitiesCreator(), promoter);
                 if (taken != null){
-                    entitiesCreator.getForSaleLand().remove(taken);
+                    promoter.getEntitiesCreator().getForSaleLand().remove(taken);
                     Property construction = null;
                     try {
-                        int id = entitiesCreator.getIdManager()[0]++;
+                        int id = promoter.getEntitiesCreator().getIdManager()[0]++;
                         construction = new Property(Integer.toString(id),taken.getLatitude(),
                                 taken.getLongitude(),(taken.getPrice() + 150), taken.getPrice()/10, taken.getPrice(),
                                 taken.getGeom(), taken);
                         construction.setDivision(taken.getDivision());
                         taken.getDivision().addProperty(construction);
                         construction.setState(Property.FOR_SALE);
-                        freeProperties.add(construction);
+                        promoter.getEntitiesCreator().getFreeProperties().add(construction);
                     }
                     catch (Exception e) {}
                 }
@@ -294,7 +277,7 @@ public class Simulation {
      * Purchases a land
      * @return The land purchased
      */
-    public static Property rentProperty(EntitiesCreator entitiesCreator, Household investor){
+    public static Property rentProperty(Household investor){
         double maxUtility = 0.0;
         Property selection = null;
         for (Property purchasable : investor.getRentableProperties()) {
@@ -302,8 +285,8 @@ public class Simulation {
                 if (purchasable.getDivision() != null && !purchasable.isUpdated()) {
                     double equipUtility = 0.0;
                     double transportUtility = 0.0;
-                    Statement s1 = entitiesCreator.getConn().createStatement();
-                    String query_equipments = "SELECT COUNT(a.*) FROM " + entitiesCreator.getFilteredEquipments() + ")) a INNER JOIN buffer b ON ST_Intersects(a.geom, b.geom) WHERE b.id_land = " + purchasable.getLand().getId();
+                    Statement s1 = investor.getEntitiesCreator().getConn().createStatement();
+                    String query_equipments = "SELECT COUNT(a.*) FROM " + investor.getEntitiesCreator().getFilteredEquipments() + ")) a INNER JOIN buffer b ON ST_Intersects(a.geom, b.geom) WHERE b.id_land = " + purchasable.getLand().getId();
                     ResultSet r1 = s1.executeQuery(query_equipments);
                     if(r1.next()) {
                         equipUtility = r1.getInt(1);
@@ -311,8 +294,8 @@ public class Simulation {
                     s1.close();
                     r1.close();
 
-                    Statement s2 = entitiesCreator.getConn().createStatement();
-                    String query_transport = "SELECT COUNT(a.*) FROM " + entitiesCreator.getFilteredNetwork() + ")) a INNER JOIN buffer b ON ST_Intersects(a.geom, b.geom) WHERE b.id_land = " + purchasable.getLand().getId();
+                    Statement s2 = investor.getEntitiesCreator().getConn().createStatement();
+                    String query_transport = "SELECT COUNT(a.*) FROM " + investor.getEntitiesCreator().getFilteredNetwork() + ")) a INNER JOIN buffer b ON ST_Intersects(a.geom, b.geom) WHERE b.id_land = " + purchasable.getLand().getId();
                     ResultSet r2 = s2.executeQuery(query_transport);
                     if(r2.next()) {
                         transportUtility = r2.getInt(1);
@@ -320,7 +303,7 @@ public class Simulation {
                     s2.close();
                     r2.close();
 
-                    purchasable.setUtility(0.4*(equipUtility/(double)entitiesCreator.getEquipmentsLength()) + 0.6*(transportUtility/(double)entitiesCreator.getNetworkLength()));
+                    purchasable.setUtility(0.4*(equipUtility/(double)investor.getEntitiesCreator().getEquipmentsLength()) + 0.6*(transportUtility/(double)investor.getEntitiesCreator().getNetworkLength()));
 //                    purchasable.setUtility(0.0*(equipUtility/(double)equipmentsLength) + 1.0*(transportUtility/(double)networkLength));
 //                    purchasable.setUtility(Math.random());
                     purchasable.setUpdated(true);
@@ -662,20 +645,20 @@ public class Simulation {
                     }
 
                     for (Promoter promoter : builder.getPromoters()) {
-                        promoterUpdateBeliefs(builder, promoter, time-1);
-                        promoterIntentionStep(builder, promoter);
+                        promoterUpdateBeliefs(promoter, time-1);
+                        promoterIntentionStep(promoter);
                     }
 
                     for (Investor investor : builder.getInvestors()) {
-                        investorUpdateBeliefs(builder, investor, time-1);
-                        investorIntentionStep(builder, investor);
+                        investorUpdateBeliefs(investor, time-1);
+                        investorIntentionStep(investor);
                     }
 
                     for (Household household : builder.getHouseholds()) {
                         // Updates household's beliefs
                         household.householdUpdateBeliefs(time-1, builder.getFreeProperties(), builder.getForRentProperties());
                         // Generates household's new intentions
-                        householdIntentionStep(builder, household, time);
+                        householdIntentionStep(household, time);
                     }
 
                     System.err.println(time-1 + ". - free " + builder.getFreeProperties().size() + " for rent " + builder.getForRentProperties().size() + " total " +
