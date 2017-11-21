@@ -4,6 +4,7 @@ import kobdig.urbanSimulation.EntitiesCreator;
 import kobdig.urbanSimulation.entities.IActionnable;
 import kobdig.urbanSimulation.entities.environement.Land;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,8 +21,8 @@ public class Promoter extends AbstractAgent implements IActionnable {
     private double purchasingPower;
     private double riskAverse;
 
-    public Promoter(EntitiesCreator entitiesCreator, String id, double purchasingPower, InputStream is) throws IOException {
-        super(entitiesCreator, id, new FileInputStream(entitiesCreator.getPromoterAgentFile()));
+    public Promoter(String id, double purchasingPower, File file) throws IOException {
+        super(id, new FileInputStream(file));
         this.purchasableLand = new ArrayList<>();
         this.purchasingPower = purchasingPower;
         this.riskAverse = Math.random();

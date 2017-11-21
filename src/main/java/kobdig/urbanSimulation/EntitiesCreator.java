@@ -236,8 +236,8 @@ public class EntitiesCreator {
             double netMonthlyIncome = r.getDouble(4);
             Household household = null;
             try {
-                household = new Household(this, Integer.toString(id), purchasingPower,
-                        netMonthlyIncome);
+                household = new Household(Integer.toString(id), purchasingPower,
+                        netMonthlyIncome, householdAgentFile);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -257,7 +257,7 @@ public class EntitiesCreator {
             double purchasingPower = r.getDouble(2);
             Investor investor = null;
             try {
-                investor = new Investor(this, Integer.toString(id), purchasingPower, 0.0);
+                investor = new Investor(Integer.toString(id), purchasingPower, 0.0, investorAgentFile);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -275,7 +275,7 @@ public class EntitiesCreator {
             double purchasingPower = r.getDouble(2);
             Promoter promoter = null;
             try {
-                promoter = new Promoter(this, Integer.toString(id), purchasingPower, new FileInputStream(promoterAgentFile));
+                promoter = new Promoter(Integer.toString(id), purchasingPower, promoterAgentFile);
             } catch (IOException e) {
                 e.printStackTrace();
             }

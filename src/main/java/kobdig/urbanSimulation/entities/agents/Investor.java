@@ -6,6 +6,7 @@ import kobdig.urbanSimulation.entities.IActionnable;
 import kobdig.urbanSimulation.entities.environement.Property;
 import org.omg.IOP.ENCODING_CDR_ENCAPS;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,16 +33,16 @@ public class Investor extends AbstractAgentBuy implements IActionnable {
      * @param id The id
      * @param purchasingPower The current purchasing power
      */
-    public Investor(EntitiesCreator entitiesCreator, String id, double purchasingPower, double netMonthlyIncome) throws IOException {
-        super(entitiesCreator, id, purchasingPower, netMonthlyIncome, new FileInputStream(entitiesCreator.getInvestorAgentFile()));
+    public Investor(String id, double purchasingPower, double netMonthlyIncome, File file) throws IOException {
+        super(id, purchasingPower, netMonthlyIncome, new FileInputStream(file));
         this.investDegree = Math.random();
         this.speculate = Math.random();
         this.owner = false;
         this.currentRent = 0;
     }
 
-    public Investor(EntitiesCreator entitiesCreator, Household household, Property property) throws IOException {
-        super(entitiesCreator, household.getId(), household.getCurrentPurchasingPower(), household.getCurrentNetMonthlyIncome(), new FileInputStream(entitiesCreator.getInvestorAgentFile()));
+    public Investor(Household household, Property property, File file) throws IOException {
+        super(household.getId(), household.getCurrentPurchasingPower(), household.getCurrentNetMonthlyIncome(), new FileInputStream(file));
         setProperty(property);
         this.household = household;
         this.owner = true;

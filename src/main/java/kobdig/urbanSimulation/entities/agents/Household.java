@@ -5,6 +5,7 @@ import kobdig.urbanSimulation.EntitiesCreator;
 import kobdig.urbanSimulation.entities.IActionnable;
 import kobdig.urbanSimulation.entities.environement.Property;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,8 +30,8 @@ public class Household extends AbstractAgentBuy implements IActionnable {
     private double proximityCoefficient;
     private double investDegree;
 
-    public Household(EntitiesCreator entitiesCreator, String id, double purchasingPower, double netMonthlyIncome) throws IOException {
-        super(entitiesCreator, id, purchasingPower, netMonthlyIncome, new FileInputStream(entitiesCreator.getHouseholdAgentFile()));
+    public Household(String id, double purchasingPower, double netMonthlyIncome, File file) throws IOException {
+        super(id, purchasingPower, netMonthlyIncome, new FileInputStream(file));
         this.rentableProperties = new ArrayList<>();
         this.renting = false;
         this.ownerOccupied = false;

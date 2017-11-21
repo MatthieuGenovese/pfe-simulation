@@ -20,8 +20,8 @@ public class AbstractAgentBuy extends AbstractAgent implements IAgentBuy {
     private Property property;
     private ArrayList<Property> purchasableProperties;
 
-    public AbstractAgentBuy(EntitiesCreator entitiesCreator, String id, double purchasingPower, double netMonthlyIncome, InputStream is) throws IOException {
-        super(entitiesCreator, id, is);
+    public AbstractAgentBuy(String id, double purchasingPower, double netMonthlyIncome, InputStream is) throws IOException {
+        super(id, is);
         this.previousPurchasingPower = purchasingPower - 100;
         this.previousNetMonthlyIncome = netMonthlyIncome;
         this.currentPurchasingPower = purchasingPower - 100;

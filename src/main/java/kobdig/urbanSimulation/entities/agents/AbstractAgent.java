@@ -15,12 +15,10 @@ import java.io.InputStream;
 public class AbstractAgent extends Agent implements IAgent {
 
     private String id;
-    private EntitiesCreator entitiesCreator;
 
-    public AbstractAgent(EntitiesCreator entitiesCreator, String id, InputStream is) throws IOException {
+    public AbstractAgent(String id, InputStream is) throws IOException {
         super(is);
         this.id=id;
-        this.entitiesCreator = entitiesCreator;
     }
 
     public String getId() {
@@ -29,14 +27,6 @@ public class AbstractAgent extends Agent implements IAgent {
 
     public void setId(String id){
         this.id = id;
-    }
-
-    public EntitiesCreator getEntitiesCreator() {
-        return entitiesCreator;
-    }
-
-    public void setEntitiesCreator(EntitiesCreator entitiesCreator) {
-        this.entitiesCreator = entitiesCreator;
     }
 
     public void updateBelief(String stringFact){
