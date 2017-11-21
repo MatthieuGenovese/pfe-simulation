@@ -30,6 +30,9 @@ public class EntitiesCreator {
     private Agent householdAgent, investorAgent, promoterAgent;
     private int numSim, networkLength, equipmentsLength;
     private int[] idManager;
+    File householdAgentFile;
+    File investorAgentFile;
+    File promoterAgentFile;
 
     public EntitiesCreator(){
         freeProperties = new ArrayList<>();
@@ -40,6 +43,29 @@ public class EntitiesCreator {
         forSaleLand = new ArrayList<>();
         divisions = new AdministrativeDivision[200];
         idManager = new int[5];
+    }
+
+    public File getHouseholdAgentFile() {
+        return householdAgentFile;
+    }
+
+    public File getInvestorAgentFile() {
+        return investorAgentFile;
+    }
+
+    public File getPromoterAgentFile() {
+        return promoterAgentFile;
+    }
+
+    public void setHouseholdAgentFile(File file){
+        this.householdAgentFile = file;
+    }
+
+    public void setInvestorAgentFile(File file){
+        this.investorAgentFile = file;
+    }
+    public void setPromoterAgentFile(File file){
+        this.promoterAgentFile = file;
     }
 
     public ArrayList<Property> getFreeProperties() {
@@ -107,9 +133,9 @@ public class EntitiesCreator {
             conn = createConnection();
             numSim = 30;
 
-            File householdAgentFile = new File(pwd + "/docs/householdAgent.apl");
-            File investorAgentFile = new File(pwd + "/docs/investorAgent.apl");
-            File promoterAgentFile = new File(pwd + "/docs/promoterAgent.apl");
+            householdAgentFile = new File(pwd + "/docs/householdAgent.apl");
+            investorAgentFile = new File(pwd + "/docs/investorAgent.apl");
+            promoterAgentFile = new File(pwd + "/docs/promoterAgent.apl");
             try {
                 householdAgent = new Agent(new FileInputStream(householdAgentFile));
                 investorAgent = new Agent(new FileInputStream(investorAgentFile));
@@ -208,8 +234,13 @@ public class EntitiesCreator {
             String lastname = r.getString(2);
             double purchasingPower = r.getDouble(3);
             double netMonthlyIncome = r.getDouble(4);
-            Household household = new Household(this, Integer.toString(id), householdAgent, purchasingPower,
-                    netMonthlyIncome);
+            Household household = null;
+            try {
+                household = new Household(this, Integer.toString(id), purchasingPower,
+                        netMonthlyIncome);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             household.updateBelief("not r:1");
             household.updateBelief("not o:1");
             households.add(household);
@@ -224,7 +255,12 @@ public class EntitiesCreator {
         while (r.next()) {
             int id = r.getInt(1);
             double purchasingPower = r.getDouble(2);
-            Investor investor = new Investor(this, Integer.toString(id), investorAgent, purchasingPower, 0.0);
+            Investor investor = null;
+            try {
+                investor = new Investor(this, Integer.toString(id), purchasingPower, 0.0);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             investors.add(investor);
         }
         r.close();
@@ -237,7 +273,12 @@ public class EntitiesCreator {
         while (r.next()) {
             int id = r.getInt(1);
             double purchasingPower = r.getDouble(2);
-            Promoter promoter = new Promoter(this, Integer.toString(id), promoterAgent, purchasingPower);
+            Promoter promoter = null;
+            try {
+                promoter = new Promoter(this, Integer.toString(id), purchasingPower, new FileInputStream(promoterAgentFile));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             promoters.add(promoter);
         }
         r.close();

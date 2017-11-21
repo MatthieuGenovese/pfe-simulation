@@ -5,6 +5,8 @@ import kobdig.urbanSimulation.EntitiesCreator;
 import kobdig.urbanSimulation.entities.environement.Property;
 import org.omg.IOP.ENCODING_CDR_ENCAPS;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
@@ -18,8 +20,8 @@ public class AbstractAgentBuy extends AbstractAgent implements IAgentBuy {
     private Property property;
     private ArrayList<Property> purchasableProperties;
 
-    public AbstractAgentBuy(EntitiesCreator entitiesCreator, String id, Agent agent, double purchasingPower, double netMonthlyIncome){
-        super(entitiesCreator, id, agent);
+    public AbstractAgentBuy(EntitiesCreator entitiesCreator, String id, double purchasingPower, double netMonthlyIncome, InputStream is) throws IOException {
+        super(entitiesCreator, id, is);
         this.previousPurchasingPower = purchasingPower - 100;
         this.previousNetMonthlyIncome = netMonthlyIncome;
         this.currentPurchasingPower = purchasingPower - 100;

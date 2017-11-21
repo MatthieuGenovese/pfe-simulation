@@ -6,27 +6,21 @@ import kobdig.gui.FactParser;
 import kobdig.logic.TruthDegree;
 import kobdig.urbanSimulation.EntitiesCreator;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 /**
  * Created by Matthieu on 20/11/2017.
  */
-public class AbstractAgent implements IAgent {
+public class AbstractAgent extends Agent implements IAgent {
 
-    private Agent agent;
     private String id;
     private EntitiesCreator entitiesCreator;
 
-    public AbstractAgent(EntitiesCreator entitiesCreator, String id, Agent agent){
+    public AbstractAgent(EntitiesCreator entitiesCreator, String id, InputStream is) throws IOException {
+        super(is);
         this.id=id;
-        this.agent = agent;
         this.entitiesCreator = entitiesCreator;
-    }
-
-    public Agent getAgent() {
-        return agent;
-    }
-
-    public void setAgent(Agent agent) {
-        this.agent = agent;
     }
 
     public String getId() {
@@ -49,10 +43,9 @@ public class AbstractAgent implements IAgent {
         FactParser parser = new FactParser(stringFact);
         Fact fact = parser.getFact();
         TruthDegree truthDegree = parser.getTrust();
-        agent.updateBeliefs(fact,truthDegree);
-        agent.updateDesires();
-        agent.updateGoals();
+        updateBeliefs(fact,truthDegree);
+        updateDesires();
+        updateGoals();
 
     }
-
 }

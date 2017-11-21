@@ -6,6 +6,10 @@ import kobdig.urbanSimulation.entities.IActionnable;
 import kobdig.urbanSimulation.entities.environement.Property;
 import org.omg.IOP.ENCODING_CDR_ENCAPS;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 /**
  * Created by Matthieu on 20/11/2017.
  */
@@ -26,19 +30,18 @@ public class Investor extends AbstractAgentBuy implements IActionnable {
     /**
      * Independent Investor's constructor
      * @param id The id
-     * @param agent The BDI agent that represents the investor
      * @param purchasingPower The current purchasing power
      */
-    public Investor(EntitiesCreator entitiesCreator, String id, Agent agent, double purchasingPower, double netMonthlyIncome){
-        super(entitiesCreator, id, agent, purchasingPower, netMonthlyIncome);
+    public Investor(EntitiesCreator entitiesCreator, String id, double purchasingPower, double netMonthlyIncome) throws IOException {
+        super(entitiesCreator, id, purchasingPower, netMonthlyIncome, new FileInputStream(entitiesCreator.getInvestorAgentFile()));
         this.investDegree = Math.random();
         this.speculate = Math.random();
         this.owner = false;
         this.currentRent = 0;
     }
 
-    public Investor(EntitiesCreator entitiesCreator, Agent agent, Household household, Property property){
-        super(entitiesCreator, household.getId(), agent, household.getCurrentPurchasingPower(), household.getCurrentNetMonthlyIncome());
+    public Investor(EntitiesCreator entitiesCreator, Household household, Property property) throws IOException {
+        super(entitiesCreator, household.getId(), household.getCurrentPurchasingPower(), household.getCurrentNetMonthlyIncome(), new FileInputStream(entitiesCreator.getInvestorAgentFile()));
         setProperty(property);
         this.household = household;
         this.owner = true;

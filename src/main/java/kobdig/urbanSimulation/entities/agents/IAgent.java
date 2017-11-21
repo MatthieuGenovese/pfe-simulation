@@ -7,8 +7,6 @@ import kobdig.agent.Agent;
  */
 public interface IAgent {
 
-    public Agent getAgent();
-    public void setAgent(Agent agent);
     public String getId();
     public void setId(String id);
     public void updateBelief(String stringFact);

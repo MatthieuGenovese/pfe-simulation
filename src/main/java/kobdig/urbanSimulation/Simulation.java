@@ -6,6 +6,8 @@ import kobdig.urbanSimulation.entities.agents.Household;
 import kobdig.urbanSimulation.entities.agents.Investor;
 import kobdig.urbanSimulation.entities.agents.Promoter;
 import kobdig.urbanSimulation.entities.environement.*;
+
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -28,14 +30,14 @@ public class Simulation {
     public static void householdIntentionStep(Household household, int time) {
 
         System.out.println("____________________Interntion Step____________________");
-        Iterator<Fact> iter = household.getAgent().goals().factIterator();
+        Iterator<Fact> iter = household.goals().factIterator();
         System.out.println("Simulation step: " + time + " Household no." + household.getId());
         while (iter.hasNext()){
             System.out.println(iter.next().formula().toString());
         }
         System.out.println("________________________________________");
 
-         iter = household.getAgent().goals().factIterator();
+         iter = household.goals().factIterator();
         while(iter.hasNext()) {
             String goal = iter.next().formula().toString();
             // If the goal is to buy
@@ -56,7 +58,12 @@ public class Simulation {
                     household.getEntitiesCreator().getFreeProperties().remove(taken);
                     household.getEntitiesCreator().getForRentProperties().add(taken);
                     taken.setUpdated(false);
-                    Investor newInvestor = new Investor(household.getEntitiesCreator(), investorAgent, household,taken);
+                    Investor newInvestor = null;
+                    try {
+                        newInvestor = new Investor(household.getEntitiesCreator(), household,taken);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     household.getEntitiesCreator().getInvestors().add(newInvestor);
                     household.setProperty(null);
                 }
@@ -87,7 +94,12 @@ public class Simulation {
                         household.invest(household.getProperty());
                         household.getEntitiesCreator().getFreeProperties().remove(household.getProperty());
                         household.getEntitiesCreator().getForRentProperties().add(household.getProperty());
-                        Investor newInvestor = new Investor(household.getEntitiesCreator(), investorAgent, household, household.getProperty());
+                        Investor newInvestor = null;
+                        try {
+                            newInvestor = new Investor(household.getEntitiesCreator(), household, household.getProperty());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         newInvestor.getProperty().setState(Property.SEEKING_TENANT);
                         household.getEntitiesCreator().getInvestors().add(newInvestor);
                         household.setProperty(null);
@@ -170,7 +182,7 @@ public class Simulation {
      */
     public static void investorIntentionStep(Investor investor) {
 
-        Iterator<Fact> iter = investor.getAgent().goals().factIterator();
+        Iterator<Fact> iter = investor.goals().factIterator();
         while(iter.hasNext()) {
             String goal = iter.next().formula().toString();
 
@@ -183,7 +195,6 @@ public class Simulation {
                         investor.getEntitiesCreator().getForRentProperties().add(taken);
                         taken.setState(Property.SEEKING_TENANT);
                         //Investor newInvestor = new Investor(investorAgent, investor, taken);
-                        investor.setAgent(investorAgent);
                         investor.setProperty(taken);
                         investor.setOwner(true);
                         investor.getEntitiesCreator().getInvestors().add(investor);
@@ -247,7 +258,7 @@ public class Simulation {
      * @param promoter The promoter
      */
     public static void promoterIntentionStep(Promoter promoter) {
-        Iterator<Fact> iter = promoter.getAgent().goals().factIterator();
+        Iterator<Fact> iter = promoter.goals().factIterator();
         while(iter.hasNext()) {
             String goal = iter.next().formula().toString();
             //if (goal.contains(Promoter.BUY_LAND) && goal.contains(Promoter.SELL_OFF_PLANS)){
