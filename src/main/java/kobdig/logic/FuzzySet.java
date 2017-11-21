@@ -52,7 +52,7 @@ public class FuzzySet<E>
     }
 
     /**
-     * Returns the membership degree of the given element.
+     * Returns the membership degree of the given environement.
      */
     public TruthDegree member(E element)
     {
@@ -63,7 +63,7 @@ public class FuzzySet<E>
     }
     
     /**
-     * Sets the membership degree of the given element.
+     * Sets the membership degree of the given environement.
      */
     public void member(E element, TruthDegree membership)
     {

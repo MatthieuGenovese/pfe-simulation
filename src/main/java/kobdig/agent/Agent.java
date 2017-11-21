@@ -31,7 +31,7 @@ import kobdig.logic.TruthDegree;
 /**
  * A KOBDIG deliberating agent, equipped with knowledge and belief bases,
  * desire and obligation-generation rules, and obligation, desire, and goal sets.
- * These element constitute the mental state of the agent.
+ * These environement constitute the mental state of the agent.
  * <p>More precisely,</p>
  * <ul>
  * <li>the <strong>knowledge base</strong> contains things the agent knows

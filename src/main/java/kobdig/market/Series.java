@@ -87,15 +87,15 @@ public class Series
     }
     
     /**
-     * Returns the log-return calculated on the <VAR>t</VAR>th element of the series.
-     * The log-return of element <VAR>x</var>(<VAR>t</VAR>) of series <VAR>X</VAR>
+     * Returns the log-return calculated on the <VAR>t</VAR>th environement of the series.
+     * The log-return of environement <VAR>x</var>(<VAR>t</VAR>) of series <VAR>X</VAR>
      * is defined as log(<VAR>x</var>(<VAR>t</VAR>)/<VAR>x</var>(<VAR>t - 1</VAR>).
-     * For this reason, the first element for which log-return can be calculated is
+     * For this reason, the first environement for which log-return can be calculated is
      * the one with index <CODE>1</CODE>.
      * Requesting a log-return for an out-of-range index does not cause an
      * exception to be thrown, but the result is zero.
      * @param t an index to an individual quote in the series (<CODE>0</CODE> is the index of the quote for the first day)
-     * @return the log-return calculated on the <VAR>t</VAR>th element of the series
+     * @return the log-return calculated on the <VAR>t</VAR>th environement of the series
      */
     public double getLogReturn(int t)
     {

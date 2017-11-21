@@ -87,7 +87,7 @@ public class TruthDegree implements Comparable<TruthDegree>
     /**
      * Returns <code>true</code> if the degree of truth is greater than,
      * or equal to the given digree of truth. This method is useful to
-     * check whether an element belongs to a level set of a fuzzy set.
+     * check whether an environement belongs to a level set of a fuzzy set.
      */
     public boolean isAtLeastAsTrueAs(TruthDegree that)
     {
