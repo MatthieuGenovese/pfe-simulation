@@ -1,6 +1,7 @@
 package kobdig.urbanSimulation.entities.agents;
 
 import kobdig.agent.Agent;
+import kobdig.agent.Fact;
 import kobdig.urbanSimulation.EntitiesCreator;
 import kobdig.urbanSimulation.entities.IActionnable;
 import kobdig.urbanSimulation.entities.environement.Property;
@@ -10,6 +11,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Iterator;
 
 /**
  * Created by Matthieu on 20/11/2017.
@@ -108,5 +113,147 @@ public class Investor extends AbstractAgentBuy implements IActionnable {
         setCurrentNetMonthlyIncome(currentNetMonthlyIncome);
         setPreviousPurchasingPower(previousPurchasingPower);
 
+    }
+
+    @Override
+    public Property invest(EntitiesCreator entitiesCreator){
+        double maxUtility = 0.0;
+        Property selection = null;
+        for (Property purchasable : getPurchasableProperties()) {
+            try {
+                if (purchasable.getDivision() != null && !purchasable.isUpdated()) {
+                    double equipUtility = 0.0;
+                    double transportUtility = 0.0;
+                    Statement s1 = entitiesCreator.getConn().createStatement();
+                    String query_equipments = "SELECT COUNT(a.*) FROM " + entitiesCreator.getFilteredEquipments() + ")) a INNER JOIN buffer b ON ST_Intersects(a.geom, b.geom) WHERE b.id_land = " + purchasable.getLand().getId();
+                    ResultSet r1 = s1.executeQuery(query_equipments);
+                    if(r1.next()) {
+                        equipUtility = r1.getInt(1);
+                    }
+                    s1.close();
+                    r1.close();
+
+                    Statement s2 = entitiesCreator.getConn().createStatement();
+                    String query_transport = "SELECT COUNT(a.*) FROM " + entitiesCreator.getFilteredNetwork() + ")) a INNER JOIN buffer b ON ST_Intersects(a.geom, b.geom) WHERE b.id_land = " + purchasable.getLand().getId();
+                    ResultSet r2 = s2.executeQuery(query_transport);
+                    if(r2.next()) {
+                        transportUtility = r2.getInt(1);
+                    }
+                    s2.close();
+                    r2.close();
+                    purchasable.setUtility(0.4*(equipUtility/(double)entitiesCreator.getEquipmentsLength()) + 0.6*(transportUtility/(double)entitiesCreator.getNetworkLength()));
+//                    purchasable.setUtility(0.0*(equipUtility/(double)equipmentsLength) + 1.0*(transportUtility/(double)networkLength));
+//                    purchasable.setUtility(Math.random());
+                    purchasable.setUpdated(true);
+                }
+                if(purchasable.getUtility() > maxUtility){
+                    maxUtility = purchasable.getUtility();
+                    selection = purchasable;
+                }
+            }
+            catch (SQLException e){                 e.printStackTrace();             }
+        }
+        if (selection != null){
+            setPreviousPurchasingPower(getCurrentPurchasingPower());
+            setCurrentPurchasingPower(getPreviousPurchasingPower() - selection.getCurrentPrice());
+        }
+        return selection;
+    }
+
+    @Override
+    public void agentUpdateBeliefs(EntitiesCreator entitiesCreator, int time) {
+
+        step(time);
+        Property cheapestProperty = null;
+        double cheapestPrice = Double.POSITIVE_INFINITY;
+
+        // Updates de affordBuying and affordRenting beliefs and gets the cheapest property
+        int purchFound = 0;
+
+        for (Property property : entitiesCreator.getFreeProperties()) {
+            if (property.getCurrentPrice() < cheapestPrice) {
+                cheapestPrice = property.getCurrentPrice();
+                cheapestProperty = property;
+            }
+
+            if (getCurrentPurchasingPower() >= property.getCurrentPrice()) {
+                addPurchasableProperty(property);
+                purchFound++;
+            }
+        }
+
+        if(purchFound > 0){
+            updateBelief("ab:" + Double.toString(purchFound/(0.0 + entitiesCreator.getFreeProperties().size())));
+        }
+
+        else updateBelief("not ab:1");
+
+        // Updates the buyingRentable belief
+        // TODO: Improve this approach
+        if(cheapestPrice < Double.POSITIVE_INFINITY){
+            if(getCurrentPurchasingPower() > cheapestPrice){
+                updateBelief("br:" + cheapestProperty.getCurrentCapitalizedRent()/(0.0 +
+                        cheapestProperty.getCurrentPotentialRent()));
+            }
+        }
+
+
+        // Updates the sellingRentable belief
+        // TODO: Improve this approach
+        if (getProperty() != null) {
+            if (cheapestPrice < Double.POSITIVE_INFINITY) {
+                if (getCurrentPurchasingPower() > cheapestPrice) {
+                    double sellingRentability = getProperty().getCurrentCapitalizedRent() /
+                            (0.0 + getProperty().getCurrentCapitalizedRent() +
+                                    cheapestProperty.getCurrentCapitalizedRent());
+
+                    updateBelief("sr:" + sellingRentability);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void agentIntentionsStep(EntitiesCreator entitiesCreator) {
+
+        Iterator<Fact> iter = goals().factIterator();
+        while(iter.hasNext()) {
+            String goal = iter.next().formula().toString();
+
+            // If the goal is to invest
+            if (goal.contains(Investor.BUY) && goal.contains(Investor.LANDLORD)){
+                if (getProperty() != null) {
+                    Property taken = invest(entitiesCreator);
+                    if (taken != null) {
+                        entitiesCreator.getFreeProperties().remove(taken);
+                        entitiesCreator.getForRentProperties().add(taken);
+                        taken.setState(Property.SEEKING_TENANT);
+                        //Investor newInvestor = new Investor(investorAgent, investor, taken);
+                        setProperty(taken);
+                        setOwner(true);
+                        entitiesCreator.getInvestors().add(this);
+                    }
+                }
+                else{
+                    Property taken = invest(entitiesCreator);
+                    if (taken != null) {
+                        entitiesCreator.getFreeProperties().remove(taken);
+                        entitiesCreator.getForRentProperties().add(taken);
+                        taken.setState(Property.SEEKING_TENANT);
+                    }
+                }
+            }
+
+            // If the goal is to sell
+            // TODO: Improve this approach
+//            if (!goal.contains(Investor.BUY) && !goal.contains(Investor.LANDLORD) && !goal.contains(Investor.NOT_SELL)
+//                    && goal.contains(Investor.SELL)){
+//                if (investor.getProperty() != null) {
+//                    freeProperties.add(investor.getProperty());
+//                    investor.getProperty().setState(Property.FOR_SALE);
+//                }
+//            }
+
+        }
     }
 }

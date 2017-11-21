@@ -2,6 +2,7 @@ package kobdig.urbanSimulation.entities.agents;
 
 
 
+import kobdig.urbanSimulation.EntitiesCreator;
 import kobdig.urbanSimulation.entities.environement.Property;
 
 import java.util.ArrayList;
@@ -23,4 +24,5 @@ public interface IAgentBuy {
     public void addPurchasableProperty(Property purchasable);
     public Property getProperty();
     public void setProperty(Property property);
+    public Property invest(EntitiesCreator builder);
 }

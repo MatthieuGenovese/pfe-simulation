@@ -1,6 +1,7 @@
 package kobdig.urbanSimulation;
 
 import kobdig.agent.Agent;
+import kobdig.urbanSimulation.entities.agents.AbstractAgent;
 import kobdig.urbanSimulation.entities.agents.Household;
 import kobdig.urbanSimulation.entities.agents.Investor;
 import kobdig.urbanSimulation.entities.agents.Promoter;
@@ -18,9 +19,7 @@ import java.util.ArrayList;
  * Created by Matthieu on 20/11/2017.
  */
 public class EntitiesCreator {
-    private ArrayList<Household> households;
     private ArrayList<Investor> investors;
-    private ArrayList<Promoter> promoters;
     private ArrayList<Land> forSaleLand;
     private AdministrativeDivision[] divisions;
     private ArrayList<Property> freeProperties;
@@ -28,6 +27,7 @@ public class EntitiesCreator {
     private String filteredEquipments, filteredNetwork;
     private Connection conn;
     private Agent householdAgent, investorAgent, promoterAgent;
+    private ArrayList<AbstractAgent> agents;
     private int numSim, networkLength, equipmentsLength;
     private int[] idManager;
     File householdAgentFile;
@@ -37,10 +37,9 @@ public class EntitiesCreator {
     public EntitiesCreator(){
         freeProperties = new ArrayList<>();
         forRentProperties = new ArrayList<>();
-        households = new ArrayList<>();
         investors = new ArrayList<>();
-        promoters = new ArrayList<>();
         forSaleLand = new ArrayList<>();
+        agents = new ArrayList<>();
         divisions = new AdministrativeDivision[200];
         idManager = new int[5];
     }
@@ -76,16 +75,8 @@ public class EntitiesCreator {
         return forRentProperties;
     }
 
-    public ArrayList<Household> getHouseholds() {
-        return households;
-    }
-
     public ArrayList<Investor> getInvestors() {
         return investors;
-    }
-
-    public ArrayList<Promoter> getPromoters() {
-        return promoters;
     }
 
     public ArrayList<Land> getForSaleLand() {
@@ -242,7 +233,7 @@ public class EntitiesCreator {
             }
             household.updateBelief("not r:1");
             household.updateBelief("not o:1");
-            households.add(household);
+            agents.add(household);
         }
         r.close();
         s.close();
@@ -266,6 +257,10 @@ public class EntitiesCreator {
         s.close();
     }
 
+    public ArrayList<AbstractAgent> getAgents() {
+        return agents;
+    }
+
     private void createPromoters(Connection conn) throws SQLException {
         Statement s = conn.createStatement();
         ResultSet r = s.executeQuery("select * from promoters");
@@ -278,7 +273,8 @@ public class EntitiesCreator {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            promoters.add(promoter);
+            agents.add(promoter);
+
         }
         r.close();
         s.close();

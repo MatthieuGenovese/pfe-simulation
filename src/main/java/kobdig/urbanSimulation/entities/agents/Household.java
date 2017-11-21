@@ -1,6 +1,7 @@
 package kobdig.urbanSimulation.entities.agents;
 
 import kobdig.agent.Agent;
+import kobdig.agent.Fact;
 import kobdig.urbanSimulation.EntitiesCreator;
 import kobdig.urbanSimulation.entities.IActionnable;
 import kobdig.urbanSimulation.entities.environement.Property;
@@ -9,7 +10,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created by Matthieu on 20/11/2017.
@@ -86,6 +91,249 @@ public class Household extends AbstractAgentBuy implements IActionnable {
         setPreviousPurchasingPower(getCurrentPurchasingPower());
         setCurrentPurchasingPower(getPreviousPurchasingPower() - property.getCurrentPrice());
     }
+
+    @Override
+    public Property invest(EntitiesCreator entitiesCreator){
+        double maxUtility = 0.0;
+        Property selection = null;
+        for (Property purchasable : getPurchasableProperties()) {
+            try {
+                if (purchasable.getDivision() != null && !purchasable.isUpdated()) {
+                    double equipUtility = 0.0;
+                    double transportUtility = 0.0;
+                    Statement s1 = entitiesCreator.getConn().createStatement();
+                    String query_equipments = "SELECT COUNT(a.*) FROM " + entitiesCreator.getFilteredEquipments() + ")) a INNER JOIN buffer b ON ST_Intersects(a.geom, b.geom) WHERE b.id_land = " + purchasable.getLand().getId();
+                    ResultSet r1 = s1.executeQuery(query_equipments);
+                    if(r1.next()) {
+                        equipUtility = r1.getInt(1);
+                    }
+                    s1.close();
+                    r1.close();
+
+                    Statement s2 = entitiesCreator.getConn().createStatement();
+                    String query_transport = "SELECT COUNT(a.*) FROM " + entitiesCreator.getFilteredNetwork() + ")) a INNER JOIN buffer b ON ST_Intersects(a.geom, b.geom) WHERE b.id_land = " + purchasable.getLand().getId();
+                    ResultSet r2 = s2.executeQuery(query_transport);
+                    if(r2.next()) {
+                        transportUtility = r2.getInt(1);
+                    }
+                    s2.close();
+                    r2.close();
+
+                    purchasable.setUtility(0.4*(equipUtility/(double)entitiesCreator.getEquipmentsLength()) + 0.6*(transportUtility/(double)entitiesCreator.getNetworkLength()));
+//                    purchasable.setUtility(0.0*(equipUtility/(double)equipmentsLength) + 1.0*(transportUtility/(double)networkLength));
+//                    purchasable.setUtility(Math.random());
+                    purchasable.setUpdated(true);
+                }
+                if(purchasable.getUtility() > maxUtility){
+                    maxUtility = purchasable.getUtility();
+                    selection = purchasable;
+                }
+            }
+            catch (SQLException e){                 e.printStackTrace();             }
+        }
+        if (selection != null){
+            setPreviousPurchasingPower(getCurrentPurchasingPower());
+            setCurrentPurchasingPower(getPreviousPurchasingPower() - selection.getCurrentPrice());
+        }
+        return selection;
+    }
+
+    public Property rentProperty(EntitiesCreator entitiesCreator){
+        double maxUtility = 0.0;
+        Property selection = null;
+        for (Property purchasable : getRentableProperties()) {
+            try {
+                if (purchasable.getDivision() != null && !purchasable.isUpdated()) {
+                    double equipUtility = 0.0;
+                    double transportUtility = 0.0;
+                    Statement s1 = entitiesCreator.getConn().createStatement();
+                    String query_equipments = "SELECT COUNT(a.*) FROM " + entitiesCreator.getFilteredEquipments() + ")) a INNER JOIN buffer b ON ST_Intersects(a.geom, b.geom) WHERE b.id_land = " + purchasable.getLand().getId();
+                    ResultSet r1 = s1.executeQuery(query_equipments);
+                    if(r1.next()) {
+                        equipUtility = r1.getInt(1);
+                    }
+                    s1.close();
+                    r1.close();
+
+                    Statement s2 = entitiesCreator.getConn().createStatement();
+                    String query_transport = "SELECT COUNT(a.*) FROM " + entitiesCreator.getFilteredNetwork() + ")) a INNER JOIN buffer b ON ST_Intersects(a.geom, b.geom) WHERE b.id_land = " + purchasable.getLand().getId();
+                    ResultSet r2 = s2.executeQuery(query_transport);
+                    if(r2.next()) {
+                        transportUtility = r2.getInt(1);
+                    }
+                    s2.close();
+                    r2.close();
+
+                    purchasable.setUtility(0.4*(equipUtility/(double)entitiesCreator.getEquipmentsLength()) + 0.6*(transportUtility/(double)entitiesCreator.getNetworkLength()));
+//                    purchasable.setUtility(0.0*(equipUtility/(double)equipmentsLength) + 1.0*(transportUtility/(double)networkLength));
+//                    purchasable.setUtility(Math.random());
+                    purchasable.setUpdated(true);
+                }
+                if(purchasable.getUtility() > maxUtility){
+                    maxUtility = purchasable.getUtility();
+                    selection = purchasable;
+                }
+            }
+            catch (SQLException e){                 e.printStackTrace();             }
+
+        }
+        setRenting(selection != null);
+        if(isRenting()){
+            setPreviousNetMonthlyIncome(getCurrentNetMonthlyIncome());
+            setCurrentNetMonthlyIncome(getPreviousNetMonthlyIncome() - selection.getCurrentCapitalizedRent());
+        }
+        return selection;
+    }
+
+    @Override
+    public void agentIntentionsStep(EntitiesCreator entitiesCreator) {
+
+        System.out.println("____________________Interntion Step____________________");
+        Iterator<Fact> iter = goals().factIterator();
+        System.out.println("Simulation step:  Household no." + getId());
+        while (iter.hasNext()){
+            System.out.println(iter.next().formula().toString());
+        }
+        System.out.println("________________________________________");
+
+        iter = goals().factIterator();
+        while(iter.hasNext()) {
+            String goal = iter.next().formula().toString();
+            // If the goal is to buy
+            if (goal.contains(Household.BUY) && goal.contains(Household.OWNER)){
+                Property taken = buyProperty(entitiesCreator);
+                if (taken != null) {
+                    entitiesCreator.getFreeProperties().remove(taken);
+                    taken.setState(Property.OCCUPIED);
+                    setOwnerOccupied(true);
+                }
+            }
+
+            // If the goal is to invest
+            else if (goal.contains(Household.BUY) && !goal.contains(Household.NOT_LANDLORD) && goal.contains(Household.LANDLORD)){
+                Property taken = invest(entitiesCreator);
+                if (taken != null) {
+                    taken.setState(Property.SEEKING_TENANT);
+                    entitiesCreator.getFreeProperties().remove(taken);
+                    entitiesCreator.getForRentProperties().add(taken);
+                    taken.setUpdated(false);
+                    Investor newInvestor = null;
+                    try {
+                        newInvestor = new Investor(this,taken, entitiesCreator.getInvestorAgentFile());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    entitiesCreator.getInvestors().add(newInvestor);
+                    //entitiesCreator.getAgents().add(newInvestor);
+                    setProperty(null);
+                }
+            }
+
+            // If the goal is to rent
+            if (goal.contains(Household.RENT)){
+                Property taken = rentProperty(entitiesCreator);
+                if (taken != null) {
+                    entitiesCreator.getForRentProperties().remove(taken);
+                    taken.setState(Property.RENTED);
+                    setProperty(null);
+                    setRenting(true);
+                }
+            }
+
+            // If the goal is to change and either sell or invest
+            if (goal.contains(Household.CHANGE)){
+
+                Property taken = buyProperty(entitiesCreator);
+                if (taken != null) {
+                    entitiesCreator.getFreeProperties().remove(taken);
+                    taken.setState(Property.OCCUPIED);
+                }
+
+                if (goal.contains(Household.LANDLORD)){
+                    if(getProperty() != null) {
+                        invest(getProperty());
+                        entitiesCreator.getFreeProperties().remove(getProperty());
+                        entitiesCreator.getForRentProperties().add(getProperty());
+                        Investor newInvestor = null;
+                        try {
+                            newInvestor = new Investor(this, getProperty(), entitiesCreator.getInvestorAgentFile());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        newInvestor.getProperty().setState(Property.SEEKING_TENANT);
+                        entitiesCreator.getInvestors().add(newInvestor);
+                        //entitiesCreator.getAgents().add(newInvestor);
+                        setProperty(null);
+                    }
+                }
+                else if (goal.contains(Household.SELL)){
+                    //TODO: Implement the seller part of the property
+                    if (getProperty() != null) {
+                        entitiesCreator.getFreeProperties().add(getProperty());
+                        getProperty().setState(Property.FOR_SALE);
+                        setProperty(null);
+                    }
+                }
+
+            }
+
+        }
+    }
+
+    /**
+     * Purchases a land
+     * @return The land purchased
+     */
+    public Property buyProperty(EntitiesCreator entitiesCreator){
+        double maxUtility = 0.0;
+        Property selection = null;
+        for (Property purchasable : getPurchasableProperties()) {
+            try {
+                double equipUtility = 0.0;
+                double transportUtility = 0.0;
+                if (purchasable.getDivision() != null && !purchasable.isUpdated()) {
+                    Statement s1 = entitiesCreator.getConn().createStatement();
+                    String query_equipments = "SELECT COUNT(a.*) FROM "
+                            + entitiesCreator.getFilteredEquipments() + ")) a INNER JOIN buffer b ON ST_Intersects(a.geom, b.geom) WHERE b.id_land = "
+                            + purchasable.getLand().getId();
+                    ResultSet r1 = s1.executeQuery(query_equipments);
+                    if(r1.next()) {
+                        equipUtility = r1.getInt(1);
+                    }
+                    s1.close();
+                    r1.close();
+
+                    Statement s2 = entitiesCreator.getConn().createStatement();
+                    String query_transport = "SELECT COUNT(a.*) FROM " + entitiesCreator.getFilteredNetwork() + ")) a INNER JOIN buffer b ON ST_Intersects(a.geom, b.geom) WHERE b.id_land = " + purchasable.getLand().getId();
+                    ResultSet r2 = s2.executeQuery(query_transport);
+                    if(r2.next()) {
+                        transportUtility = r2.getInt(1);
+                    }
+                    s2.close();
+                    r2.close();
+
+                    purchasable.setUtility(0.4*(equipUtility/(double)entitiesCreator.getEquipmentsLength()) + 0.6*(transportUtility/(double)entitiesCreator.getNetworkLength()));
+//                    purchasable.setUtility(0.0*(equipUtility/(double)equipmentsLength) + 1.0*(transportUtility/(double)networkLength));
+//                        purchasable.setUtility(Math.random());
+                    purchasable.setUpdated(true);
+                }
+                if(purchasable.getUtility() > maxUtility){
+                    maxUtility = purchasable.getUtility();
+                    selection = purchasable;
+                }
+            }
+            catch (SQLException e){ e.printStackTrace();             }
+        }
+        setOwnerOccupied(selection != null);
+        if(isOwnerOccupied()){
+            setProperty(selection);
+            setPreviousPurchasingPower(getCurrentPurchasingPower());
+            setCurrentPurchasingPower(getPreviousPurchasingPower() - getProperty().getCurrentPrice());
+            getProperty().setState(Property.OCCUPIED);
+        }
+        return selection;
+    }
+
 
     public void step(int time){
         // TODO: Determine how the purchasing power and net monthly income would evolve
@@ -164,8 +412,9 @@ public class Household extends AbstractAgentBuy implements IActionnable {
         setCurrentNetMonthlyIncome(currentNetMonthlyIncome);
     }
 
-    public void householdUpdateBeliefs(int time, ArrayList<Property> freeProperties, ArrayList<Property> forRentProperties) {
-
+    @Override
+    public void agentUpdateBeliefs(EntitiesCreator builder, int time) {
+//, ArrayList<Property> freeProperties, ArrayList<Property> forRentProperties
         step(time);
         Property cheapestProperty = null;
         double cheapestPrice = Double.POSITIVE_INFINITY;
@@ -174,7 +423,7 @@ public class Household extends AbstractAgentBuy implements IActionnable {
         int purchFound = 0;
         int rentFound = 0;
 
-        for (Property property : freeProperties) {
+        for (Property property : builder.getFreeProperties()) {
             if (property.getCurrentPrice() < cheapestPrice) {
                 cheapestPrice = property.getCurrentPrice();
                 cheapestProperty = property;
@@ -187,20 +436,20 @@ public class Household extends AbstractAgentBuy implements IActionnable {
 
         }
 
-        for (Property property : forRentProperties) {
+        for (Property property : builder.getForRentProperties()) {
             if(getCurrentNetMonthlyIncome() >= property.getCurrentCapitalizedRent()){
                 addRentableProperty(property);
                 rentFound++;
             }
         }
         if(purchFound > 0){
-           updateBelief("ab:" + Double.toString(purchFound/(0.0 + freeProperties.size())));
+           updateBelief("ab:" + Double.toString(purchFound/(0.0 + builder.getFreeProperties().size())));
         }
         else{
            updateBelief("not ab:1");
         }
         if(rentFound > 0){
-            updateBelief("ar:" + Double.toString(rentFound/(0.0 + forRentProperties.size())));
+            updateBelief("ar:" + Double.toString(rentFound/(0.0 + builder.getForRentProperties().size())));
         }
         else{
             updateBelief("not ar:1");

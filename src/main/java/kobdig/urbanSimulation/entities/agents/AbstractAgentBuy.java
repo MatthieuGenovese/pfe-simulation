@@ -78,4 +78,8 @@ public class AbstractAgentBuy extends AbstractAgent implements IAgentBuy {
     public void clearPurchasableProperties(){
         purchasableProperties = new ArrayList<>();
     }
+
+    public Property invest(EntitiesCreator creator){
+        return null;
+    }
 }

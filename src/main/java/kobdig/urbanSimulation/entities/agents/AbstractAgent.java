@@ -38,4 +38,12 @@ public class AbstractAgent extends Agent implements IAgent {
         updateGoals();
 
     }
+
+    public void agentUpdateBeliefs(EntitiesCreator builder, int time){
+
+    }
+
+    public void agentIntentionsStep(EntitiesCreator builder){
+
+    }
 }
