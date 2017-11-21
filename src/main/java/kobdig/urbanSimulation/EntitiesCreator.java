@@ -158,7 +158,6 @@ public class EntitiesCreator {
                 e.printStackTrace();
             }
 
-            conn.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
