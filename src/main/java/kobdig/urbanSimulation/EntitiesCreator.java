@@ -39,6 +39,10 @@ public class EntitiesCreator {
     File investorAgentFile;
     File promoterAgentFile;
 
+    private int nbrHousehold;
+    private int nbrInvestor;
+    private int nbrPromoter;
+
     protected static EntitiesCreator _singleton;
 
     @PostConstruct
@@ -58,7 +62,17 @@ public class EntitiesCreator {
     }
 
     private EntitiesCreator(){
-        begin();
+
+        freeProperties = new ArrayList<>();
+        forRentProperties = new ArrayList<>();
+        investors = new ArrayList<>();
+        forSaleLand = new ArrayList<>();
+        agents = new ArrayList<>();
+        divisions = new AdministrativeDivision[200];
+        idManager = new int[5];
+
+        createAll();
+
     }
 
     public void begin(){
@@ -71,6 +85,18 @@ public class EntitiesCreator {
         idManager = new int[5];
 
         createAll();
+    }
+
+    public void setNbrHousehold(int nbrHousehold){
+        this.nbrHousehold = nbrHousehold;
+    }
+
+    public void setNbrInvestor(int investor){
+        this.nbrInvestor = investor;
+    }
+
+    public void setNbrPromoter(int nbrPromoter){
+        this.nbrPromoter = nbrPromoter;
     }
 
     public File getHouseholdAgentFile() {
@@ -128,6 +154,8 @@ public class EntitiesCreator {
         return numSim;
     }
 
+    public void setNumSim(int numSim){ this.numSim = numSim; }
+
     public int getNetworkLength() {
         return networkLength;
     }
@@ -151,7 +179,6 @@ public class EntitiesCreator {
 
         try {
             conn = createConnection();
-            numSim = 30;
 
             householdAgentFile = new File(pwd + "/docs/householdAgent.apl");
             investorAgentFile = new File(pwd + "/docs/investorAgent.apl");
@@ -247,7 +274,7 @@ public class EntitiesCreator {
 
     private void createHouseholds(Connection conn) throws SQLException {
         Statement s = conn.createStatement();
-        ResultSet r = s.executeQuery("select * from households limit 60");
+        ResultSet r = s.executeQuery("select * from households limit "+nbrHousehold);
         while (r.next()) {
             int id = r.getInt(1);
             String lastname = r.getString(2);
@@ -270,7 +297,7 @@ public class EntitiesCreator {
 
     private void createInvestors(Connection conn) throws SQLException {
         Statement s = conn.createStatement();
-        ResultSet r = s.executeQuery("select * from investors");
+        ResultSet r = s.executeQuery("select * from investors limit "+nbrInvestor);
         while (r.next()) {
             int id = r.getInt(1);
             double purchasingPower = r.getDouble(2);
@@ -292,7 +319,7 @@ public class EntitiesCreator {
 
     private void createPromoters(Connection conn) throws SQLException {
         Statement s = conn.createStatement();
-        ResultSet r = s.executeQuery("select * from promoters");
+        ResultSet r = s.executeQuery("select * from promoters limit "+nbrPromoter);
         while (r.next()) {
             int id = r.getInt(1);
             double purchasingPower = r.getDouble(2);
