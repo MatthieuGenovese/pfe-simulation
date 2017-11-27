@@ -7,6 +7,7 @@ import kobdig.urbanSimulation.entities.agents.Household;
 import kobdig.urbanSimulation.entities.agents.Investor;
 import kobdig.urbanSimulation.entities.agents.Promoter;
 import kobdig.urbanSimulation.entities.environement.*;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.sql.*;
@@ -16,6 +17,7 @@ import java.util.Iterator;
 /**
  * Created by Meili on 20/06/16.
  */
+@Service
 public class Simulation {
 
     public static final double INCOME_GAP = 0.3;
@@ -24,7 +26,9 @@ public class Simulation {
     public static final String EQUIPMENT = "equipment";
     protected static Agent investorAgent;
 
+    public Simulation(){
 
+    }
 
 
     /*

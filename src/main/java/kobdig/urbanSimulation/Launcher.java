@@ -1,16 +1,23 @@
 package kobdig.urbanSimulation;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
+
+@SpringBootApplication
 public class Launcher {
 
+    @Autowired
     private Simulation simulation;
 
     public void init(){
-        simulation = new Simulation();
         simulation.start();
     }
 
     public static void main(String[] args){
-        Launcher launcher = new Launcher();
+        ConfigurableApplicationContext ctx = SpringApplication.run(Launcher.class, args);
+        Launcher launcher = ctx.getBean(Launcher.class);
         launcher.init();
     }
 }
