@@ -7,6 +7,8 @@ import kobdig.urbanSimulation.entities.agents.Household;
 import kobdig.urbanSimulation.entities.agents.Investor;
 import kobdig.urbanSimulation.entities.agents.Promoter;
 import kobdig.urbanSimulation.entities.environement.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -20,46 +22,38 @@ import java.util.Iterator;
 @Service
 public class Simulation {
 
+    private int id;
+
     public static final double INCOME_GAP = 0.3;
     public static final String NETWORK = "network";
 
     public static final String EQUIPMENT = "equipment";
     protected static Agent investorAgent;
 
+    @Autowired
+    EntitiesCreator builder;
+
+    /** Execution delay in milliseconds */
+    private volatile int executionDelay;
+
+    /** Animation thread. */
+    private Thread thread;
+
+    /** A flag for controlling the animation thread */
+    private volatile boolean running = false;
+
+
+    @Autowired
     public Simulation(){
-
+        this.executionDelay = 10;
+        this. id = 0;
     }
-
-
-    /*
-
-    public static void updateEquipmentsOrNetworkToConsider(String type, String newConsiderations) {
-        if(type.equals(EQUIPMENT)) {
-            filteredEquipments += "," + newConsiderations;
-        }
-
-        if(type.equals(NETWORK)) {
-            filteredNetwork += "," + newConsiderations;
-        }
-
-        for (Property property : freeProperties) {
-            property.setUpdated(false);
-        }
-        for (Property property : forRentProperties) {
-            property.setUpdated(false);
-        }
-        for (Land land : forSaleLand) {
-            land.setUpdated(false);
-        }
-        System.out.println("::: Updated " + type);
-    }*/
-
 
     /**
      * Writes the resultant data indicators in the database
      * @throws SQLException
      */
-    public static void writeIndicators(EntitiesCreator entitiesCreator, int time) throws SQLException{
+    public void writeIndicators(EntitiesCreator entitiesCreator, int time) throws SQLException{
         double countRent = 0.0;
         double countSale = 0.0;
         for (AdministrativeDivision division : entitiesCreator.getDivisions()) {
@@ -103,13 +97,13 @@ public class Simulation {
      * Writes the resultant data in the database
      * @throws SQLException
      */
-    public static void writeResults(EntitiesCreator entitiesCreator, int time) throws SQLException{
+    public void writeResults(EntitiesCreator entitiesCreator, int time) throws SQLException{
         for (AdministrativeDivision division : entitiesCreator.getDivisions()) {
             if (division != null) {
                 for (Property property : division.getProperties()) {
                     Statement s = entitiesCreator.getConn().createStatement();
-                    String query = "INSERT INTO properties_state (\"step\",\"idProperty\",\"price\",\"rent\",\"value\",\"state\"" +
-                            ",\"geom\",\"codigo_upz\") VALUES ('" + time + "','" + property.getId() + "','" + property.getCurrentPrice() + "','" +
+                    String query = "INSERT INTO properties_state (\"idSimularion\", \"step\",\"idProperty\",\"price\",\"rent\",\"value\",\"state\"" +
+                            ",\"geom\",\"codigo_upz\") VALUES ('" + this.id + "','" + time + "','" + property.getId() + "','" + property.getCurrentPrice() + "','" +
                             property.getCurrentCapitalizedRent() + "','" + property.getCurrentValue() + "','" + property.getState() +
                             "','" + property.getGeom() + "','" + division.getCode() + "')";
                     s.executeUpdate(query);
@@ -119,10 +113,66 @@ public class Simulation {
         }
     }
 
-    public void start(){
+    public void setId(int id){
+        this.id = id;
+    }
+
+    public synchronized void start() {
+        if (running) {
+            throw new IllegalStateException("Animation is already running.");
+        }
+
+        // the reason we do not inherit from Runnable is that we do not want to
+        // expose the void run() method to the outside world. We want to well
+        // encapsulate the whole idea of a thread.
+        // thread cannot be restarted so we need to always create a new one
+        thread = new Thread() {
+            @Override
+            public void run() {
+                while (true) {
+                    synchronized (this) {
+                        while (!running) {
+                            try {
+                                wait();
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    }
+
+                    try {
+                        synchronized (this) {
+                            Thread.sleep(executionDelay);
+                        }
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    show();
+
+                }
+            }
+        };
+
+        // start the thread
+        thread.start();
+        // set the flag
+        running = true;
+    }
+
+    public synchronized boolean isRunning() {
+        return running;
+    }
+
+    public synchronized void stop() {
+        if (!running) {
+            throw new IllegalStateException("Animation is stopped.");
+        }
+        running = false;
+    }
+
+    public void show(){
         System.out.println("Testing the kobdig.urbanSimulation Simulator...");
-        EntitiesCreator builder = new EntitiesCreator();
-        builder.createAll();
 
         try {
             writeIndicators(builder, 0);

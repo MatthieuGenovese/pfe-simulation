@@ -7,7 +7,11 @@ import kobdig.urbanSimulation.entities.agents.Investor;
 import kobdig.urbanSimulation.entities.agents.Promoter;
 import kobdig.urbanSimulation.entities.environement.*;
 import org.postgis.PGgeometry;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -18,6 +22,7 @@ import java.util.ArrayList;
 /**
  * Created by Matthieu on 20/11/2017.
  */
+@Service
 public class EntitiesCreator {
     private ArrayList<Investor> investors;
     private ArrayList<Land> forSaleLand;
@@ -34,14 +39,38 @@ public class EntitiesCreator {
     File investorAgentFile;
     File promoterAgentFile;
 
-    public EntitiesCreator(){
-        freeProperties = new ArrayList<>();
-        forRentProperties = new ArrayList<>();
-        investors = new ArrayList<>();
-        forSaleLand = new ArrayList<>();
-        agents = new ArrayList<>();
+    protected static EntitiesCreator _singleton;
+
+    @PostConstruct
+    public static void init() {
+
+        if (_singleton != null) {
+            throw new RuntimeException("EntitiesCreator already created by "
+                    + _singleton.getClass().getName());
+        } else {
+            _singleton = new EntitiesCreator();
+        }
+    }
+
+    @Autowired
+    public static EntitiesCreator getInstance() {
+        return _singleton;
+    }
+
+    private EntitiesCreator(){
+        begin();
+    }
+
+    public void begin(){
+        freeProperties.clear();
+        forRentProperties.clear();
+        investors.clear();
+        forSaleLand.clear();
+        agents.clear();
         divisions = new AdministrativeDivision[200];
         idManager = new int[5];
+
+        createAll();
     }
 
     public File getHouseholdAgentFile() {
@@ -188,7 +217,7 @@ public class EntitiesCreator {
         }
 
         Statement s2 = conn.createStatement();
-        String query = "CREATE TABLE \"properties_state\" (gid serial,\"step\" numeric,\"idProperty\" numeric,\"price\"" +
+        String query = "CREATE TABLE \"properties_state\" (gid serial,\"idSimularion\" numeric, \"step\" numeric,\"idProperty\" numeric,\"price\"" +
                 "numeric,\"rent\" numeric,\"value\" numeric,\"state\" varchar(200),\"codigo_upz\" numeric)";
         s2.executeUpdate(query);
         s2.close();

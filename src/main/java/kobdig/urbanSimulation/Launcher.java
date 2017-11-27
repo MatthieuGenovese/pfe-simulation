@@ -9,15 +9,10 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class Launcher {
 
     @Autowired
-    private Simulation simulation;
-
-    public void init(){
-        simulation.start();
-    }
+    EntitiesCreator builder;
 
     public static void main(String[] args){
         ConfigurableApplicationContext ctx = SpringApplication.run(Launcher.class, args);
         Launcher launcher = ctx.getBean(Launcher.class);
-        launcher.init();
     }
 }
