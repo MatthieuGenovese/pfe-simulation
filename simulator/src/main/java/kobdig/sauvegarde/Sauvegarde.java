@@ -1,21 +1,41 @@
-package bogota.save.entity;
+package kobdig.sauvegarde;
 
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "sauvegarde")
 public class Sauvegarde {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
+
+    @Column(name = "nbrEtape")
     private int num;
 
+    @Column(name = "nbrHousehold")
     private int nbrHousehold;
+
+    @Column(name = "nbrPromoter")
     private int nbrPromoter;
+
+    @Column(name = "nbrInvestor")
     private int nbrInvestor;
 
-    private int id;
+    @Column(name = "idSimulation")
+    private int idSimulation;
+
+    public Sauvegarde(){
+
+    }
 
     public Sauvegarde(int num, int nbrHousehold, int nbrPromoter, int nbrInvestor, int id){
         this.num = num;
         this.nbrHousehold = nbrHousehold;
         this.nbrPromoter = nbrPromoter;
         this.nbrInvestor = nbrInvestor;
-        this.id = id;
+        this.idSimulation = id;
     }
 
     public int getNbrHousehold() {
@@ -51,17 +71,17 @@ public class Sauvegarde {
     }
 
     public int getId() {
-        return id;
+        return idSimulation;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.idSimulation = id;
     }
 
     @Override
     public String toString(){
         return "Sauvegarde{" +
-                "id: " + id + ", " +
+                "id: " + idSimulation + ", " +
                 "num" + num + " }";
     }
 }

@@ -18,7 +18,6 @@
 
     <modules>
         <module>eventbus</module>
-        <module>save</module>
         <module>simulator</module>
     </modules>
 

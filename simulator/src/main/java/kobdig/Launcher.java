@@ -2,7 +2,6 @@ package kobdig;
 
 import bogota.eventbus.EventRessource;
 import bogota.eventbus.EventTypes;
-import bogota.save.service.SaveSimulationService;
 import kobdig.urbanSimulation.EntitiesCreator;
 import kobdig.service.SimulationService;
 import org.springframework.beans.factory.annotation.Autowired;
