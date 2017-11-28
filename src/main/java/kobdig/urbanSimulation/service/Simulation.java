@@ -184,23 +184,28 @@ public class Simulation {
             if(r.next())  builder.getIdManager()[0] = r.getInt(1) + 1;
             s.close();
             r.close();
-            int sizeland = 0;
-            for (int i = 0; i < builder.getDivisions().length; i++) {
-                if (builder.getDivisions()[i] != null) {
-                    sizeland+= builder.getDivisions()[i].getLands().size();
-                }
-            }
-            System.out.println("land size : "+sizeland);
             for (int time = 1; time <= builder.getNumSim(); time++) {
 
+               // System.out.println("FOR RENT PROPERTIES :" + builder.getForRentProperties().size());
 
+                int occuped = 0;
+                int rented = 0;
+                int forsale = 0;
+                int landsize = 0;
+                int forrent = 0;
                 for (int i = 0; i < builder.getDivisions().length; i++) {
                     if (builder.getDivisions()[i] != null) {
                         ArrayList<Land> landDiv = builder.getDivisions()[i].getLands();
                         for (Land land : landDiv) land.step(time - 1);
                         for (Property property : builder.getDivisions()[i].getProperties()) property.step(time - 1);
+                        occuped += builder.getDivisions()[i].getPropertiesOccuped();
+                        rented += builder.getDivisions()[i].getPropertiesRented();
+                        forsale += builder.getDivisions()[i].getPropertiesForSale();
+                        forrent += builder.getDivisions()[i].getPropertiesForRent();
+                        landsize+= builder.getDivisions()[i].getLands().size();
                     }
                 }
+
 
                 for(AbstractAgent agent : builder.getAgents()){
                     agent.agentUpdateBeliefs(builder, time);
@@ -212,27 +217,14 @@ public class Simulation {
                     investor.agentIntentionsStep(builder);
                 }
 
-                System.err.println(time-1 + ". - free " + builder.getFreeProperties().size() + " for rent " + builder.getForRentProperties().size() + " total " +
-                        (builder.getFreeProperties().size() + builder.getForRentProperties().size()) );
 
                 writeIndicators(builder, time-1);
                 writeResults(builder, time-1);
 
+                System.out.println("occuped : " + occuped +" for rent " + forrent + " rented : " + rented + " for sale : " + forsale);
+                System.out.println("land size : " +landsize);
+
             }
-            int occuped = 0;
-            int rented = 0;
-            int forsale = 0;
-            int landsize = 0;
-            for (int i = 0; i < builder.getDivisions().length; i++) {
-                if (builder.getDivisions()[i] != null) {
-                    occuped += builder.getDivisions()[i].getPropertiesOccuped();
-                    rented += builder.getDivisions()[i].getPropertiesRented();
-                    forsale += builder.getDivisions()[i].getPropertiesForSale();
-                    landsize+= builder.getDivisions()[i].getLands().size();
-                }
-            }
-            System.out.println("occuped : " + occuped + " rented : " + rented + " for sale : " + forsale);
-            System.out.println("land size : " +landsize);
 
             builder.getConn().close();
         } catch (SQLException e1) {

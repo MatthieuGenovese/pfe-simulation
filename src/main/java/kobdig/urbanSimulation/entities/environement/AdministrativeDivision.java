@@ -122,4 +122,17 @@ public class AdministrativeDivision {
         }
         return res;
     }
+
+    public int getPropertiesForRent(){
+        int res = 0;
+        for(Property p : properties){
+            switch (p.getState()){
+                case Property.SEEKING_TENANT:
+                    res++;
+                    break;
+
+            }
+        }
+        return res;
+    }
 }

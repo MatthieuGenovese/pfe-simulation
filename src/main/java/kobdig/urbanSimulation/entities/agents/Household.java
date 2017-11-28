@@ -217,10 +217,10 @@ public class Household extends AbstractAgentBuy implements IActionnable {
                 Property taken = invest(entitiesCreator);
                 if (taken != null) {
                     entitiesCreator.getDivisions()[taken.getLand().getDivision().getCode()].getProperties().remove(taken);
+                    entitiesCreator.getFreeProperties().remove(taken);
                     taken.setState(Property.SEEKING_TENANT);
                     System.out.println("SEEKING TENANT");
                     entitiesCreator.getDivisions()[taken.getLand().getDivision().getCode()].getProperties().add(taken);
-                    entitiesCreator.getFreeProperties().remove(taken);
                     entitiesCreator.getForRentProperties().add(taken);
                     taken.setUpdated(false);
                     Investor newInvestor = null;

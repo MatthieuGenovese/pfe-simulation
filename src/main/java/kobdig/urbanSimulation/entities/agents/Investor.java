@@ -226,8 +226,10 @@ public class Investor extends AbstractAgentBuy implements IActionnable {
                     Property taken = invest(entitiesCreator);
                     if (taken != null) {
                         entitiesCreator.getFreeProperties().remove(taken);
-                        entitiesCreator.getForRentProperties().add(taken);
+                        entitiesCreator.getDivisions()[taken.getLand().getDivision().getCode()].getProperties().remove(taken);
                         taken.setState(Property.SEEKING_TENANT);
+                        entitiesCreator.getForRentProperties().add(taken);
+                        entitiesCreator.getDivisions()[taken.getLand().getDivision().getCode()].getProperties().add(taken);
                         //Investor newInvestor = new Investor(investorAgent, investor, taken);
                         setProperty(taken);
                         setOwner(true);
@@ -240,8 +242,10 @@ public class Investor extends AbstractAgentBuy implements IActionnable {
                     Property taken = invest(entitiesCreator);
                     if (taken != null) {
                         entitiesCreator.getFreeProperties().remove(taken);
-                        entitiesCreator.getForRentProperties().add(taken);
+                        entitiesCreator.getDivisions()[taken.getLand().getDivision().getCode()].getProperties().remove(taken);
                         taken.setState(Property.SEEKING_TENANT);
+                        entitiesCreator.getForRentProperties().add(taken);
+                        entitiesCreator.getDivisions()[taken.getLand().getDivision().getCode()].getProperties().add(taken);
                     }
                 }
             }
