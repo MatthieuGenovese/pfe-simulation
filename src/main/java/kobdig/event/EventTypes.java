@@ -2,5 +2,6 @@ package kobdig.event;
 
 public class EventTypes {
 
-    public String StateMessage = "StateMessage";
+    public static final String StateSimulatorMessage = "StateSimulatorMessage";
+
 }

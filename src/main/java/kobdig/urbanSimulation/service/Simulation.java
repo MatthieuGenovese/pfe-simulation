@@ -1,7 +1,8 @@
-package kobdig.urbanSimulation;
+package kobdig.urbanSimulation.service;
 
 import kobdig.agent.Agent;
 import kobdig.agent.Fact;
+import kobdig.urbanSimulation.EntitiesCreator;
 import kobdig.urbanSimulation.entities.agents.AbstractAgent;
 import kobdig.urbanSimulation.entities.agents.Household;
 import kobdig.urbanSimulation.entities.agents.Investor;

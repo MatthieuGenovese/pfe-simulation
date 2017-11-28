@@ -43,6 +43,8 @@ public class EntitiesCreator {
     private int nbrInvestor;
     private int nbrPromoter;
 
+    private int id;
+
     protected static EntitiesCreator _singleton;
 
     @PostConstruct
@@ -71,7 +73,6 @@ public class EntitiesCreator {
         divisions = new AdministrativeDivision[200];
         idManager = new int[5];
 
-        createAll();
 
     }
 
@@ -85,6 +86,14 @@ public class EntitiesCreator {
         idManager = new int[5];
 
         createAll();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setNbrHousehold(int nbrHousehold){
@@ -118,6 +127,7 @@ public class EntitiesCreator {
     public void setInvestorAgentFile(File file){
         this.investorAgentFile = file;
     }
+
     public void setPromoterAgentFile(File file){
         this.promoterAgentFile = file;
     }
