@@ -83,4 +83,43 @@ public class AdministrativeDivision {
     public void addLand(Land land) {
         lands.add(land);
     }
+
+    public int getPropertiesOccuped(){
+        int res = 0;
+        for(Property p : properties){
+            switch (p.getState()){
+                case Property.OCCUPIED:
+                    res++;
+                    break;
+
+            }
+        }
+        return res;
+    }
+
+    public int getPropertiesRented(){
+        int res = 0;
+        for(Property p : properties){
+            switch (p.getState()){
+                case Property.RENTED:
+                    res++;
+                    break;
+
+            }
+        }
+        return res;
+    }
+
+    public int getPropertiesForSale(){
+        int res = 0;
+        for(Property p : properties){
+            switch (p.getState()){
+                case Property.FOR_SALE:
+                    res++;
+                    break;
+
+            }
+        }
+        return res;
+    }
 }

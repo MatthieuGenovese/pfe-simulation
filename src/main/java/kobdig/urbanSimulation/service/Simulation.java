@@ -184,17 +184,21 @@ public class Simulation {
             if(r.next())  builder.getIdManager()[0] = r.getInt(1) + 1;
             s.close();
             r.close();
-
+            int sizeland = 0;
+            for (int i = 0; i < builder.getDivisions().length; i++) {
+                if (builder.getDivisions()[i] != null) {
+                    sizeland+= builder.getDivisions()[i].getLands().size();
+                }
+            }
+            System.out.println("land size : "+sizeland);
             for (int time = 1; time <= builder.getNumSim(); time++) {
 
-                System.out.println("Step " + time);
 
-
-                for (AdministrativeDivision division : builder.getDivisions()) {
-                    if (division != null) {
-                        ArrayList<Land> landDiv = division.getLands();
+                for (int i = 0; i < builder.getDivisions().length; i++) {
+                    if (builder.getDivisions()[i] != null) {
+                        ArrayList<Land> landDiv = builder.getDivisions()[i].getLands();
                         for (Land land : landDiv) land.step(time - 1);
-                        for (Property property : division.getProperties()) property.step(time - 1);
+                        for (Property property : builder.getDivisions()[i].getProperties()) property.step(time - 1);
                     }
                 }
 
@@ -215,6 +219,20 @@ public class Simulation {
                 writeResults(builder, time-1);
 
             }
+            int occuped = 0;
+            int rented = 0;
+            int forsale = 0;
+            int landsize = 0;
+            for (int i = 0; i < builder.getDivisions().length; i++) {
+                if (builder.getDivisions()[i] != null) {
+                    occuped += builder.getDivisions()[i].getPropertiesOccuped();
+                    rented += builder.getDivisions()[i].getPropertiesRented();
+                    forsale += builder.getDivisions()[i].getPropertiesForSale();
+                    landsize+= builder.getDivisions()[i].getLands().size();
+                }
+            }
+            System.out.println("occuped : " + occuped + " rented : " + rented + " for sale : " + forsale);
+            System.out.println("land size : " +landsize);
 
             builder.getConn().close();
         } catch (SQLException e1) {

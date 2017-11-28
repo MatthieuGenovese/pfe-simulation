@@ -21,6 +21,7 @@ public class Property extends AbstractEnvironment implements IActionnable {
     private double currentPotentialRent;
     private double currentValue;
     private double previousPrice;
+
     private double previousCapitalizedRent;
     private double previousPotentialRent;
     private double previousValue;

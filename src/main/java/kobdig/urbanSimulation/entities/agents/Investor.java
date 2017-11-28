@@ -231,7 +231,9 @@ public class Investor extends AbstractAgentBuy implements IActionnable {
                         //Investor newInvestor = new Investor(investorAgent, investor, taken);
                         setProperty(taken);
                         setOwner(true);
+                        System.out.println("taille liste investor : " + entitiesCreator.getInvestors().size());
                         entitiesCreator.getInvestors().add(this);
+                        System.out.println("taille liste investor après le truc chelou : " + entitiesCreator.getInvestors().size());
                     }
                 }
                 else{
