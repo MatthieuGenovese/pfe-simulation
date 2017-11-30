@@ -161,6 +161,8 @@ public class Simulation {
     public void simulate(){
         System.err.println("STEP "+builder.getTime()+"/"+builder.getNumSim());
         if(builder.getTime() == 0){
+            System.out.println("Testing the kobdig.urbanSimulation Simulator...");
+
             try {
                 writeIndicators(builder, 0);
                 writeResults(builder, 0);
@@ -229,65 +231,5 @@ public class Simulation {
 
 
 
-    }
-
-    public void show(){
-        System.out.println("Testing the kobdig.urbanSimulation Simulator...");
-
-        try {
-            writeIndicators(builder, 0);
-            writeResults(builder, 0);
-
-            Statement s = builder.getConn().createStatement();
-            ResultSet r = s.executeQuery("SELECT MAX(gid) FROM properties;");
-            if(r.next())  builder.getIdManager()[0] = r.getInt(1) + 1;
-            s.close();
-            r.close();
-            for (int time = 1; time <= builder.getNumSim(); time++) {
-
-               // System.out.println("FOR RENT PROPERTIES :" + builder.getForRentProperties().size());
-
-                int occuped = 0;
-                int rented = 0;
-                int forsale = 0;
-                int landsize = 0;
-                int forrent = 0;
-                for (int i = 0; i < builder.getDivisions().length; i++) {
-                    if (builder.getDivisions()[i] != null) {
-                        ArrayList<Land> landDiv = builder.getDivisions()[i].getLands();
-                        for (Land land : landDiv) land.step(time - 1);
-                        for (Property property : builder.getDivisions()[i].getProperties()) property.step(time - 1);
-                        occuped += builder.getDivisions()[i].getPropertiesOccuped();
-                        rented += builder.getDivisions()[i].getPropertiesRented();
-                        forsale += builder.getDivisions()[i].getPropertiesForSale();
-                        forrent += builder.getDivisions()[i].getPropertiesForRent();
-                        landsize+= builder.getDivisions()[i].getLands().size();
-                    }
-                }
-
-
-                for(AbstractAgent agent : builder.getAgents()){
-                    agent.agentUpdateBeliefs(builder, time);
-                    agent.agentIntentionsStep(builder);
-                }
-
-                for (Investor investor : builder.getInvestors()) {
-                    investor.agentUpdateBeliefs(builder, time-1);
-                    investor.agentIntentionsStep(builder);
-                }
-
-
-                writeIndicators(builder, time-1);
-                writeResults(builder, time-1);
-
-                System.out.println("occuped : " + occuped +" for rent " + forrent + " rented : " + rented + " for sale : " + forsale);
-                System.out.println("land size : " +landsize);
-
-            }
-
-            builder.getConn().close();
-        } catch (SQLException e1) {
-            e1.printStackTrace();
-        }
     }
 }

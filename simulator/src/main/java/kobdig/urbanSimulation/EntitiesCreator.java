@@ -238,7 +238,7 @@ public class EntitiesCreator {
         ((org.postgresql.PGConnection) conn).addDataType("geometry", Class.forName("org.postgis.PGgeometry"));
         ((org.postgresql.PGConnection) conn).addDataType("box3d", Class.forName("org.postgis.PGbox3d"));
 
-        try {
+        /*try {
             Statement s1 = conn.createStatement();
             s1.executeUpdate("DROP TABLE properties_state");
             s1.close();
@@ -286,7 +286,7 @@ public class EntitiesCreator {
         Statement s6 = conn.createStatement();
         query = "CREATE TABLE \"indicator2\" (gid serial,\"step\" numeric,\"idUPZ\" numeric,\"si\" numeric)";
         s6.executeUpdate(query);
-        s6.close();
+        s6.close();*/
 
         return conn;
     }
