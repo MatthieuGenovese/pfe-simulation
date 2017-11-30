@@ -44,6 +44,8 @@ public class EntitiesCreator {
 
     private int id;
 
+    private int time;
+
     protected static EntitiesCreator _singleton;
 
     @PostConstruct
@@ -176,8 +178,17 @@ public class EntitiesCreator {
         return idManager;
     }
 
+    public int getTime(){
+        return time;
+    }
+
+    public void setTime(int time){
+        this.time = time;
+    }
+
     public void createAll() {
         System.out.println("Testing the kobdig.urbanSimulation Simulator...");
+        time = 0;
         String pwd = new File("").getAbsolutePath();
         filteredEquipments = "(SELECT * FROM equipamentos WHERE codigo_upz IN (85,81,80,46,112,116,31,30,29,28,27";
         filteredNetwork = "(SELECT * FROM red_primaria WHERE gid IN (176,784,794,793,798,796,822,819,856,852,849,885,894," +

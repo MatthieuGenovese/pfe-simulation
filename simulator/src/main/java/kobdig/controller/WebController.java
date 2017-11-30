@@ -3,6 +3,7 @@ package kobdig.controller;
 import bogota.eventbus.EventRessource;
 import bogota.eventbus.EventTypes;
 import bogota.eventbus.input.SimulationMessage;
+import bogota.eventbus.input.StopSimulationMessage;
 import kobdig.sauvegarde.Sauvegarde;
 import kobdig.sauvegarde.SauvegardeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,14 @@ public class WebController {
         System.out.println("Send message to simulator");
         sauvegardeRepository.save(new Sauvegarde(30, 50, 50, 50, 5));
         eventBus.notify(EventTypes.StateSimulatorMessage, Event.wrap(stateEventRessource));
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/stop")
+    public ResponseEntity<Void> stopSimulation(@RequestBody EventRessource<StopSimulationMessage> stateEventRessource) {
+
+        System.out.println("Send message to simulator");
+        eventBus.notify(EventTypes.StopSimulatorMessage, Event.wrap(stateEventRessource));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

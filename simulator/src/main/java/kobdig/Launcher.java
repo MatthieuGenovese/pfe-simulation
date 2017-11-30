@@ -59,5 +59,6 @@ public class Launcher implements CommandLineRunner {
     @Override
     public void run(String... strings) throws Exception {
         subscribe(EventTypes.StateSimulatorMessage, simulation);
+        subscribe(EventTypes.StopSimulatorMessage, simulation);
     }
 }

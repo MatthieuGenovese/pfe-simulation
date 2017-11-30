@@ -113,6 +113,7 @@ public class Simulation {
         thread = new Thread() {
             @Override
             public void run() {
+
                 while (true) {
                     synchronized (this) {
                         while (!running) {
@@ -132,7 +133,8 @@ public class Simulation {
                         throw new RuntimeException(e);
                     }
 
-                    show();
+                    simulate();
+                    builder.setTime(builder.getTime()+1);
 
                 }
             }
@@ -153,6 +155,80 @@ public class Simulation {
             throw new IllegalStateException("Animation is stopped.");
         }
         running = false;
+        builder.setTime(0);
+    }
+
+    public void simulate(){
+        System.err.println("STEP "+builder.getTime()+"/"+builder.getNumSim());
+        if(builder.getTime() == 0){
+            try {
+                writeIndicators(builder, 0);
+                writeResults(builder, 0);
+                Statement s = builder.getConn().createStatement();
+                ResultSet r = s.executeQuery("SELECT MAX(gid) FROM properties;");
+                if(r.next())  builder.getIdManager()[0] = r.getInt(1) + 1;
+                s.close();
+                r.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }else if(builder.getTime() == builder.getNumSim()){
+            try {
+                builder.getConn().close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            System.err.println("SIMULATION FINISHED");
+            running = false;
+        }
+
+        else {
+
+            int occuped = 0;
+            int rented = 0;
+            int forsale = 0;
+            int landsize = 0;
+            int forrent = 0;
+            for (int i = 0; i < builder.getDivisions().length; i++) {
+                if (builder.getDivisions()[i] != null) {
+                    ArrayList<Land> landDiv = builder.getDivisions()[i].getLands();
+                    for (Land land : landDiv) land.step(builder.getTime() - 1);
+                    for (Property property : builder.getDivisions()[i].getProperties()) property.step(builder.getTime() - 1);
+                    occuped += builder.getDivisions()[i].getPropertiesOccuped();
+                    rented += builder.getDivisions()[i].getPropertiesRented();
+                    forsale += builder.getDivisions()[i].getPropertiesForSale();
+                    forrent += builder.getDivisions()[i].getPropertiesForRent();
+                    landsize+= builder.getDivisions()[i].getLands().size();
+                }
+            }
+
+
+            for(AbstractAgent agent : builder.getAgents()){
+                agent.agentUpdateBeliefs(builder, builder.getTime());
+                agent.agentIntentionsStep(builder);
+            }
+
+            for (Investor investor : builder.getInvestors()) {
+                investor.agentUpdateBeliefs(builder, builder.getTime()-1);
+                investor.agentIntentionsStep(builder);
+            }
+
+
+            try {
+                writeIndicators(builder, builder.getTime()-1);
+                writeResults(builder, builder.getTime()-1);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            System.out.println("occuped : " + occuped +" for rent " + forrent + " rented : " + rented + " for sale : " + forsale);
+            System.out.println("land size : " +landsize);
+
+        }
+
+
+
+
     }
 
     public void show(){

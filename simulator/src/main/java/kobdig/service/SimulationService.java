@@ -36,8 +36,11 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
                 entitiesCreator.setNbrHousehold(message.getNbrHousehold());
                 entitiesCreator.setId(message.getId());
                 entitiesCreator.createAll();
-                simulation.show();
+                simulation.start();
 
+                break;
+            case EventTypes.StopSimulatorMessage:
+                simulation.stop();
                 break;
             default:
                 break;
