@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -21,7 +22,8 @@ public class Simulation {
 
     public static final double INCOME_GAP = 0.3;
     public static final String NETWORK = "network";
-
+    private int iterations = 0;
+    private int actualIteration = 0;
     public static final String EQUIPMENT = "equipment";
     protected static Agent investorAgent;
 
@@ -133,7 +135,11 @@ public class Simulation {
                         throw new RuntimeException(e);
                     }
 
-                    simulate();
+                    try {
+                        simulate();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     builder.setTime(builder.getTime()+1);
 
                 }
@@ -158,9 +164,18 @@ public class Simulation {
         builder.setTime(0);
     }
 
-    public void simulate(){
-        System.err.println("STEP "+builder.getTime()+"/"+builder.getNumSim());
-        if(builder.getTime() == 0){
+    public void simulate() throws IOException {
+        System.err.println("STEP " + builder.getTime() + "/" + builder.getNumSim());
+        iterations = builder.getConfig().getIterations();
+        if(iterations > actualIteration && builder.getTime() == builder.getNumSim()){
+            builder.setTime(0);
+            actualIteration++;
+            builder.reset();
+            builder.getConfig().setActualIteration(actualIteration);
+            builder.createAll();
+            System.out.println("Iteration numéro : " + String.valueOf(actualIteration+1)+"\nUtilisation du fichier " + builder.getHouseholdAgentFile().getName());
+        }
+        if (builder.getTime() == 0) {
             System.out.println("Testing the kobdig.urbanSimulation Simulator...");
 
             try {
@@ -168,13 +183,13 @@ public class Simulation {
                 writeResults(builder, 0);
                 Statement s = builder.getConn().createStatement();
                 ResultSet r = s.executeQuery("SELECT MAX(gid) FROM properties;");
-                if(r.next())  builder.getIdManager()[0] = r.getInt(1) + 1;
+                if (r.next()) builder.getIdManager()[0] = r.getInt(1) + 1;
                 s.close();
                 r.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        }else if(builder.getTime() == builder.getNumSim()){
+        } else if (builder.getTime() == builder.getNumSim()) {
             try {
                 builder.getConn().close();
             } catch (SQLException e) {
@@ -182,9 +197,7 @@ public class Simulation {
             }
             System.err.println("SIMULATION FINISHED");
             running = false;
-        }
-
-        else {
+        } else {
 
             int occuped = 0;
             int rented = 0;
@@ -195,41 +208,38 @@ public class Simulation {
                 if (builder.getDivisions()[i] != null) {
                     ArrayList<Land> landDiv = builder.getDivisions()[i].getLands();
                     for (Land land : landDiv) land.step(builder.getTime() - 1);
-                    for (Property property : builder.getDivisions()[i].getProperties()) property.step(builder.getTime() - 1);
+                    for (Property property : builder.getDivisions()[i].getProperties())
+                        property.step(builder.getTime() - 1);
                     occuped += builder.getDivisions()[i].getPropertiesOccuped();
                     rented += builder.getDivisions()[i].getPropertiesRented();
                     forsale += builder.getDivisions()[i].getPropertiesForSale();
                     forrent += builder.getDivisions()[i].getPropertiesForRent();
-                    landsize+= builder.getDivisions()[i].getLands().size();
+                    landsize += builder.getDivisions()[i].getLands().size();
                 }
             }
 
 
-            for(AbstractAgent agent : builder.getAgents()){
+            for (AbstractAgent agent : builder.getAgents()) {
                 agent.agentUpdateBeliefs(builder, builder.getTime());
                 agent.agentIntentionsStep(builder);
             }
 
             for (Investor investor : builder.getInvestors()) {
-                investor.agentUpdateBeliefs(builder, builder.getTime()-1);
+                investor.agentUpdateBeliefs(builder, builder.getTime() - 1);
                 investor.agentIntentionsStep(builder);
             }
 
 
             try {
-                writeIndicators(builder, builder.getTime()-1);
-                writeResults(builder, builder.getTime()-1);
+                writeIndicators(builder, builder.getTime() - 1);
+                writeResults(builder, builder.getTime() - 1);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
 
-            System.out.println("occuped : " + occuped +" for rent " + forrent + " rented : " + rented + " for sale : " + forsale);
-            System.out.println("land size : " +landsize);
+            System.out.println("occuped : " + occuped + " for rent " + forrent + " rented : " + rented + " for sale : " + forsale);
+            System.out.println("land size : " + landsize);
 
         }
-
-
-
-
     }
 }

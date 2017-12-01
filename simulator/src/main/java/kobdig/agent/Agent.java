@@ -492,7 +492,6 @@ public class Agent
         //    insert into the revised base only those facts whose degree
         //    of membership is greater than the "contradiction":
         Iterator<Fact> i = beliefs.factIterator();
-        System.out.println("TAILLE DES BELIEFS : " + beliefs.size());
         while(i.hasNext())
         {
             Fact psi = i.next();

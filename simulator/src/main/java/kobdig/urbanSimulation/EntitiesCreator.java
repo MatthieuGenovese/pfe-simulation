@@ -6,6 +6,7 @@ import kobdig.urbanSimulation.entities.agents.Household;
 import kobdig.urbanSimulation.entities.agents.Investor;
 import kobdig.urbanSimulation.entities.agents.Promoter;
 import kobdig.urbanSimulation.entities.environement.*;
+import kobdig.urbanSimulation.utils.SimulationSettings;
 import org.postgis.PGgeometry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ public class EntitiesCreator {
     private ArrayList<Property> forRentProperties;
     private String filteredEquipments, filteredNetwork;
     private Connection conn;
+    private SimulationSettings config;
     private Agent householdAgent, investorAgent, promoterAgent;
     private ArrayList<AbstractAgent> agents;
     private int numSim, networkLength, equipmentsLength;
@@ -65,7 +67,7 @@ public class EntitiesCreator {
     }
 
     private EntitiesCreator(){
-
+        config = new SimulationSettings();
         freeProperties = new ArrayList<>();
         forRentProperties = new ArrayList<>();
         investors = new ArrayList<>();
@@ -73,6 +75,7 @@ public class EntitiesCreator {
         agents = new ArrayList<>();
         divisions = new AdministrativeDivision[200];
         idManager = new int[5];
+        config.parseConfFile();
 
     }
 
@@ -186,10 +189,39 @@ public class EntitiesCreator {
         this.time = time;
     }
 
+    public SimulationSettings getConfig(){
+        return config;
+    }
+
+    public void createAgents() throws IOException {
+        if(config.getMode() == 0){
+            householdAgentFile = new File(config.getPath() + "/householdAgent.apl");
+            investorAgentFile = new File(config.getPath()+ "/investorAgent.apl");
+            promoterAgentFile = new File(config.getPath()+ "/promoterAgent.apl");
+        }
+        else if(config.getMode() == 1){
+            householdAgentFile = new File(config.getPath() + "/householdAgent"+String.valueOf(config.getActualIteration()+1)+".apl");
+            investorAgentFile = new File(config.getPath()+ "/investorAgent"+String.valueOf(config.getActualIteration()+1)+".apl");
+            promoterAgentFile = new File(config.getPath()+ "/promoterAgent"+String.valueOf(config.getActualIteration()+1)+".apl");
+        }
+        householdAgent = new Agent(new FileInputStream(householdAgentFile));
+        investorAgent = new Agent(new FileInputStream(investorAgentFile));
+        promoterAgent = new Agent(new FileInputStream(promoterAgentFile));
+    }
+
+    public void reset(){
+        freeProperties.clear();
+        forRentProperties.clear();
+        investors.clear();
+        forSaleLand.clear();
+        agents.clear();
+        divisions = new AdministrativeDivision[200];
+        idManager = new int[5];
+    }
+
     public void createAll() {
         System.out.println("Testing the kobdig.urbanSimulation Simulator...");
         time = 0;
-        String pwd = new File("").getAbsolutePath();
         filteredEquipments = "(SELECT * FROM equipamentos WHERE codigo_upz IN (85,81,80,46,112,116,31,30,29,28,27";
         filteredNetwork = "(SELECT * FROM red_primaria WHERE gid IN (176,784,794,793,798,796,822,819,856,852,849,885,894," +
                 "891,937,932,938,984,990,986,1029,1028,1076,1077,1113,1114,1117,1165,1164,1218,1221,1220,1280,1281,1284," +
@@ -198,31 +230,16 @@ public class EntitiesCreator {
 
         try {
             conn = createConnection();
+            createAgents();
+            createDivisions(conn);
+            createTransportNetwork(conn);
+            createEquipments(conn);
+            //createProperties(conn);
+            createHouseholds(conn);
+            createInvestors(conn);
+            createPromoters(conn);
+            createLand(conn);
 
-            householdAgentFile = new File(pwd + "/docs/householdAgent.apl");
-            investorAgentFile = new File(pwd + "/docs/investorAgent.apl");
-            promoterAgentFile = new File(pwd + "/docs/promoterAgent.apl");
-            try {
-                householdAgent = new Agent(new FileInputStream(householdAgentFile));
-                investorAgent = new Agent(new FileInputStream(investorAgentFile));
-                promoterAgent = new Agent(new FileInputStream(promoterAgentFile));
-
-                createDivisions(conn);
-                createTransportNetwork(conn);
-                createEquipments(conn);
-                //createProperties(conn);
-                createHouseholds(conn);
-                createInvestors(conn);
-                createPromoters(conn);
-                createLand(conn);
-
-
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
         } catch (Exception e) {
             e.printStackTrace();
