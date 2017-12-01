@@ -167,7 +167,7 @@ public class Simulation {
     public void simulate() throws IOException {
         System.err.println("STEP " + builder.getTime() + "/" + builder.getNumSim());
         iterations = builder.getConfig().getIterations();
-        if(iterations > actualIteration && builder.getTime() == builder.getNumSim()){
+        if(iterations > actualIteration+1 && builder.getTime() == builder.getNumSim()){
             builder.setTime(0);
             actualIteration++;
             builder.reset();
