@@ -1,4 +1,4 @@
-package kobdig.sauvegarde;
+package kobdig.tables;
 
 
 import javax.persistence.*;
