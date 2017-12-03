@@ -78,7 +78,7 @@ public class EntitiesCreator {
     PromoterRepository promoterRepository;
 
     @Autowired
-    TransportNetworkRepository transportNetworkRepository;
+    public TransportNetworkRepository transportNetworkRepository;
 
     @PostConstruct
     public static void init() {
@@ -340,7 +340,7 @@ public class EntitiesCreator {
 
     private void createHouseholds() {
 
-        for(HouseholdE householdE : householdRepository.findAll()){
+        for(HouseholdE householdE : householdRepository.findByNbr(nbrHousehold)){
             Household household = null;
             try {
                 household = new Household(Integer.toString(householdE.getId()), householdE.getPurchasingpower(),
@@ -356,7 +356,7 @@ public class EntitiesCreator {
 
     private void createInvestors() {
 
-        for(InvestorE investorE : investorRepository.findAll()){
+        for(InvestorE investorE : investorRepository.findByNbr(nbrInvestor)){
             Investor investor = null;
             try {
                 investor = new Investor(Integer.toString(investorE.getId()), investorE.getPurchasingpower(), 0.0, investorAgentFile);
@@ -373,7 +373,7 @@ public class EntitiesCreator {
 
     private void createPromoters() {
 
-        for(PromoterE promoterE : promoterRepository.findAll()){
+        for(PromoterE promoterE : promoterRepository.findByNbr(nbrPromoter)){
             Promoter promoter = null;
             try {
                 promoter = new Promoter(Integer.toString(promoterE.getId()), promoterE.getPurchasingpower(), promoterAgentFile);
@@ -416,8 +416,8 @@ public class EntitiesCreator {
                 Geometry geo = PGgeometry.geomFromString(transportNetworkE.getGeom());
                 PGgeometry geom = new PGgeometry(geo);
                 TransportNetwork transportNetwork = new TransportNetwork(Integer.toString(transportNetworkE.getId()), "primary", geom);
-                for (IntersectionE intersectionE : intersectionRepository.findAll()) {
-                    if (intersectionE.getCodigo_upz() != 0 && intersectionE.getId_redprimaria() == transportNetworkE.getId()) {
+                for (IntersectionE intersectionE : intersectionRepository.findById_Redprimaria(transportNetworkE.getId())) {
+                    if (intersectionE.getCodigo_upz() != 0) {
                         transportNetwork.setDivision(divisions[intersectionE.getCodigo_upz()]);
                         divisions[intersectionE.getCodigo_upz()].addNetwork(transportNetwork);
                     }
@@ -494,6 +494,6 @@ public class EntitiesCreator {
     }
 
     public Connection getConn(){
-        return conn;
+      return conn;
     }
 }

@@ -42,4 +42,9 @@ public class DivisionE implements Serializable {
     public String getGeom() {
         return geom;
     }
+
+    @Override
+    public String toString(){
+        return "Division "+getId()+";"+geom+";"+codigo_upz;
+    }
 }
