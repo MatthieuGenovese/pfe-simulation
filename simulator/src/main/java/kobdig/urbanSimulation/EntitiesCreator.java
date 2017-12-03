@@ -411,8 +411,7 @@ public class EntitiesCreator {
 
     private void createTransportNetwork() throws SQLException {
 
-        for(TransportNetworkE transportNetworkE : transportNetworkRepository.findAll()){
-            if(isInListT(transportNetworkE.getId())) {
+        for(TransportNetworkE transportNetworkE : transportNetworkRepository.findById()){
                 Geometry geo = PGgeometry.geomFromString(transportNetworkE.getGeom());
                 PGgeometry geom = new PGgeometry(geo);
                 TransportNetwork transportNetwork = new TransportNetwork(Integer.toString(transportNetworkE.getId()), "primary", geom);
@@ -422,7 +421,6 @@ public class EntitiesCreator {
                         divisions[intersectionE.getCodigo_upz()].addNetwork(transportNetwork);
                     }
                 }
-            }
         }
     }
 
@@ -432,8 +430,8 @@ public class EntitiesCreator {
 
     private void createEquipments() throws SQLException {
 
-        for(EquipmentE equipmentE : equipmentRepository.findAll()){
-            if(isInListE(equipmentE.getCodigo_upz())) {
+        for(EquipmentE equipmentE : equipmentRepository.findByCodigo_Upz()){
+            if(equipmentE.getGeom() != null) {
                 Geometry geo = PGgeometry.geomFromString(equipmentE.getGeom());
                 PGgeometry geom = new PGgeometry(geo);
                 Equipment equip = new Equipment(Integer.toString(equipmentE.getId()), equipmentE.getTipo(), geom);
@@ -444,53 +442,6 @@ public class EntitiesCreator {
                 }
             }
         }
-    }
-
-    public boolean isInListT(int el){
-        List<Integer> id = new ArrayList<>();
-        id.add(176);
-        id.add(784);
-        id.add(794);
-        id.add(793);
-        id.add(798);
-        id.add(796);
-        id.add(822);
-        id.add(819);
-        id.add(856);
-        id.add(852);
-        id.add(849);
-
-        for(Integer i : id){
-            if(el != i){
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public boolean isInListE(int el){
-        List<Integer> codigo = new ArrayList<>();
-        codigo.add(85);
-        codigo.add(81);
-        codigo.add(80);
-        codigo.add(46);
-        codigo.add(112);
-        codigo.add(116);
-        codigo.add(31);
-        codigo.add(30);
-        codigo.add(29);
-        codigo.add(28);
-        codigo.add(27);
-
-        for(Integer i : codigo){
-            if(el != i){
-                return false;
-            }
-        }
-
-        return true;
-
     }
 
     public Connection getConn(){

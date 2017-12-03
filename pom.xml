@@ -19,6 +19,7 @@
     <modules>
         <module>eventbus</module>
         <module>simulator</module>
+        <module>repository</module>
     </modules>
 
     <properties>
