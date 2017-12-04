@@ -1,10 +1,18 @@
 package kobdig.service;
 
 import kobdig.agent.Agent;
+import kobdig.repository.IndicatorOneRepository;
+import kobdig.repository.IndicatorTwoRepository;
+import kobdig.repository.PropertyRepository;
+import kobdig.tables.IndicatorOne;
+import kobdig.tables.IndicatorTwo;
+import kobdig.tables.PropertyE;
 import kobdig.urbanSimulation.EntitiesCreator;
 import kobdig.urbanSimulation.entities.agents.AbstractAgent;
 import kobdig.urbanSimulation.entities.agents.Investor;
 import kobdig.urbanSimulation.entities.environement.*;
+import org.postgis.Geometry;
+import org.postgis.PGgeometry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -29,6 +37,15 @@ public class Simulation {
 
     @Autowired
     EntitiesCreator builder;
+
+    @Autowired
+    PropertyRepository propertyRepository;
+
+    @Autowired
+    IndicatorOneRepository indicatorOneRepository;
+
+    @Autowired
+    IndicatorTwoRepository indicatorTwoRepository;
 
     /** Execution delay in milliseconds */
     private volatile int executionDelay = 10;
@@ -68,18 +85,11 @@ public class Simulation {
                 double sale = (countSale > 0.0) ? division.getOnSaleProperties() / countSale : 0;
                 double rent = (countRent > 0.0) ? division.getRentedProperties() / countRent : 0;
                 double si = Math.abs(sale - rent) / 2.0;
-                Statement s = entitiesCreator.getConn().createStatement();
-                String query = "INSERT INTO indicator2 (\"step\",\"si\",\"idUPZ\") VALUES ('" + time + "','" + si + "','" +
-                        division.getId() + "')";
-                s.executeUpdate(query);
-                s.close();
+                indicatorTwoRepository.save(new IndicatorTwo(time, Integer.parseInt(division.getId()), si));
             }
         }
         double rop = ((countRent + countSale) > 0.0)? countRent/(countRent + countSale): 0.0;
-        Statement s = entitiesCreator.getConn().createStatement();
-        String query = "INSERT INTO indicator1 (\"step\",\"ROP\") VALUES ('" + time + "','" + rop + "')";
-        s.executeUpdate(query);
-        s.close();
+        indicatorOneRepository.save(new IndicatorOne(time, rop));
 
     }
 
@@ -91,13 +101,7 @@ public class Simulation {
         for (AdministrativeDivision division : entitiesCreator.getDivisions()) {
             if (division != null) {
                 for (Property property : division.getProperties()) {
-                    Statement s = entitiesCreator.getConn().createStatement();
-                    String query = "INSERT INTO properties_state (\"idSimularion\", \"step\",\"idProperty\",\"price\",\"rent\",\"value\",\"state\"" +
-                            ",\"geom\",\"codigo_upz\") VALUES ('" + builder.getId() + "','" + time + "','" + property.getId() + "','" + property.getCurrentPrice() + "','" +
-                            property.getCurrentCapitalizedRent() + "','" + property.getCurrentValue() + "','" + property.getState() +
-                            "','" + property.getGeom() + "','" + division.getCode() + "')";
-                    s.executeUpdate(query);
-                    s.close();
+                    propertyRepository.save(new PropertyE(builder.getId(), time, Integer.parseInt(property.getId()), property.getCurrentPrice(), property.getCurrentCapitalizedRent(), property.getCurrentValue(), property.getState(), division.getCode(), property.getGeom().toString()));
                 }
             }
         }
@@ -181,20 +185,12 @@ public class Simulation {
             try {
                 writeIndicators(builder, 0);
                 writeResults(builder, 0);
-                Statement s = builder.getConn().createStatement();
-                ResultSet r = s.executeQuery("SELECT MAX(gid) FROM properties;");
-                if (r.next()) builder.getIdManager()[0] = r.getInt(1) + 1;
-                s.close();
-                r.close();
+                builder.getIdManager()[0] = 100 + 1;
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         } else if (builder.getTime() == builder.getNumSim()) {
-            try {
-                builder.getConn().close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+
             System.err.println("SIMULATION FINISHED");
             running = false;
         } else {

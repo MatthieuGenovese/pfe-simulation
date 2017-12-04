@@ -60,7 +60,7 @@ public class EntitiesCreator {
     DivisionRepository divisionRepository;
 
     @Autowired
-    EquipmentRepository  equipmentRepository;
+    public EquipmentRepository  equipmentRepository;
 
     @Autowired
     HouseholdRepository householdRepository;
@@ -444,7 +444,7 @@ public class EntitiesCreator {
         }
     }
 
-    public Connection getConn(){
-      return conn;
-    }
+    //public Connection getConn(){
+      //return conn;
+    //}
 }

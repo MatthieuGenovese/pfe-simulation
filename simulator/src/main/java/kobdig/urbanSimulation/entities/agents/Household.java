@@ -95,27 +95,13 @@ public class Household extends AbstractAgentBuy implements IActionnable {
         double maxUtility = 0.0;
         Property selection = null;
         for (Property purchasable : getPurchasableProperties()) {
-            try {
                 if (purchasable.getDivision() != null && !purchasable.isUpdated()) {
                     double equipUtility = 0.0;
                     double transportUtility = 0.0;
-                    Statement s1 = entitiesCreator.getConn().createStatement();
-                    String query_equipments = "SELECT COUNT(a.*) FROM " + entitiesCreator.getFilteredEquipments() + ")) a INNER JOIN buffer b ON ST_Intersects(a.geom, b.geom) WHERE b.id_land = " + purchasable.getLand().getId();
-                    ResultSet r1 = s1.executeQuery(query_equipments);
-                    if(r1.next()) {
-                        equipUtility = r1.getInt(1);
-                    }
-                    s1.close();
-                    r1.close();
 
-                    Statement s2 = entitiesCreator.getConn().createStatement();
-                    String query_transport = "SELECT COUNT(a.*) FROM " + entitiesCreator.getFilteredNetwork() + ")) a INNER JOIN buffer b ON ST_Intersects(a.geom, b.geom) WHERE b.id_land = " + purchasable.getLand().getId();
-                    ResultSet r2 = s2.executeQuery(query_transport);
-                    if(r2.next()) {
-                        transportUtility = r2.getInt(1);
-                    }
-                    s2.close();
-                    r2.close();
+                    equipUtility = entitiesCreator.equipmentRepository.findById(Integer.parseInt(purchasable.getLand().getId())).size();
+
+                    transportUtility = entitiesCreator.transportNetworkRepository.findById(Integer.parseInt(purchasable.getLand().getId())).size();
 
                     purchasable.setUtility(0.4*(equipUtility/(double)entitiesCreator.getEquipmentsLength()) + 0.6*(transportUtility/(double)entitiesCreator.getNetworkLength()));
 //                    purchasable.setUtility(0.0*(equipUtility/(double)equipmentsLength) + 1.0*(transportUtility/(double)networkLength));
@@ -126,8 +112,6 @@ public class Household extends AbstractAgentBuy implements IActionnable {
                     maxUtility = purchasable.getUtility();
                     selection = purchasable;
                 }
-            }
-            catch (SQLException e){                 e.printStackTrace();             }
         }
         if (selection != null){
             setPreviousPurchasingPower(getCurrentPurchasingPower());
@@ -140,27 +124,13 @@ public class Household extends AbstractAgentBuy implements IActionnable {
         double maxUtility = 0.0;
         Property selection = null;
         for (Property purchasable : getRentableProperties()) {
-            try {
                 if (purchasable.getDivision() != null && !purchasable.isUpdated()) {
                     double equipUtility = 0.0;
                     double transportUtility = 0.0;
-                    Statement s1 = entitiesCreator.getConn().createStatement();
-                    String query_equipments = "SELECT COUNT(a.*) FROM " + entitiesCreator.getFilteredEquipments() + ")) a INNER JOIN buffer b ON ST_Intersects(a.geom, b.geom) WHERE b.id_land = " + purchasable.getLand().getId();
-                    ResultSet r1 = s1.executeQuery(query_equipments);
-                    if(r1.next()) {
-                        equipUtility = r1.getInt(1);
-                    }
-                    s1.close();
-                    r1.close();
+                    equipUtility = entitiesCreator.equipmentRepository.findById(Integer.parseInt(purchasable.getLand().getId())).size();
 
-                    Statement s2 = entitiesCreator.getConn().createStatement();
-                    String query_transport = "SELECT COUNT(a.*) FROM " + entitiesCreator.getFilteredNetwork() + ")) a INNER JOIN buffer b ON ST_Intersects(a.geom, b.geom) WHERE b.id_land = " + purchasable.getLand().getId();
-                    ResultSet r2 = s2.executeQuery(query_transport);
-                    if(r2.next()) {
-                        transportUtility = r2.getInt(1);
-                    }
-                    s2.close();
-                    r2.close();
+                    transportUtility = entitiesCreator.transportNetworkRepository.findById(Integer.parseInt(purchasable.getLand().getId())).size();
+
 
                     purchasable.setUtility(0.4*(equipUtility/(double)entitiesCreator.getEquipmentsLength()) + 0.6*(transportUtility/(double)entitiesCreator.getNetworkLength()));
 //                    purchasable.setUtility(0.0*(equipUtility/(double)equipmentsLength) + 1.0*(transportUtility/(double)networkLength));
@@ -171,8 +141,7 @@ public class Household extends AbstractAgentBuy implements IActionnable {
                     maxUtility = purchasable.getUtility();
                     selection = purchasable;
                 }
-            }
-            catch (SQLException e){                 e.printStackTrace();             }
+
 
         }
         setRenting(selection != null);
@@ -304,29 +273,13 @@ public class Household extends AbstractAgentBuy implements IActionnable {
         double maxUtility = 0.0;
         Property selection = null;
         for (Property purchasable : getPurchasableProperties()) {
-            try {
                 double equipUtility = 0.0;
                 double transportUtility = 0.0;
                 if (purchasable.getDivision() != null && !purchasable.isUpdated()) {
-                    Statement s1 = entitiesCreator.getConn().createStatement();
-                    String query_equipments = "SELECT COUNT(a.*) FROM "
-                            + entitiesCreator.getFilteredEquipments() + ")) a INNER JOIN buffer b ON ST_Intersects(a.geom, b.geom) WHERE b.id_land = "
-                            + purchasable.getLand().getId();
-                    ResultSet r1 = s1.executeQuery(query_equipments);
-                    if(r1.next()) {
-                        equipUtility = r1.getInt(1);
-                    }
-                    s1.close();
-                    r1.close();
+                    equipUtility = entitiesCreator.equipmentRepository.findById(Integer.parseInt(purchasable.getLand().getId())).size();
 
-                    Statement s2 = entitiesCreator.getConn().createStatement();
-                    String query_transport = "SELECT COUNT(a.*) FROM " + entitiesCreator.getFilteredNetwork() + ")) a INNER JOIN buffer b ON ST_Intersects(a.geom, b.geom) WHERE b.id_land = " + purchasable.getLand().getId();
-                    ResultSet r2 = s2.executeQuery(query_transport);
-                    if(r2.next()) {
-                        transportUtility = r2.getInt(1);
-                    }
-                    s2.close();
-                    r2.close();
+                    transportUtility = entitiesCreator.transportNetworkRepository.findById(Integer.parseInt(purchasable.getLand().getId())).size();
+
 
                     purchasable.setUtility(0.4*(equipUtility/(double)entitiesCreator.getEquipmentsLength()) + 0.6*(transportUtility/(double)entitiesCreator.getNetworkLength()));
 //                    purchasable.setUtility(0.0*(equipUtility/(double)equipmentsLength) + 1.0*(transportUtility/(double)networkLength));
@@ -337,8 +290,7 @@ public class Household extends AbstractAgentBuy implements IActionnable {
                     maxUtility = purchasable.getUtility();
                     selection = purchasable;
                 }
-            }
-            catch (SQLException e){ e.printStackTrace();             }
+
         }
         setOwnerOccupied(selection != null);
         if(isOwnerOccupied()){

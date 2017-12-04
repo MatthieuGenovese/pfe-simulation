@@ -115,29 +115,14 @@ public class Promoter extends AbstractAgent implements IActionnable {
         System.out.println(getPurchasableLand().size());
         for (Land purchasable : getPurchasableLand()) {
             //System.out.println(purchasable.getId());
-            try {
                 if (purchasable.getDivision() != null && !purchasable.isUpdated()) {
                     double equipUtility = 0.0;
                     double transportUtility = 0.0;
 
-                    Statement s1 = entitiesCreator.getConn().createStatement();
-                    String query_equipments = "SELECT COUNT(a.*) FROM " + entitiesCreator.getFilteredEquipments() + ")) a INNER JOIN buffer b ON ST_Intersects(a.geom, b.geom) WHERE b.id_land = " + purchasable.getId();
-                    ResultSet r1 = s1.executeQuery(query_equipments);
-                    if(r1.next()) {
-                        equipUtility = r1.getInt(1);
-                    }
-                    s1.close();
-                    r1.close();
+                    equipUtility = entitiesCreator.equipmentRepository.findById(Integer.parseInt(purchasable.getId())).size();
 
+                    transportUtility = entitiesCreator.transportNetworkRepository.findById(Integer.parseInt(purchasable.getId())).size();
 
-                    Statement s2 = entitiesCreator.getConn().createStatement();
-                    String query_transport = "SELECT COUNT(a.*) FROM " + entitiesCreator.getFilteredNetwork() + ")) a INNER JOIN buffer b ON ST_Intersects(a.geom, b.geom) WHERE b.id_land = " + purchasable.getId();
-                    ResultSet r2 = s2.executeQuery(query_transport);
-                    if(r2.next()) {
-                        transportUtility = r2.getInt(1);
-                    }
-                    s2.close();
-                    r2.close();
                     purchasable.setUtility(0.4*(equipUtility/(double)entitiesCreator.getEquipmentsLength()) + 0.6*(transportUtility/(double)entitiesCreator.getNetworkLength()));
 //                    purchasable.setUtility(0.0*(equipUtility/(double)equipmentsLength) + 1.0*(transportUtility/(double)networkLength));
 //                    purchasable.setUtility(Math.random());
@@ -147,10 +132,6 @@ public class Promoter extends AbstractAgent implements IActionnable {
                     maxUtility = purchasable.getUtility();
                     selection = purchasable;
                 }
-            }
-            catch (SQLException e){
-                e.printStackTrace();
-            }
         }
         if (selection != null){
             setPurchasingPower(getPurchasingPower() - selection.getPrice());
