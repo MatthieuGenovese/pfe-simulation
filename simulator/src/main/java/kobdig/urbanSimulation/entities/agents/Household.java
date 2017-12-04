@@ -182,6 +182,7 @@ public class Household extends AbstractAgentBuy implements IActionnable {
             // If the goal is to invest
             else if (goal.contains(Household.BUY) && !goal.contains(Household.NOT_LANDLORD) && goal.contains(Household.LANDLORD)){
                 Property taken = invest(entitiesCreator);
+                System.out.println("JE SUIS LA SEEKING !!!");
                 if (taken != null) {
                     entitiesCreator.getDivisions()[taken.getLand().getDivision().getCode()].getProperties().remove(taken);
                     entitiesCreator.getFreeProperties().remove(taken);
@@ -205,6 +206,8 @@ public class Household extends AbstractAgentBuy implements IActionnable {
             // If the goal is to rent
             if (goal.contains(Household.RENT)){
                 Property taken = rentProperty(entitiesCreator);
+
+                System.out.println("JE SUIS LA RENTED !!!");
                 if (taken != null) {
                     entitiesCreator.getForRentProperties().remove(taken);
                     entitiesCreator.getDivisions()[taken.getLand().getDivision().getCode()].getProperties().remove(taken);
