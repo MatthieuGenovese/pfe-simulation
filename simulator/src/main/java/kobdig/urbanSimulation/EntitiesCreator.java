@@ -261,14 +261,14 @@ public class EntitiesCreator {
         try {
             conn = createConnection();
             createAgents();
-            createDivisions(conn);
-            createTransportNetwork(conn);
-            createEquipments(conn);
+            createDivisions();
+            createTransportNetwork();
+            createEquipments();
             //createProperties(conn);
-            createHouseholds(conn);
-            createInvestors(conn);
-            createPromoters(conn);
-            createLand(conn);
+            createHouseholds();
+            createInvestors();
+            createPromoters();
+            createLand();
 
 
         } catch (Exception e) {
@@ -530,17 +530,17 @@ public class EntitiesCreator {
     }
 
     private void createTransportNetwork() throws SQLException {
-
-        for(TransportNetworkE transportNetworkE : transportNetworkRepository.findById()){
-                Geometry geo = PGgeometry.geomFromString(transportNetworkE.getGeom());
-                PGgeometry geom = new PGgeometry(geo);
-                TransportNetwork transportNetwork = new TransportNetwork(Integer.toString(transportNetworkE.getId()), "primary", geom);
-                for (IntersectionE intersectionE : intersectionRepository.findById_Redprimaria(transportNetworkE.getId())) {
-                    if (intersectionE.getCodigo_upz() != 0) {
-                        transportNetwork.setDivision(divisions[intersectionE.getCodigo_upz()]);
-                        divisions[intersectionE.getCodigo_upz()].addNetwork(transportNetwork);
-                    }
+        for (TransportNetworkE transportNetworkE : transportNetworkRepository.findById()) {
+            networkLength++;
+            Geometry geo = PGgeometry.geomFromString(transportNetworkE.getGeom());
+            PGgeometry geom = new PGgeometry(geo);
+            TransportNetwork transportNetwork = new TransportNetwork(Integer.toString(transportNetworkE.getId()), "primary", geom);
+            for (IntersectionE intersectionE : intersectionRepository.findById_Redprimaria(transportNetworkE.getId())) {
+                if (intersectionE.getCodigo_upz() != 0) {
+                    transportNetwork.setDivision(divisions[intersectionE.getCodigo_upz()]);
+                    divisions[intersectionE.getCodigo_upz()].addNetwork(transportNetwork);
                 }
+            }
         }
     }
 
