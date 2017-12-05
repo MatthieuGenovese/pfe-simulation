@@ -72,6 +72,7 @@ public class Property extends AbstractEnvironment implements IActionnable {
     public void setLand(Land land) {
         this.land = land;
     }
+
     public void step(int time){
 
         previousPrice = currentPrice;

@@ -1,22 +1,18 @@
 package kobdig.service;
 
 import kobdig.agent.Agent;
-import kobdig.repository.IndicatorOneRepository;
-import kobdig.repository.IndicatorTwoRepository;
-import kobdig.repository.PropertyRepository;
-import kobdig.tables.IndicatorOne;
-import kobdig.tables.IndicatorTwo;
-import kobdig.tables.PropertyE;
+import kobdig.access.repository.IndicatorOneRepository;
+import kobdig.access.repository.IndicatorTwoRepository;
+import kobdig.access.repository.PropertyRepository;
+import kobdig.access.tables.IndicatorOne;
+import kobdig.access.tables.IndicatorTwo;
+import kobdig.access.tables.PropertyE;
 import kobdig.urbanSimulation.EntitiesCreator;
 import kobdig.urbanSimulation.entities.agents.AbstractAgent;
 import kobdig.urbanSimulation.entities.agents.Investor;
 import kobdig.urbanSimulation.entities.environement.*;
-import org.postgis.Geometry;
-import org.postgis.PGgeometry;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.sql.*;
@@ -179,7 +175,7 @@ public class Simulation {
             builder.createAll();
             System.out.println("Iteration numéro : " + String.valueOf(actualIteration+1)+"\nUtilisation du fichier " + builder.getHouseholdAgentFile().getName());
         }
-        if (builder.getTime() == 0) {
+        if (builder.getTime() > 0) {
             System.out.println("Testing the kobdig.urbanSimulation Simulator...");
 
             try {
@@ -189,7 +185,7 @@ public class Simulation {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        } else if (builder.getTime() == builder.getNumSim()) {
+        } else if (builder.getTime() > builder.getNumSim()) {
 
             System.err.println("SIMULATION FINISHED");
             running = false;
