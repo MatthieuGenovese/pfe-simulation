@@ -4,6 +4,7 @@ import bogota.eventbus.EventRessource;
 import bogota.eventbus.EventTypes;
 import bogota.eventbus.input.SimulationMessage;
 import bogota.eventbus.input.StopSimulationMessage;
+import bogota.eventbus.input.TabSimulationMessage;
 import kobdig.access.repository.*;
 import kobdig.access.tables.DivisionE;
 import kobdig.access.tables.EquipmentE;
@@ -22,15 +23,19 @@ public class WebController {
     @Autowired
     EventBus eventBus;
 
-    @Autowired
-    SauvegardeRepository sauvegardeRepository;
-
     @PostMapping("/state")
     public ResponseEntity<Void> startSimulation(@RequestBody EventRessource<SimulationMessage> stateEventRessource) {
 
         System.out.println("Send message to simulator");
-        sauvegardeRepository.save(new Sauvegarde(30, 50, 50, 50, 5));
         eventBus.notify(EventTypes.StateSimulatorMessage, Event.wrap(stateEventRessource));
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/statetab")
+    public ResponseEntity<Void> startTabSimulation(@RequestBody EventRessource<TabSimulationMessage> stateEventRessource) {
+
+        System.out.println("Send message to simulator");
+        eventBus.notify(EventTypes.TabStateSimulatorMessage, Event.wrap(stateEventRessource));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

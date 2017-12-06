@@ -60,5 +60,6 @@ public class Launcher implements CommandLineRunner {
     public void run(String... strings) throws Exception {
         subscribe(EventTypes.StateSimulatorMessage, simulation);
         subscribe(EventTypes.StopSimulatorMessage, simulation);
+        subscribe(EventTypes.TabStateSimulatorMessage, simulation);
     }
 }

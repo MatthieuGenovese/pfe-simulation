@@ -165,9 +165,8 @@ public class Simulation {
     }
 
     public void simulate() throws IOException {
-        System.err.println("STEP " + builder.getTime() + "/" + builder.getNumSim());
         iterations = builder.getConfig().getIterations();
-        if(iterations > actualIteration+1 && builder.getTime() == builder.getNumSim()){
+        if(iterations > actualIteration+1 && builder.getTime() > builder.getNumSim()){
             builder.setTime(0);
             actualIteration++;
             builder.reset();
@@ -175,8 +174,8 @@ public class Simulation {
             builder.createAll();
             System.out.println("Iteration numéro : " + String.valueOf(actualIteration+1)+"\nUtilisation du fichier " + builder.getHouseholdAgentFile().getName());
         }
-        if (builder.getTime() > 0) {
-            System.out.println("Testing the kobdig.urbanSimulation Simulator...");
+        if (builder.getTime() == 0) {
+            System.err.println("Initialisation...");
 
             try {
                 writeIndicators(builder, 0);
@@ -190,7 +189,7 @@ public class Simulation {
             System.err.println("SIMULATION FINISHED");
             running = false;
         } else {
-
+            System.err.println("STEP " + builder.getTime() + "/" + builder.getNumSim());
             int occuped = 0;
             int rented = 0;
             int forsale = 0;
