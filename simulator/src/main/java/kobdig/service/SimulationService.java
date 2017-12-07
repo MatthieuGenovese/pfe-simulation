@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import reactor.bus.Event;
 import reactor.fn.Consumer;
 
+import java.util.List;
+
 
 @Service
 public class SimulationService implements Consumer<Event<EventRessource>> {
@@ -51,23 +53,24 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
                         (EventRessource<TabSimulationMessage>) eventRessourceEvent.getData();
 
                 TabSimulationMessage tabMessage = tabMessageRessource.getValue();
-                int i = 0;
-                while(i < tabMessage.getSimulationMessageList().size()){
-                    i++;
-                    sauvegardeRepository.save(new Sauvegarde(tabMessage.getSimulationMessageList().get(i).getNum(), tabMessage.getSimulationMessageList().get(i).getNbrHousehold(), tabMessage.getSimulationMessageList().get(i).getNbrPromoter(), tabMessage.getSimulationMessageList().get(i).getNbrInvestor(), tabMessage.getSimulationMessageList().get(i).getId()));
 
-                    entitiesCreator.setNumSim(tabMessage.getSimulationMessageList().get(i).getNum());
-                    entitiesCreator.setNbrInvestor(tabMessage.getSimulationMessageList().get(i).getNbrInvestor());
-                    entitiesCreator.setNbrPromoter(tabMessage.getSimulationMessageList().get(i).getNbrPromoter());
-                    entitiesCreator.setNbrHousehold(tabMessage.getSimulationMessageList().get(i).getNbrHousehold());
-                    entitiesCreator.setId(tabMessage.getSimulationMessageList().get(i).getId());
+                for(SimulationMessage simulationMessage : tabMessage.getSimulationMessageList()){
+                    sauvegardeRepository.save(new Sauvegarde(simulationMessage.getNum(), simulationMessage.getNbrHousehold(), simulationMessage.getNbrPromoter(), simulationMessage.getNbrInvestor(), simulationMessage.getId()));
+
+                    entitiesCreator.setNumSim(simulationMessage.getNum());
+                    entitiesCreator.setNbrInvestor(simulationMessage.getNbrInvestor());
+                    entitiesCreator.setNbrPromoter(simulationMessage.getNbrPromoter());
+                    entitiesCreator.setNbrHousehold(simulationMessage.getNbrHousehold());
+                    entitiesCreator.setId(simulationMessage.getId());
                     entitiesCreator.createAll();
                     simulation.start();
 
-                    try {
-                        Thread.sleep(30000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    while(simulation.isRunning()){
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
 

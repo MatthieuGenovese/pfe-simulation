@@ -210,6 +210,7 @@ public class EntitiesCreator {
     }
 
     public void reset(){
+        time = 0;
         freeProperties.clear();
         forRentProperties.clear();
         investors.clear();
@@ -220,9 +221,8 @@ public class EntitiesCreator {
     }
 
     public void createAll() {
-        System.out.println("Testing the kobdig.urbanSimulation Simulator...");
-        time = 0;
-
+        System.out.println("Initialisation...");
+        reset();
         try {
             createAgents();
             createDivisions();

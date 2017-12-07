@@ -175,7 +175,6 @@ public class Simulation {
             System.out.println("Iteration numéro : " + String.valueOf(actualIteration+1)+"\nUtilisation du fichier " + builder.getHouseholdAgentFile().getName());
         }
         if (builder.getTime() == 0) {
-            System.err.println("Initialisation...");
 
             try {
                 writeIndicators(builder, 0);
