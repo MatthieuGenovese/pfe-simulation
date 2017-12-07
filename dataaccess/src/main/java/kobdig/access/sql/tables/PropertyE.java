@@ -1,4 +1,4 @@
-package kobdig.access.tables;
+package kobdig.access.sql.tables;
 
 import javax.persistence.*;
 import java.io.Serializable;

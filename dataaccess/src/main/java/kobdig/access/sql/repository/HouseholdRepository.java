@@ -1,6 +1,6 @@
-package kobdig.access.repository;
+package kobdig.access.sql.repository;
 
-import kobdig.access.tables.HouseholdE;
+import kobdig.access.sql.tables.HouseholdE;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;

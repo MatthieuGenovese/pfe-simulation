@@ -1,6 +1,6 @@
-package kobdig.access.repository;
+package kobdig.access.sql.repository;
 
-import kobdig.access.tables.IntersectionE;
+import kobdig.access.sql.tables.IntersectionE;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;

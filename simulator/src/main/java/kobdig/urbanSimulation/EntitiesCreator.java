@@ -1,7 +1,7 @@
 package kobdig.urbanSimulation;
 
-import kobdig.access.repository.*;
-import kobdig.access.tables.*;
+import kobdig.access.sql.repository.*;
+import kobdig.access.sql.tables.*;
 import kobdig.urbanSimulation.entities.agents.AbstractAgent;
 import kobdig.urbanSimulation.entities.agents.Household;
 import kobdig.urbanSimulation.entities.agents.Investor;

@@ -4,18 +4,15 @@ import bogota.eventbus.EventRessource;
 import bogota.eventbus.EventTypes;
 import bogota.eventbus.input.SimulationMessage;
 import bogota.eventbus.input.TabSimulationMessage;
-import kobdig.access.repository.PropertyRepository;
-import kobdig.access.repository.SauvegardeRepository;
-import kobdig.access.tables.PropertyE;
-import kobdig.access.tables.Sauvegarde;
+import kobdig.access.sql.repository.PropertyRepository;
+import kobdig.access.sql.repository.SauvegardeRepository;
+import kobdig.access.sql.tables.PropertyE;
+import kobdig.access.sql.tables.Sauvegarde;
 import kobdig.urbanSimulation.EntitiesCreator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 import reactor.bus.Event;
 import reactor.fn.Consumer;
-
-import java.util.List;
 
 
 @Service

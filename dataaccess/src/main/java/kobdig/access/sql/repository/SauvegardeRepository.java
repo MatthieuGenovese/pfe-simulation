@@ -1,6 +1,6 @@
-package kobdig.access.repository;
+package kobdig.access.sql.repository;
 
-import kobdig.access.tables.Sauvegarde;
+import kobdig.access.sql.tables.Sauvegarde;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,14 +1,19 @@
 package kobdig.service;
 
+import kobdig.acces.mongo.collections.HouseholdMongo;
+import kobdig.acces.mongo.repository.HouseholdMongoRepository;
+import kobdig.acces.mongo.repository.PropertyMongoRepository;
+import kobdig.acces.mongo.collections.PropertyMongo;
 import kobdig.agent.Agent;
-import kobdig.access.repository.IndicatorOneRepository;
-import kobdig.access.repository.IndicatorTwoRepository;
-import kobdig.access.repository.PropertyRepository;
-import kobdig.access.tables.IndicatorOne;
-import kobdig.access.tables.IndicatorTwo;
-import kobdig.access.tables.PropertyE;
+import kobdig.access.sql.repository.IndicatorOneRepository;
+import kobdig.access.sql.repository.IndicatorTwoRepository;
+import kobdig.access.sql.repository.PropertyRepository;
+import kobdig.access.sql.tables.IndicatorOne;
+import kobdig.access.sql.tables.IndicatorTwo;
+import kobdig.access.sql.tables.PropertyE;
 import kobdig.urbanSimulation.EntitiesCreator;
 import kobdig.urbanSimulation.entities.agents.AbstractAgent;
+import kobdig.urbanSimulation.entities.agents.Household;
 import kobdig.urbanSimulation.entities.agents.Investor;
 import kobdig.urbanSimulation.entities.environement.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +47,12 @@ public class Simulation {
 
     @Autowired
     IndicatorTwoRepository indicatorTwoRepository;
+
+    @Autowired
+    PropertyMongoRepository propertyMongoRepository;
+
+    @Autowired
+    HouseholdMongoRepository householdMongoRepository;
 
     /** Execution delay in milliseconds */
     private volatile int executionDelay = 10;
@@ -93,12 +104,18 @@ public class Simulation {
      * Writes the resultant data in the database
      * @throws SQLException
      */
-    public void writeResults(EntitiesCreator entitiesCreator, int time) throws SQLException{
+    public void writeResults(EntitiesCreator entitiesCreator, int time) throws SQLException {
         for (AdministrativeDivision division : entitiesCreator.getDivisions()) {
             if (division != null) {
                 for (Property property : division.getProperties()) {
+                    propertyMongoRepository.save(new PropertyMongo(builder.getId(), time, Integer.parseInt(property.getId()), property.getCurrentPrice(), property.getCurrentCapitalizedRent(), property.getCurrentValue(), property.getState(), division.getCode(), property.getGeom().toString()));
                     propertyRepository.save(new PropertyE(builder.getId(), time, Integer.parseInt(property.getId()), property.getCurrentPrice(), property.getCurrentCapitalizedRent(), property.getCurrentValue(), property.getState(), division.getCode(), property.getGeom().toString()));
                 }
+            }
+        }
+        for(AbstractAgent h : entitiesCreator.getAgents()){
+            if(h instanceof Household){
+                householdMongoRepository.save(new HouseholdMongo(h.getId(), h.name(), ((Household) h).getCurrentPurchasingPower(), ((Household) h).getCurrentNetMonthlyIncome()));
             }
         }
     }
