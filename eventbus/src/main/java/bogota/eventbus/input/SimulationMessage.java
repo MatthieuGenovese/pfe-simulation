@@ -8,8 +8,6 @@ public class SimulationMessage {
     private int nbrPromoter;
     private int nbrInvestor;
 
-    private int id;
-
     public int getNbrHousehold() {
         return nbrHousehold;
     }
@@ -42,14 +40,6 @@ public class SimulationMessage {
         this.num = num;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
     @Override
     public String toString() {
         return "{" +
@@ -57,7 +47,6 @@ public class SimulationMessage {
                 ", \"nbrHousehold\":" + nbrHousehold +
                 ", \"nbrPromoter\":" + nbrPromoter +
                 ", \"nbrInvestor\":" + nbrInvestor +
-                ", \"id\":" + id +
                 '}';
     }
 }

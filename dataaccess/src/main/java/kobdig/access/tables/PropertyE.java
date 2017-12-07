@@ -57,4 +57,8 @@ public class PropertyE implements Serializable {
         this.codigo_upz = codigo_upz;
         this.geom = geom;
     }
+
+    public int getId() {
+        return id;
+    }
 }
