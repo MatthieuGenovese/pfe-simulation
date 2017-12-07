@@ -11,7 +11,9 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by Matthieu on 20/11/2017.
@@ -120,9 +122,10 @@ public class Investor extends AbstractAgentBuy implements IActionnable {
                 if (purchasable.getDivision() != null && !purchasable.isUpdated()) {
                     double equipUtility = 0.0;
                     double transportUtility = 0.0;
-                    equipUtility = entitiesCreator.equipmentRepository.findById(Integer.parseInt(purchasable.getLand().getId())).size();
 
-                    transportUtility = entitiesCreator.transportNetworkRepository.findById(Integer.parseInt(purchasable.getLand().getId())).size();
+                    equipUtility = entitiesCreator.equipmentRepository.findById(entitiesCreator.getListOfEquipment(), Integer.parseInt(purchasable.getLand().getId())).size();
+
+                    transportUtility = entitiesCreator.transportNetworkRepository.findById(entitiesCreator.getListOfTransport(), Integer.parseInt(purchasable.getLand().getId())).size();
 
                     purchasable.setUtility(0.4*(equipUtility/(double)entitiesCreator.getEquipmentsLength()) + 0.6*(transportUtility/(double)entitiesCreator.getNetworkLength()));
 //                    purchasable.setUtility(0.0*(equipUtility/(double)equipmentsLength) + 1.0*(transportUtility/(double)networkLength));

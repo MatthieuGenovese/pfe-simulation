@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.postgis.PGgeometry.geomFromString;
 
@@ -42,6 +43,9 @@ public class EntitiesCreator {
     private int nbrHousehold;
     private int nbrInvestor;
     private int nbrPromoter;
+
+    private List<Integer> listOfEquipment;
+    private List<Integer> listOfTransport;
 
     private int id;
 
@@ -99,6 +103,8 @@ public class EntitiesCreator {
         divisions = new AdministrativeDivision[200];
         idManager = new int[5];
         config.parseConfFile();
+        listOfEquipment = new ArrayList<>();
+        listOfTransport = new ArrayList<>();
 
     }
 
@@ -194,6 +200,22 @@ public class EntitiesCreator {
 
     public SimulationSettings getConfig(){
         return config;
+    }
+
+    public List<Integer> getListOfEquipment(){
+        return listOfEquipment;
+    }
+
+    public void setListOfEquipment(List<Integer> listOfEquipment) {
+        this.listOfEquipment = listOfEquipment;
+    }
+
+    public List<Integer> getListOfTransport() {
+        return listOfTransport;
+    }
+
+    public void setListOfTransport(java.util.List<Integer> listOfTransport) {
+        this.listOfTransport = listOfTransport;
     }
 
     public void createAgents() throws IOException {
@@ -310,7 +332,8 @@ public class EntitiesCreator {
     }
 
     private void createTransportNetwork() throws SQLException {
-        for (TransportNetworkE transportNetworkE : transportNetworkRepository.findById()) {
+
+        for (TransportNetworkE transportNetworkE : transportNetworkRepository.findById(listOfTransport)) {
             networkLength++;
             Geometry geo = PGgeometry.geomFromString(transportNetworkE.getGeom());
             PGgeometry geom = new PGgeometry(geo);
@@ -326,7 +349,7 @@ public class EntitiesCreator {
 
     private void createEquipments() throws SQLException {
 
-        for(EquipmentE equipmentE : equipmentRepository.findByCodigo_Upz()){
+        for(EquipmentE equipmentE : equipmentRepository.findByCodigo_Upz(listOfEquipment)){
             if(equipmentE.getGeom() != null) {
                 Geometry geo = PGgeometry.geomFromString(equipmentE.getGeom());
                 PGgeometry geom = new PGgeometry(geo);

@@ -1,5 +1,8 @@
 package bogota.eventbus.input;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SimulationMessage {
 
     private int num;
@@ -7,6 +10,9 @@ public class SimulationMessage {
     private int nbrHousehold;
     private int nbrPromoter;
     private int nbrInvestor;
+
+    private List<Integer> listOfEquipment = new ArrayList<>();
+    private List<Integer> listOfTransport = new ArrayList<>();
 
     public int getNbrHousehold() {
         return nbrHousehold;
@@ -38,6 +44,22 @@ public class SimulationMessage {
 
     public void setNum(int num) {
         this.num = num;
+    }
+
+    public List<Integer> getListOfEquipment(){
+        return listOfEquipment;
+    }
+
+    public void setListOfEquipment(List<Integer> listOfEquipment) {
+        this.listOfEquipment = listOfEquipment;
+    }
+
+    public List<Integer> getListOfTransport() {
+        return listOfTransport;
+    }
+
+    public void setListOfTransport(java.util.List<Integer> listOfTransport) {
+        this.listOfTransport = listOfTransport;
     }
 
     @Override

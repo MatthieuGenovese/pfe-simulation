@@ -53,6 +53,8 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
                 entitiesCreator.setNbrPromoter(message.getNbrPromoter());
                 entitiesCreator.setNbrHousehold(message.getNbrHousehold());
                 entitiesCreator.setId(idSimulation);
+                entitiesCreator.setListOfEquipment(message.getListOfEquipment());
+                entitiesCreator.setListOfTransport(message.getListOfTransport());
                 entitiesCreator.createAll();
                 simulation.start();
 
@@ -77,6 +79,8 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
                     entitiesCreator.setNbrPromoter(simulationMessage.getNbrPromoter());
                     entitiesCreator.setNbrHousehold(simulationMessage.getNbrHousehold());
                     entitiesCreator.setId(idSimulationBis);
+                    entitiesCreator.setListOfEquipment(simulationMessage.getListOfEquipment());
+                    entitiesCreator.setListOfTransport(simulationMessage.getListOfTransport());
                     entitiesCreator.createAll();
                     simulation.start();
 
