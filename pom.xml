@@ -29,6 +29,7 @@
         <module>eventbus</module>
         <module>simulator</module>
         <module>dataaccess</module>
+        <module>interface</module>
     </modules>
 
     <properties>
