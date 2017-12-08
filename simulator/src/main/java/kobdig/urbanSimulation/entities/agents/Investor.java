@@ -30,6 +30,9 @@ public class Investor extends AbstractAgentBuy implements IActionnable {
     private double currentRent;
     private boolean owner;
 
+    public Household getHousehold() {
+        return household;
+    }
     // CONSTRUCTOR
 
     /**

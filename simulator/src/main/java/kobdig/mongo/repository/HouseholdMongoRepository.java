@@ -1,6 +1,6 @@
-package kobdig.acces.mongo.repository;
+package kobdig.mongo.repository;
 
-import kobdig.acces.mongo.collections.HouseholdMongo;
+import kobdig.mongo.collections.HouseholdMongo;
 import org.springframework.data.mongodb.repository.MongoRepository;
 /**
  * Created by Matthieu on 07/12/2017.

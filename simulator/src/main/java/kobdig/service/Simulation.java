@@ -1,9 +1,7 @@
 package kobdig.service;
 
-import kobdig.acces.mongo.collections.HouseholdMongo;
-import kobdig.acces.mongo.repository.HouseholdMongoRepository;
-import kobdig.acces.mongo.repository.PropertyMongoRepository;
-import kobdig.acces.mongo.collections.PropertyMongo;
+import kobdig.mongo.collections.*;
+import kobdig.mongo.repository.*;
 import kobdig.agent.Agent;
 import kobdig.access.sql.repository.IndicatorOneRepository;
 import kobdig.access.sql.repository.IndicatorTwoRepository;
@@ -15,6 +13,7 @@ import kobdig.urbanSimulation.EntitiesCreator;
 import kobdig.urbanSimulation.entities.agents.AbstractAgent;
 import kobdig.urbanSimulation.entities.agents.Household;
 import kobdig.urbanSimulation.entities.agents.Investor;
+import kobdig.urbanSimulation.entities.agents.Promoter;
 import kobdig.urbanSimulation.entities.environement.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -47,6 +46,15 @@ public class Simulation {
 
     @Autowired
     IndicatorTwoRepository indicatorTwoRepository;
+
+    @Autowired
+    InvestorMongoRepository investorMongoRepository;
+
+    @Autowired
+    PromoterMongoRepository promoterMongoRepository;
+
+    @Autowired
+    LandMongoRepository landMongoRepository;
 
     @Autowired
     PropertyMongoRepository propertyMongoRepository;
@@ -108,15 +116,24 @@ public class Simulation {
         for (AdministrativeDivision division : entitiesCreator.getDivisions()) {
             if (division != null) {
                 for (Property property : division.getProperties()) {
-                    propertyMongoRepository.save(new PropertyMongo(builder.getId(), time, Integer.parseInt(property.getId()), property.getCurrentPrice(), property.getCurrentCapitalizedRent(), property.getCurrentValue(), property.getState(), division.getCode(), property.getGeom().toString()));
+                    propertyMongoRepository.save(new PropertyMongo(builder.getId(), time, property));
                     propertyRepository.save(new PropertyE(builder.getId(), time, Integer.parseInt(property.getId()), property.getCurrentPrice(), property.getCurrentCapitalizedRent(), property.getCurrentValue(), property.getState(), division.getCode(), property.getGeom().toString()));
+                }
+                for(Land l : division.getLands()){
+                    landMongoRepository.save(new LandMongo(builder.getId(), time, l));
                 }
             }
         }
         for(AbstractAgent h : entitiesCreator.getAgents()){
             if(h instanceof Household){
-                householdMongoRepository.save(new HouseholdMongo(h.getId(), h.name(), ((Household) h).getCurrentPurchasingPower(), ((Household) h).getCurrentNetMonthlyIncome()));
+                householdMongoRepository.save(new HouseholdMongo(builder.getId(), time,(Household) h));
             }
+            else if(h instanceof Promoter){
+                promoterMongoRepository.save(new PromoterMongo(builder.getId(), time, (Promoter) h));
+            }
+        }
+        for(Investor i : entitiesCreator.getInvestors()){
+            investorMongoRepository.save(new InvestorMongo(builder.getId(), time, i));
         }
     }
 
