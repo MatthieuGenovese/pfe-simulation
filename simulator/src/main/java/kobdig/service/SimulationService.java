@@ -43,17 +43,20 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
                         (EventRessource<SimulationMessage>) eventRessourceEvent.getData();
 
                 SimulationMessage message = messageRessource.getValue();
-                sauvegardeRepository.save(new Sauvegarde(message.getNum(), message.getNbrHousehold(), message.getNbrPromoter(), message.getNbrInvestor(), idSimulation));
 
-                entitiesCreator.setNumSim(message.getNum());
-                entitiesCreator.setNbrInvestor(message.getNbrInvestor());
-                entitiesCreator.setNbrPromoter(message.getNbrPromoter());
-                entitiesCreator.setNbrHousehold(message.getNbrHousehold());
-                entitiesCreator.setId(idSimulation);
-                entitiesCreator.setListOfEquipment(message.getListOfEquipment());
-                entitiesCreator.setListOfTransport(message.getListOfTransport());
-                entitiesCreator.createAll();
-                simulation.start();
+                if(!simulation.isRunning()) {
+                    sauvegardeRepository.save(new Sauvegarde(message.getNum(), message.getNbrHousehold(), message.getNbrPromoter(), message.getNbrInvestor(), idSimulation));
+
+                    entitiesCreator.setNumSim(message.getNum());
+                    entitiesCreator.setNbrInvestor(message.getNbrInvestor());
+                    entitiesCreator.setNbrPromoter(message.getNbrPromoter());
+                    entitiesCreator.setNbrHousehold(message.getNbrHousehold());
+                    entitiesCreator.setId(idSimulation);
+                    entitiesCreator.setListOfEquipment(message.getListOfEquipment());
+                    entitiesCreator.setListOfTransport(message.getListOfTransport());
+                    entitiesCreator.createAll();
+                    simulation.start();
+                }
 
                 break;
             case EventTypes.TabStateSimulatorMessage:
