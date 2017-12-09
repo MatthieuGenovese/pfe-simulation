@@ -478,6 +478,7 @@ public class Agent
      * @param trust the degree to which the source of the incoming fact
      *              is trusted
      */
+
     public void updateBeliefs(Fact fact, TruthDegree trust)
     {
         // First of all, compute the degree to which the incoming

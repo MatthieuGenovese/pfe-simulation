@@ -123,4 +123,9 @@ public class PossibilisticFactBase extends FactBase
             tell(fact, t);
         }
     }
+
+    @Override
+    public String toString(){
+        return super.toString();
+    }
 }

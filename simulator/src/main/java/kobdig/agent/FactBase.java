@@ -85,5 +85,10 @@ public class FactBase extends FactSet
             if(t.isFalse()) break;
         }
         return t;
-    }    
+    }
+
+    @Override
+    public String toString(){
+        return super.toString();
+    }
 }

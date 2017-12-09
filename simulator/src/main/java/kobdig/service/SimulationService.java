@@ -8,9 +8,16 @@ import kobdig.access.sql.repository.PropertyRepository;
 import kobdig.access.sql.repository.SauvegardeRepository;
 import kobdig.access.sql.tables.PropertyE;
 import kobdig.access.sql.tables.Sauvegarde;
+import kobdig.mongo.collections.ConfigurationMongo;
+import kobdig.mongo.repository.ConfigurationMongoRepository;
 import kobdig.urbanSimulation.EntitiesCreator;
+import kobdig.urbanSimulation.entities.agents.AbstractAgent;
+import kobdig.urbanSimulation.entities.agents.Household;
+import kobdig.urbanSimulation.entities.agents.Investor;
+import kobdig.urbanSimulation.entities.agents.Promoter;
 import kobdig.urbanSimulation.utils.SimulationLogging;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 import reactor.bus.Event;
 import reactor.fn.Consumer;
@@ -35,6 +42,9 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
     @Autowired
     PropertyRepository propertyRepository;
 
+    @Autowired
+    ConfigurationMongoRepository configurationMongoRepository;
+
     private SimulationLogging log = new SimulationLogging();
 
     @Override
@@ -52,7 +62,6 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
                 SimulationMessage message = messageRessource.getValue();
 
                 if(!simulation.isRunning()) {
-                    sauvegardeRepository.save(new Sauvegarde(message.getNum(), message.getNbrHousehold(), message.getNbrPromoter(), message.getNbrInvestor(), idSimulation));
 
                     entitiesCreator.setNumSim(message.getNum());
                     entitiesCreator.setNbrInvestor(message.getNbrInvestor());
@@ -65,11 +74,32 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
                     entitiesCreator.setFileInvestor(message.getFileInvestor());
                     entitiesCreator.setFilePromoter(message.getFilePromoter());
                     entitiesCreator.createAll();
+                    Household h = null;
+                    Promoter p = null;
+                    Investor i = null;
+                    for(AbstractAgent a : entitiesCreator.getAgents()){
+                        if(p != null && h != null){
+                            break;
+                        }
+                        if(a instanceof  Household){
+                            h = (Household) a;
+                        }
+                        else if(a instanceof Promoter){
+                            p = (Promoter) a;
+                        }
+                    }
+                    try {
+                        i = entitiesCreator.getInvestors().get(0);
+                    }
+                    catch(IndexOutOfBoundsException e){
+                        e.printStackTrace();
+                    }
                     simulation.start();
 
                     log.writeData("------------------------------------------------------------------");
                     Date time = new Date();
                     DateFormat shortDateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+                    configurationMongoRepository.save(new ConfigurationMongo(time, message.getNum(), message.getNbrHousehold(), message.getNbrPromoter(), message.getNbrInvestor(), idSimulation, h, i, p));
                     log.writeData(("SIMULATION DU " + shortDateFormat.format(time)));
                     log.writeData("simulation numéro " + idSimulation);
                     log.writeData("household " + message.getNbrHousehold());

@@ -117,7 +117,6 @@ public class Simulation {
             if (division != null) {
                 for (Property property : division.getProperties()) {
                     propertyMongoRepository.save(new PropertyMongo(builder.getId(), time, property));
-                    propertyRepository.save(new PropertyE(builder.getId(), time, Integer.parseInt(property.getId()), property.getCurrentPrice(), property.getCurrentCapitalizedRent(), property.getCurrentValue(), property.getState(), division.getCode(), property.getGeom().toString()));
                 }
                 for(Land l : division.getLands()){
                     landMongoRepository.save(new LandMongo(builder.getId(), time, l));

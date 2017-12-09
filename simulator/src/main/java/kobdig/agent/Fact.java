@@ -81,4 +81,5 @@ public class Fact
     {
         return new Fact(formula.negated());
     }
+
 }
