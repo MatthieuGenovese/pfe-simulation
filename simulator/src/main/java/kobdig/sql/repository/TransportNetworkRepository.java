@@ -1,6 +1,6 @@
-package kobdig.access.sql.repository;
+package kobdig.sql.repository;
 
-import kobdig.access.sql.tables.TransportNetworkE;
+import kobdig.sql.tables.TransportNetworkE;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;

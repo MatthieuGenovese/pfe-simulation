@@ -4,10 +4,10 @@ import bogota.eventbus.EventRessource;
 import bogota.eventbus.EventTypes;
 import bogota.eventbus.input.SimulationMessage;
 import bogota.eventbus.input.TabSimulationMessage;
-import kobdig.access.sql.repository.PropertyRepository;
-import kobdig.access.sql.repository.SauvegardeRepository;
-import kobdig.access.sql.tables.PropertyE;
-import kobdig.access.sql.tables.Sauvegarde;
+import kobdig.sql.repository.PropertyRepository;
+import kobdig.sql.repository.SauvegardeRepository;
+import kobdig.sql.tables.PropertyE;
+import kobdig.sql.tables.Sauvegarde;
 import kobdig.mongo.collections.ConfigurationMongo;
 import kobdig.mongo.repository.ConfigurationMongoRepository;
 import kobdig.urbanSimulation.EntitiesCreator;
@@ -23,11 +23,11 @@ import reactor.bus.Event;
 import reactor.fn.Consumer;
 
 import java.text.DateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 
 @Service
+@ComponentScan()
 public class SimulationService implements Consumer<Event<EventRessource>> {
 
     @Autowired

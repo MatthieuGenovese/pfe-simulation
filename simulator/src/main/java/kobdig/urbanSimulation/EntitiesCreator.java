@@ -1,13 +1,12 @@
 package kobdig.urbanSimulation;
 
-import kobdig.access.sql.repository.*;
-import kobdig.access.sql.tables.*;
+import kobdig.sql.repository.*;
+import kobdig.sql.tables.*;
 import kobdig.urbanSimulation.entities.agents.AbstractAgent;
 import kobdig.urbanSimulation.entities.agents.Household;
 import kobdig.urbanSimulation.entities.agents.Investor;
 import kobdig.urbanSimulation.entities.agents.Promoter;
 import kobdig.urbanSimulation.entities.environement.*;
-import kobdig.urbanSimulation.utils.SimulationSettings;
 import org.postgis.Geometry;
 import org.postgis.PGgeometry;
 import org.springframework.beans.factory.annotation.Autowired;

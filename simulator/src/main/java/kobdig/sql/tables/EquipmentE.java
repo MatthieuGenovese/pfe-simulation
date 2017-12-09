@@ -1,4 +1,4 @@
-package kobdig.access.sql.tables;
+package kobdig.sql.tables;
 
 
 import javax.persistence.*;

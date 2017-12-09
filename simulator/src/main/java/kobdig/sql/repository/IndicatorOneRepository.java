@@ -1,6 +1,6 @@
-package kobdig.access.sql.repository;
+package kobdig.sql.repository;
 
-import kobdig.access.sql.tables.IndicatorOne;
+import kobdig.sql.tables.IndicatorOne;
 import org.springframework.data.repository.CrudRepository;
 
 public interface IndicatorOneRepository extends CrudRepository<IndicatorOne, Integer> {

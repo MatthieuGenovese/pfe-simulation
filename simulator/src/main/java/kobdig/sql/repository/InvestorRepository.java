@@ -1,6 +1,6 @@
-package kobdig.access.sql.repository;
+package kobdig.sql.repository;
 
-import kobdig.access.sql.tables.InvestorE;
+import kobdig.sql.tables.InvestorE;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;

@@ -1,12 +1,11 @@
-package kobdig.access.sql.tables;
-
+package kobdig.sql.tables;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "promoters")
-public class PromoterE implements Serializable {
+@Table(name = "investors")
+public class InvestorE implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -16,11 +15,11 @@ public class PromoterE implements Serializable {
     @Column(name = "purchasingpower")
     private int purchasingpower;
 
-    public PromoterE(){
+    public InvestorE(){
 
     }
 
-    public PromoterE(int purchasingpower){
+    public InvestorE(int purchasingpower){
         this.purchasingpower = purchasingpower;
     }
 
