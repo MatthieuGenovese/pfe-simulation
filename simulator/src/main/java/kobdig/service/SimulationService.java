@@ -54,6 +54,9 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
                     entitiesCreator.setId(idSimulation);
                     entitiesCreator.setListOfEquipment(message.getListOfEquipment());
                     entitiesCreator.setListOfTransport(message.getListOfTransport());
+                    entitiesCreator.setFileHousehold(message.getFileHousehold());
+                    entitiesCreator.setFileInvestor(message.getFileInvestor());
+                    entitiesCreator.setFilePromoter(message.getFilePromoter());
                     entitiesCreator.createAll();
                     simulation.start();
                 }
@@ -81,6 +84,9 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
                     entitiesCreator.setId(idSimulationBis);
                     entitiesCreator.setListOfEquipment(simulationMessage.getListOfEquipment());
                     entitiesCreator.setListOfTransport(simulationMessage.getListOfTransport());
+                    entitiesCreator.setFileHousehold(simulationMessage.getFileHousehold());
+                    entitiesCreator.setFileInvestor(simulationMessage.getFileInvestor());
+                    entitiesCreator.setFilePromoter(simulationMessage.getFilePromoter());
                     entitiesCreator.createAll();
                     simulation.start();
 

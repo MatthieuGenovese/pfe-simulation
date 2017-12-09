@@ -32,7 +32,7 @@ public class EntitiesCreator {
     private AdministrativeDivision[] divisions;
     private ArrayList<Property> freeProperties;
     private ArrayList<Property> forRentProperties;
-    private SimulationSettings config;
+    //private SimulationSettings config;
     private ArrayList<AbstractAgent> agents;
     private int numSim, networkLength, equipmentsLength;
     private int[] idManager;
@@ -43,6 +43,10 @@ public class EntitiesCreator {
     private int nbrHousehold;
     private int nbrInvestor;
     private int nbrPromoter;
+
+    private String fileHousehold;
+    private String fileInvestor;
+    private String filePromoter;
 
     private List<Integer> listOfEquipment;
     private List<Integer> listOfTransport;
@@ -94,7 +98,7 @@ public class EntitiesCreator {
     }
 
     private EntitiesCreator(){
-        config = new SimulationSettings();
+        //config = new SimulationSettings();
         freeProperties = new ArrayList<>();
         forRentProperties = new ArrayList<>();
         investors = new ArrayList<>();
@@ -102,7 +106,7 @@ public class EntitiesCreator {
         agents = new ArrayList<>();
         divisions = new AdministrativeDivision[200];
         idManager = new int[5];
-        config.parseConfFile();
+        //config.parseConfFile();
         listOfEquipment = new ArrayList<>();
         listOfTransport = new ArrayList<>();
 
@@ -198,9 +202,9 @@ public class EntitiesCreator {
         this.time = time;
     }
 
-    public SimulationSettings getConfig(){
-        return config;
-    }
+    //public SimulationSettings getConfig(){
+      //  return config;
+    //}
 
     public List<Integer> getListOfEquipment(){
         return listOfEquipment;
@@ -218,7 +222,19 @@ public class EntitiesCreator {
         this.listOfTransport = listOfTransport;
     }
 
-    public void createAgents() throws IOException {
+    public void setFileHousehold(String fileHousehold) {
+        this.fileHousehold = fileHousehold;
+    }
+
+    public void setFileInvestor(String fileInvestor) {
+        this.fileInvestor = fileInvestor;
+    }
+
+    public void setFilePromoter(String filePromoter) {
+        this.filePromoter = filePromoter;
+    }
+
+    /*public void createAgents() throws IOException {
         if(config.getMode() == 0){
             householdAgentFile = new File(config.getPath() + "/householdAgent.apl");
             investorAgentFile = new File(config.getPath()+ "/investorAgent.apl");
@@ -229,6 +245,14 @@ public class EntitiesCreator {
             investorAgentFile = new File(config.getPath()+ "/investorAgent"+String.valueOf(config.getActualIteration()+1)+".apl");
             promoterAgentFile = new File(config.getPath()+ "/promoterAgent"+String.valueOf(config.getActualIteration()+1)+".apl");
         }
+    }*/
+
+    public void createAgents(){
+        String pwd = new File("").getAbsolutePath();
+        pwd = pwd + "/docs/";
+        householdAgentFile = new File(pwd + fileHousehold);
+        investorAgentFile = new File(pwd+fileInvestor);
+        promoterAgentFile = new File(pwd+filePromoter);
     }
 
     public void reset(){

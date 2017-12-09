@@ -199,7 +199,7 @@ public class Simulation {
     }
 
     public void simulate() throws IOException {
-        iterations = builder.getConfig().getIterations();
+        /*iterations = builder.getConfig().getIterations();
         if(iterations > actualIteration+1 && builder.getTime() > builder.getNumSim()){
             builder.setTime(0);
             actualIteration++;
@@ -207,7 +207,7 @@ public class Simulation {
             builder.getConfig().setActualIteration(actualIteration);
             builder.createAll();
             System.out.println("Iteration numéro : " + String.valueOf(actualIteration+1)+"\nUtilisation du fichier " + builder.getHouseholdAgentFile().getName());
-        }
+        }*/
         if (builder.getTime() == 0) {
 
             try {

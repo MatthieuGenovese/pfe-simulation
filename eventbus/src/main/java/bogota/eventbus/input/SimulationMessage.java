@@ -14,6 +14,10 @@ public class SimulationMessage {
     private List<Integer> listOfEquipment = new ArrayList<>();
     private List<Integer> listOfTransport = new ArrayList<>();
 
+    private String fileHousehold;
+    private String fileInvestor;
+    private String filePromoter;
+
     public int getNbrHousehold() {
         return nbrHousehold;
     }
@@ -60,6 +64,18 @@ public class SimulationMessage {
 
     public void setListOfTransport(java.util.List<Integer> listOfTransport) {
         this.listOfTransport = listOfTransport;
+    }
+
+    public String getFileHousehold() {
+        return fileHousehold;
+    }
+
+    public String getFileInvestor() {
+        return fileInvestor;
+    }
+
+    public String getFilePromoter() {
+        return filePromoter;
     }
 
     @Override
