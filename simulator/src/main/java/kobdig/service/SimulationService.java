@@ -9,10 +9,15 @@ import kobdig.access.sql.repository.SauvegardeRepository;
 import kobdig.access.sql.tables.PropertyE;
 import kobdig.access.sql.tables.Sauvegarde;
 import kobdig.urbanSimulation.EntitiesCreator;
+import kobdig.urbanSimulation.utils.SimulationLogging;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.bus.Event;
 import reactor.fn.Consumer;
+
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 
 @Service
@@ -29,6 +34,8 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
 
     @Autowired
     PropertyRepository propertyRepository;
+
+    private SimulationLogging log = new SimulationLogging();
 
     @Override
     public void accept(Event<EventRessource> eventRessourceEvent) {
@@ -59,6 +66,24 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
                     entitiesCreator.setFilePromoter(message.getFilePromoter());
                     entitiesCreator.createAll();
                     simulation.start();
+
+                    log.writeData("------------------------------------------------------------------");
+                    Date time = new Date();
+                    DateFormat shortDateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+                    log.writeData(("SIMULATION DU " + shortDateFormat.format(time)));
+                    log.writeData("simulation numéro " + message.getNum());
+                    log.writeData("household " + message.getNbrHousehold());
+                    log.writeData("investors " + message.getNbrInvestor() );
+                    log.writeData("promoters " + message.getNbrPromoter());
+                    log.writeData("CONTENU DU FICHIER HOUSEHOLD");
+                    log.writeFileInput( message.getFileHousehold());
+                    log.writeData("CONTENU DU FICHIER INVESTOR");
+                    log.writeFileInput(message.getFileInvestor());
+                    log.writeData("CONTENU DU FICHIER PROMOTER");
+                    log.writeFileInput(message.getFilePromoter());
+                    log.writeList("équipements utilisées ",message.getListOfEquipment());
+                    log.writeList("transports utilisés ", message.getListOfTransport());
+                    log.writeData("------------------------------------------------------------------");
                 }
 
                 break;

@@ -175,7 +175,6 @@ public class Simulation {
                         e.printStackTrace();
                     }
                     builder.setTime(builder.getTime()+1);
-
                 }
             }
         };
