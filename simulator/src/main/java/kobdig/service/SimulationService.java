@@ -71,7 +71,7 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
                     Date time = new Date();
                     DateFormat shortDateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
                     log.writeData(("SIMULATION DU " + shortDateFormat.format(time)));
-                    log.writeData("simulation numéro " + message.getNum());
+                    log.writeData("simulation numéro " + idSimulation);
                     log.writeData("household " + message.getNbrHousehold());
                     log.writeData("investors " + message.getNbrInvestor() );
                     log.writeData("promoters " + message.getNbrPromoter());
