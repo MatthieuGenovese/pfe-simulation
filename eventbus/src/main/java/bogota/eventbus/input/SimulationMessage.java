@@ -70,6 +70,18 @@ public class SimulationMessage {
         return fileHousehold;
     }
 
+    public void setFileHousehold(String fileHousehold) {
+        this.fileHousehold = fileHousehold;
+    }
+
+    public void setFileInvestor(String fileInvestor) {
+        this.fileInvestor = fileInvestor;
+    }
+
+    public void setFilePromoter(String filePromoter) {
+        this.filePromoter = filePromoter;
+    }
+
     public String getFileInvestor() {
         return fileInvestor;
     }
@@ -85,6 +97,11 @@ public class SimulationMessage {
                 ", \"nbrHousehold\":" + nbrHousehold +
                 ", \"nbrPromoter\":" + nbrPromoter +
                 ", \"nbrInvestor\":" + nbrInvestor +
+                ", \"listOfEquipment\":" + listOfEquipment +
+                ", \"listOfTransport\":" + listOfTransport +
+                ", \"fileHousehold\":" + fileHousehold +
+                ", \"fileInvestor\":" + fileInvestor +
+                ", \"filePromoter\":" + filePromoter +
                 '}';
     }
 }

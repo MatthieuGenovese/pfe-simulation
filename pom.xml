@@ -28,6 +28,7 @@
     <modules>
         <module>eventbus</module>
         <module>simulator</module>
+        <module>blop</module>
     </modules>
 
     <properties>
