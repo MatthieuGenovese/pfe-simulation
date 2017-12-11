@@ -39,9 +39,6 @@ public class Simulation {
     EntitiesCreator builder;
 
     @Autowired
-    PropertyRepository propertyRepository;
-
-    @Autowired
     IndicatorOneRepository indicatorOneRepository;
 
     @Autowired
@@ -62,13 +59,8 @@ public class Simulation {
     @Autowired
     HouseholdMongoRepository householdMongoRepository;
 
-    @Autowired
-    ConfigurationMongoRepository configurationMongoRepository;
-
     /** Execution delay in milliseconds */
     private volatile int executionDelay = 10;
-
-    private DataExtractor extractor = new DataExtractor();
 
     /** Animation thread. */
     private Thread thread;
@@ -139,11 +131,6 @@ public class Simulation {
         for(Investor i : entitiesCreator.getInvestors()){
             investorMongoRepository.save(new InvestorMongo(builder.getId(), time, i));
         }
-        extractor.findHouseholdsBySimulationId(householdMongoRepository, builder.getId());
-        extractor.findInvestorsBySimulationId(investorMongoRepository, builder.getId());
-        extractor.findLandsBySimulationId(landMongoRepository, builder.getId());
-        extractor.findPromotersBySimulationId(promoterMongoRepository, builder.getId());
-        extractor.findPropertiesBySimulationId(propertyMongoRepository, builder.getId());
     }
 
     public synchronized void start() {

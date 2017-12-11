@@ -2,6 +2,7 @@ package kobdig.controller;
 
 import bogota.eventbus.EventRessource;
 import bogota.eventbus.EventTypes;
+import bogota.eventbus.input.ExtractDataMessage;
 import bogota.eventbus.input.SimulationMessage;
 import bogota.eventbus.input.StopSimulationMessage;
 import bogota.eventbus.input.TabSimulationMessage;
@@ -155,6 +156,13 @@ public class WebController {
 
         System.out.println("Send message to simulator");
         eventBus.notify(EventTypes.StateSimulatorMessage, Event.wrap(stateEventRessource));
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/extract")
+    public ResponseEntity<Void> extractData(@RequestBody EventRessource<ExtractDataMessage> extractDataMessageEventRessource){
+        System.out.println("Send message to simulator");
+        eventBus.notify(EventTypes.ExtractDataMessage, Event.wrap(extractDataMessageEventRessource));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

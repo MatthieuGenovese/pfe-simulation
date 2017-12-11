@@ -2,6 +2,7 @@ package kobdig;
 
 import bogota.eventbus.EventRessource;
 import bogota.eventbus.EventTypes;
+import kobdig.service.DataService;
 import kobdig.urbanSimulation.EntitiesCreator;
 import kobdig.service.SimulationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,9 @@ public class Launcher implements CommandLineRunner {
     @Autowired
     public SimulationService simulation;
 
+    @Autowired
+    public DataService dataService;
+
     @Bean
     Environment env() {
         return Environment.initializeIfEmpty()
@@ -61,5 +65,6 @@ public class Launcher implements CommandLineRunner {
         subscribe(EventTypes.StateSimulatorMessage, simulation);
         subscribe(EventTypes.StopSimulatorMessage, simulation);
         subscribe(EventTypes.TabStateSimulatorMessage, simulation);
+        subscribe(EventTypes.ExtractDataMessage, dataService);
     }
 }

@@ -47,7 +47,6 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
     ConfigurationMongoRepository configurationMongoRepository;
 
     private SimulationLogging log = new SimulationLogging();
-    private DataExtractor extractor = new DataExtractor();
 
     @Override
     public void accept(Event<EventRessource> eventRessourceEvent) {
