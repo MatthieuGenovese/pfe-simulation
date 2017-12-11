@@ -21,6 +21,48 @@ public class InvestorMongo {
     private double purchasingpower;
     private double monthlyIncome;
 
+    private double investDegree;
+
+    private double speculate;
+
+    private double currentrent;
+
+    public String getId() {
+        return id;
+    }
+
+    public int getStep() {
+        return step;
+    }
+
+    public String getHouseholdId() {
+        return householdId;
+    }
+
+    public int getIdSimulation() {
+        return idSimulation;
+    }
+
+    public double getPurchasingpower() {
+        return purchasingpower;
+    }
+
+    public double getMonthlyIncome() {
+        return monthlyIncome;
+    }
+
+    public double getInvestDegree() {
+        return investDegree;
+    }
+
+    public double getSpeculate() {
+        return speculate;
+    }
+
+    public double getCurrentrent() {
+        return currentrent;
+    }
+
     public InvestorMongo(){
 
     }
@@ -31,6 +73,9 @@ public class InvestorMongo {
         this.id = i.getId();
         this.purchasingpower = i.getCurrentPurchasingPower();
         this.monthlyIncome = i.getCurrentNetMonthlyIncome();
+        this.speculate = i.getSpeculate();
+        this.currentrent = i.getCurrentRent();
+        this.investDegree = i .getInvestDegree();
         try {
             this.householdId = i.getHousehold().getId();
         }

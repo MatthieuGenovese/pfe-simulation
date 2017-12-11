@@ -22,7 +22,6 @@ public class Property extends AbstractEnvironment implements IActionnable {
     private double currentPotentialRent;
     private double currentValue;
     private double previousPrice;
-
     private double previousCapitalizedRent;
     private double previousPotentialRent;
     private double previousValue;
@@ -39,6 +38,23 @@ public class Property extends AbstractEnvironment implements IActionnable {
         this.previousPotentialRent = rent;
         this.previousValue = value;
         this.land = land;
+    }
+
+
+    public double getPreviousPrice() {
+        return previousPrice;
+    }
+
+    public double getPreviousCapitalizedRent() {
+        return previousCapitalizedRent;
+    }
+
+    public double getPreviousPotentialRent() {
+        return previousPotentialRent;
+    }
+
+    public double getPreviousValue() {
+        return previousValue;
     }
 
     public String getState() {

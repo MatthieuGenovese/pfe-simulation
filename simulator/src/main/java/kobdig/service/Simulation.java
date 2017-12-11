@@ -1,5 +1,6 @@
 package kobdig.service;
 
+import kobdig.mongo.access.DataExtractor;
 import kobdig.mongo.collections.*;
 import kobdig.mongo.repository.*;
 import kobdig.agent.Agent;
@@ -63,6 +64,8 @@ public class Simulation {
 
     /** Execution delay in milliseconds */
     private volatile int executionDelay = 10;
+
+    private DataExtractor extractor = new DataExtractor();
 
     /** Animation thread. */
     private Thread thread;
@@ -133,6 +136,11 @@ public class Simulation {
         for(Investor i : entitiesCreator.getInvestors()){
             investorMongoRepository.save(new InvestorMongo(builder.getId(), time, i));
         }
+        extractor.findHouseholdsBySimulationId(householdMongoRepository, 70437);
+        extractor.findInvestorsBySimulationId(investorMongoRepository, 70437);
+        extractor.findLandsBySimulationId(landMongoRepository, 70437);
+        extractor.findPromotersBySimulationId(promoterMongoRepository, 70437);
+        extractor.findPropertiesBySimulationId(propertyMongoRepository, 70437);
     }
 
     public synchronized void start() {

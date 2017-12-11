@@ -17,26 +17,40 @@ public class LandMongo {
 
     private int idSimulation;
 
-    private double latitude;
-    private double longitude;
-
     private double price;
-    private String geom;
 
-    private int codigo_upz;
+    private double utility;
 
     public LandMongo() {
 
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public int getStep() {
+        return step;
+    }
+
+    public int getIdSimulation() {
+        return idSimulation;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public double getUtility() {
+        return utility;
+    }
+
     public LandMongo(int idSimulation, int step, Land l) {
         this.idSimulation = idSimulation;
-        this.latitude = l.getLatitude();
+        this.utility = l.getUtility();
+
         this.step = step;
-        this.longitude = l.getLongitude();
         this.price = l.getPrice();
-        this.geom = l.getGeom().toString();
-        this.codigo_upz = l.getDivision().getCode();
     }
 
 

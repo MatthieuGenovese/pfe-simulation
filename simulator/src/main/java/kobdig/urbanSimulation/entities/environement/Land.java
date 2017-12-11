@@ -23,7 +23,6 @@ public class Land extends AbstractEnvironment implements IActionnable{
         this.price = price;
     }
 
-
     public void step(int time) {
             price = (price - Math.exp(time) < 0) ? 0.0 : price - Math.exp(time);
         }

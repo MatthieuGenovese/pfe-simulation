@@ -18,19 +18,43 @@ public class PropertyMongo  {
 
     private double price;
 
-    private double rent;
+    private double capitalizedRent;
 
     private double value;
 
     private String state;
 
-    private int codigo_upz;
-
-    private String geom;
-
 
     public PropertyMongo(){
 
+    }
+
+    public int getIdSimulation() {
+        return idSimulation;
+    }
+
+    public int getStep() {
+        return step;
+    }
+
+    public String getIdProperty() {
+        return idProperty;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public double getCapitalizedRent() {
+        return capitalizedRent;
+    }
+
+    public double getValue() {
+        return value;
+    }
+
+    public String getState() {
+        return state;
     }
 
     public PropertyMongo(int idSimulation, int step, Property p){
@@ -38,10 +62,9 @@ public class PropertyMongo  {
         this.step = step;
         this.idProperty = p.getId();
         this.price = p.getCurrentPrice();
-        this.rent = p.getCurrentCapitalizedRent();
+
+        this.capitalizedRent = p.getCurrentCapitalizedRent();
         this.value = p.getCurrentValue();
         this.state = p.getState();
-        this.codigo_upz = p.getDivision().getCode();
-        this.geom = p.getGeom().toString();
     }
 }

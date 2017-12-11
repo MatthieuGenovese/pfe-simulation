@@ -4,6 +4,7 @@ import bogota.eventbus.EventRessource;
 import bogota.eventbus.EventTypes;
 import bogota.eventbus.input.SimulationMessage;
 import bogota.eventbus.input.TabSimulationMessage;
+import kobdig.mongo.access.DataExtractor;
 import kobdig.sql.repository.PropertyRepository;
 import kobdig.sql.repository.SauvegardeRepository;
 import kobdig.sql.tables.PropertyE;
@@ -46,6 +47,7 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
     ConfigurationMongoRepository configurationMongoRepository;
 
     private SimulationLogging log = new SimulationLogging();
+    private DataExtractor extractor = new DataExtractor();
 
     @Override
     public void accept(Event<EventRessource> eventRessourceEvent) {
@@ -98,7 +100,7 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
 
                     log.writeData("------------------------------------------------------------------");
                     Date time = new Date();
-                    DateFormat shortDateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+                    DateFormat shortDateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.YEAR_FIELD);
                     configurationMongoRepository.save(new ConfigurationMongo(time, message.getNum(), message.getNbrHousehold(), message.getNbrPromoter(), message.getNbrInvestor(), idSimulation, h, i, p));
                     log.writeData(("SIMULATION DU " + shortDateFormat.format(time)));
                     log.writeData("simulation numéro " + idSimulation);
