@@ -62,6 +62,9 @@ public class Simulation {
     @Autowired
     HouseholdMongoRepository householdMongoRepository;
 
+    @Autowired
+    ConfigurationMongoRepository configurationMongoRepository;
+
     /** Execution delay in milliseconds */
     private volatile int executionDelay = 10;
 
@@ -136,11 +139,11 @@ public class Simulation {
         for(Investor i : entitiesCreator.getInvestors()){
             investorMongoRepository.save(new InvestorMongo(builder.getId(), time, i));
         }
-        extractor.findHouseholdsBySimulationId(householdMongoRepository, 70437);
-        extractor.findInvestorsBySimulationId(investorMongoRepository, 70437);
-        extractor.findLandsBySimulationId(landMongoRepository, 70437);
-        extractor.findPromotersBySimulationId(promoterMongoRepository, 70437);
-        extractor.findPropertiesBySimulationId(propertyMongoRepository, 70437);
+        extractor.findHouseholdsBySimulationId(householdMongoRepository, builder.getId());
+        extractor.findInvestorsBySimulationId(investorMongoRepository, builder.getId());
+        extractor.findLandsBySimulationId(landMongoRepository, builder.getId());
+        extractor.findPromotersBySimulationId(promoterMongoRepository, builder.getId());
+        extractor.findPropertiesBySimulationId(propertyMongoRepository, builder.getId());
     }
 
     public synchronized void start() {
@@ -223,7 +226,6 @@ public class Simulation {
                 e.printStackTrace();
             }
         } else if (builder.getTime() > builder.getNumSim()) {
-
             System.err.println("SIMULATION FINISHED");
             running = false;
         } else {

@@ -22,36 +22,17 @@ public class ConfigurationMongo {
 
     private int nbrInvestor;
 
-    private String beliefInvestor;
-
-    private String desiresInvestor;
-
-    private String beliefHousehold;
-
-    private String desiresHousehold;
-
-    private String beliefPromoter;
-
-    private String desiresPromoter;
-
     private int idSimulation;
 
     private String time;
 
-    public ConfigurationMongo(Date time, int num, int nbrHousehold, int nbrPromoter, int nbrInvestor, int id, Household h, Investor i, Promoter p){
+    public ConfigurationMongo(String time, int num, int nbrHousehold, int nbrPromoter, int nbrInvestor, int idSimulation){
         this.num = num;
         this.nbrHousehold = nbrHousehold;
         this.nbrPromoter = nbrPromoter;
-        DateFormat shortDateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-        this.time = shortDateFormat.format(time);
+        this.time = time;
         this.nbrInvestor = nbrInvestor;
-        this.idSimulation = id;
-        this.beliefHousehold = h.beliefs().toString();
-        this.beliefInvestor = i.beliefs().toString();
-        this.beliefPromoter = p.beliefs().toString();
-        this.desiresHousehold = h.desires().toString();
-        this.desiresInvestor = i.desires().toString();
-        this.desiresPromoter = p.desires().toString();
+        this.idSimulation = idSimulation;
     }
 
     public int getId() {

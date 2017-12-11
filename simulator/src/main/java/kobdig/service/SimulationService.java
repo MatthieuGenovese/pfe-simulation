@@ -51,20 +51,19 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
 
     @Override
     public void accept(Event<EventRessource> eventRessourceEvent) {
+        Date time = new Date();
+        DateFormat shortDateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.YEAR_FIELD);
+        String date = shortDateFormat.format(time);
         switch (eventRessourceEvent.getData().getType()) {
             case EventTypes.StateSimulatorMessage:
                 int idSimulation = 0;
-                for(PropertyE propertyE : propertyRepository.findAll()){
-                    idSimulation = propertyE.getId();
+                while(configurationMongoRepository.findByidSimulation(idSimulation) != null){
+                    idSimulation++;
                 }
-                idSimulation++;
                 EventRessource<SimulationMessage> messageRessource =
                         (EventRessource<SimulationMessage>) eventRessourceEvent.getData();
-
                 SimulationMessage message = messageRessource.getValue();
-
                 if(!simulation.isRunning()) {
-
                     entitiesCreator.setNumSim(message.getNum());
                     entitiesCreator.setNbrInvestor(message.getNbrInvestor());
                     entitiesCreator.setNbrPromoter(message.getNbrPromoter());
@@ -96,12 +95,9 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
                     catch(IndexOutOfBoundsException e){
                         e.printStackTrace();
                     }
+                    configurationMongoRepository.save(new ConfigurationMongo(date, message.getNum(), message.getNbrHousehold(), message.getNbrPromoter(), message.getNbrInvestor(), idSimulation));
                     simulation.start();
-
                     log.writeData("------------------------------------------------------------------");
-                    Date time = new Date();
-                    DateFormat shortDateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.YEAR_FIELD);
-                    configurationMongoRepository.save(new ConfigurationMongo(time, message.getNum(), message.getNbrHousehold(), message.getNbrPromoter(), message.getNbrInvestor(), idSimulation, h, i, p));
                     log.writeData(("SIMULATION DU " + shortDateFormat.format(time)));
                     log.writeData("simulation numéro " + idSimulation);
                     log.writeData("household " + message.getNbrHousehold());
@@ -128,12 +124,9 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
 
                 for(SimulationMessage simulationMessage : tabMessage.getSimulationMessageList()){
                     int idSimulationBis = 0;
-                    for(PropertyE propertyE : propertyRepository.findAll()){
-                        idSimulationBis = propertyE.getId();
+                    while(configurationMongoRepository.findByidSimulation(idSimulationBis) != null){
+                        idSimulationBis++;
                     }
-                    idSimulationBis++;
-                    sauvegardeRepository.save(new Sauvegarde(simulationMessage.getNum(), simulationMessage.getNbrHousehold(), simulationMessage.getNbrPromoter(), simulationMessage.getNbrInvestor(), idSimulationBis));
-
                     entitiesCreator.setNumSim(simulationMessage.getNum());
                     entitiesCreator.setNbrInvestor(simulationMessage.getNbrInvestor());
                     entitiesCreator.setNbrPromoter(simulationMessage.getNbrPromoter());
@@ -145,6 +138,27 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
                     entitiesCreator.setFileInvestor(simulationMessage.getFileInvestor());
                     entitiesCreator.setFilePromoter(simulationMessage.getFilePromoter());
                     entitiesCreator.createAll();
+                    Household h = null;
+                    Promoter p = null;
+                    Investor i = null;
+                    for(AbstractAgent a : entitiesCreator.getAgents()){
+                        if(p != null && h != null){
+                            break;
+                        }
+                        if(a instanceof  Household){
+                            h = (Household) a;
+                        }
+                        else if(a instanceof Promoter){
+                            p = (Promoter) a;
+                        }
+                    }
+                    try {
+                        i = entitiesCreator.getInvestors().get(0);
+                    }
+                    catch(IndexOutOfBoundsException e){
+                        e.printStackTrace();
+                    }
+                    configurationMongoRepository.save(new ConfigurationMongo(date, simulationMessage.getNum(), simulationMessage.getNbrHousehold(), simulationMessage.getNbrPromoter(), simulationMessage.getNbrInvestor(), idSimulationBis));
                     simulation.start();
 
                     while(simulation.isRunning()){
