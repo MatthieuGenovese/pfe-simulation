@@ -20,9 +20,9 @@ curl -H "Content-Type: application/json" -d '{"type": "StateSimulatorMessage", "
 ```
 
 Détails des paramètres :  
-  -num : c'est le nombre de tours que a accomplir la simulation
+  -num : c'est le nombre de tours que a accomplir la simulation  
   -listOfEquipment : c'est la list d'équipement qui vont être pris en compte lors de la simulation (si ce paramètre n'est pas présent, la simulation se lance avec tous les equipements)  
-  -listOfNetwork : même chose que pour equipements.
+  -listOfNetwork : même chose que pour equipements.  
   
  ### Extraire les données d'une simulation
  
