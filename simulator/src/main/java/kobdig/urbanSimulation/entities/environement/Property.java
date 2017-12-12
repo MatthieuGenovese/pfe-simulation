@@ -96,12 +96,12 @@ public class Property extends AbstractEnvironment implements IActionnable {
         previousPotentialRent = currentPotentialRent;
         previousValue = currentValue;
 
-        currentPrice = (previousPrice - Math.exp(time) < 0)? 0.0: previousPrice - Math.exp(time);
         currentPotentialRent = (previousPotentialRent + Math.log(time + 1) < 0)? 0.0: previousPotentialRent +
                 Math.log(time + 1);
         currentCapitalizedRent = (previousCapitalizedRent - Math.log(time + 1) <= 0.1)? 0.1: previousCapitalizedRent -
                 Math.log(time + 1);
-        currentValue = (previousValue - Math.exp(time) < 0)? 0.0: previousValue - Math.exp(time);
+        currentValue = currentValue * 0.97;
+        currentPrice = currentValue + currentCapitalizedRent;
 
     }
 }

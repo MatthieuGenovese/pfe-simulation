@@ -164,7 +164,6 @@ public class Simulation {
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
-
                     try {
                         simulate();
                     } catch (IOException e) {
@@ -235,8 +234,6 @@ public class Simulation {
                     landsize += builder.getDivisions()[i].getLands().size();
                 }
             }
-
-
             for (AbstractAgent agent : builder.getAgents()) {
                 agent.agentUpdateBeliefs(builder, builder.getTime());
                 agent.agentIntentionsStep(builder);

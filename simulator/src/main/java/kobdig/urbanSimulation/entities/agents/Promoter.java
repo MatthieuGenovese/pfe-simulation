@@ -146,12 +146,14 @@ public class Promoter extends AbstractAgent implements IActionnable {
 
         purchasableLand = new ArrayList<>();
 
-        if (rnd1 < 0.20) {
-            purchasingPower = purchasingPower * 1.001;
+        if (rnd1 < 0.60) {
+            purchasingPower = purchasingPower;
         }
-        else if (rnd1 < 0.40) {
-            purchasingPower = purchasingPower * 0.999;
-            purchasingPower = (purchasingPower < 0)? 0: purchasingPower;
+        else if (rnd1 >= 0.60 && rnd1 < 0.80) {
+            purchasingPower = purchasingPower * 1.03;
+        }
+        else{
+            purchasingPower = 0.97 * purchasingPower;
         }
 
         // Updates the investDegree belief

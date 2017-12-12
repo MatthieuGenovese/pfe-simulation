@@ -325,20 +325,31 @@ public class Household extends AbstractAgentBuy implements IActionnable {
         double rnd1 = Math.random();
         double rnd2 = Math.random();
 
-        if (rnd1 < 0.20) {
+        /*if (rnd1 < 0.20) {
             currentPurchasingPower = previousPurchasingPower * 1.001;
         }
         else if (rnd1 < 0.40) {
             currentPurchasingPower = previousPurchasingPower * 0.999;
             currentPurchasingPower = (currentPurchasingPower < 0)? 0: currentPurchasingPower;
+        }*/
+        if (rnd1 < 0.60) {
+            currentPurchasingPower = currentPurchasingPower;
+        }
+        else if (rnd1 >= 0.60 && rnd1 < 0.80) {
+            currentPurchasingPower = previousPurchasingPower * 1.03;
+        }
+        else{
+            currentPurchasingPower = 0.97 * previousPurchasingPower;
         }
 
-        if (rnd2 < 0.20) {
-            currentNetMonthlyIncome = previousNetMonthlyIncome * 1.001;
+        if (rnd2 < 0.60) {
+            currentNetMonthlyIncome = currentNetMonthlyIncome;
         }
-        else if (rnd2 < 0.40) {
-            currentNetMonthlyIncome = previousNetMonthlyIncome * 0.999;
-            currentNetMonthlyIncome = (currentNetMonthlyIncome < 0)? 0: currentNetMonthlyIncome;
+        else if (rnd2 >= 0.60 && rnd2 < 0.80) {
+            currentNetMonthlyIncome = previousNetMonthlyIncome * 1.03;
+        }
+        else{
+            currentNetMonthlyIncome = previousNetMonthlyIncome * 0.97;
         }
 
 

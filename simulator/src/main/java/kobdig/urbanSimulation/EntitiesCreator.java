@@ -355,32 +355,64 @@ public class EntitiesCreator {
     }
 
     private void createTransportNetwork() throws SQLException {
-
-        for (TransportNetworkE transportNetworkE : transportNetworkRepository.findById(listOfTransport)) {
-            networkLength++;
-            Geometry geo = PGgeometry.geomFromString(transportNetworkE.getGeom());
-            PGgeometry geom = new PGgeometry(geo);
-            TransportNetwork transportNetwork = new TransportNetwork(Integer.toString(transportNetworkE.getId()), "primary", geom);
-            for (IntersectionE intersectionE : intersectionRepository.findById_Redprimaria(transportNetworkE.getId())) {
-                if (intersectionE.getCodigo_upz() != 0) {
-                    transportNetwork.setDivision(divisions[intersectionE.getCodigo_upz()]);
-                    divisions[intersectionE.getCodigo_upz()].addNetwork(transportNetwork);
+        if(listOfTransport.isEmpty()){
+            for (TransportNetworkE transportNetworkE : transportNetworkRepository.findAll()) {
+                networkLength++;
+                listOfTransport.add(transportNetworkE.getId());
+                Geometry geo = PGgeometry.geomFromString(transportNetworkE.getGeom());
+                PGgeometry geom = new PGgeometry(geo);
+                TransportNetwork transportNetwork = new TransportNetwork(Integer.toString(transportNetworkE.getId()), "primary", geom);
+                for (IntersectionE intersectionE : intersectionRepository.findById_Redprimaria(transportNetworkE.getId())) {
+                    if (intersectionE.getCodigo_upz() != 0) {
+                        transportNetwork.setDivision(divisions[intersectionE.getCodigo_upz()]);
+                        divisions[intersectionE.getCodigo_upz()].addNetwork(transportNetwork);
+                    }
+                }
+            }
+        }
+        else {
+            for (TransportNetworkE transportNetworkE : transportNetworkRepository.findById(listOfTransport)) {
+                networkLength++;
+                Geometry geo = PGgeometry.geomFromString(transportNetworkE.getGeom());
+                PGgeometry geom = new PGgeometry(geo);
+                TransportNetwork transportNetwork = new TransportNetwork(Integer.toString(transportNetworkE.getId()), "primary", geom);
+                for (IntersectionE intersectionE : intersectionRepository.findById_Redprimaria(transportNetworkE.getId())) {
+                    if (intersectionE.getCodigo_upz() != 0) {
+                        transportNetwork.setDivision(divisions[intersectionE.getCodigo_upz()]);
+                        divisions[intersectionE.getCodigo_upz()].addNetwork(transportNetwork);
+                    }
                 }
             }
         }
     }
 
     private void createEquipments() throws SQLException {
-
-        for(EquipmentE equipmentE : equipmentRepository.findByCodigo_Upz(listOfEquipment)){
-            if(equipmentE.getGeom() != null) {
-                Geometry geo = PGgeometry.geomFromString(equipmentE.getGeom());
-                PGgeometry geom = new PGgeometry(geo);
-                Equipment equip = new Equipment(Integer.toString(equipmentE.getId()), equipmentE.getTipo(), geom);
-                if (equipmentE.getCodigo_upz() != 0 && equipmentE.getCodigo_upz() <= 117) {
-                    equip.setDivision(divisions[equipmentE.getCodigo_upz()]);
-                    divisions[equipmentE.getCodigo_upz()].addEquipement(equip);
-                    equipmentsLength++;
+        if(listOfEquipment.isEmpty()){
+            for (EquipmentE equipmentE : equipmentRepository.findAll()) {
+                if (equipmentE.getGeom() != null) {
+                    listOfEquipment.add(equipmentE.getId());
+                    Geometry geo = PGgeometry.geomFromString(equipmentE.getGeom());
+                    PGgeometry geom = new PGgeometry(geo);
+                    Equipment equip = new Equipment(Integer.toString(equipmentE.getId()), equipmentE.getTipo(), geom);
+                    if (equipmentE.getCodigo_upz() != 0 && equipmentE.getCodigo_upz() <= 117) {
+                        equip.setDivision(divisions[equipmentE.getCodigo_upz()]);
+                        divisions[equipmentE.getCodigo_upz()].addEquipement(equip);
+                        equipmentsLength++;
+                    }
+                }
+            }
+        }
+        else {
+            for (EquipmentE equipmentE : equipmentRepository.findByCodigo_Upz(listOfEquipment)) {
+                if (equipmentE.getGeom() != null) {
+                    Geometry geo = PGgeometry.geomFromString(equipmentE.getGeom());
+                    PGgeometry geom = new PGgeometry(geo);
+                    Equipment equip = new Equipment(Integer.toString(equipmentE.getId()), equipmentE.getTipo(), geom);
+                    if (equipmentE.getCodigo_upz() != 0 && equipmentE.getCodigo_upz() <= 117) {
+                        equip.setDivision(divisions[equipmentE.getCodigo_upz()]);
+                        divisions[equipmentE.getCodigo_upz()].addEquipement(equip);
+                        equipmentsLength++;
+                    }
                 }
             }
         }
