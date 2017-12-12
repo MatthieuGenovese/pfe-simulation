@@ -338,6 +338,8 @@ public class EntitiesCreator {
             Land land = new Land(Integer.toString(landE.getId()), landE.getLatitude(), landE.getLongitude(), landE.getPrice(), geom);
             if (landE.getCodigo_upzcodigo_upz() != 0) {
                 land.setDivision(divisions[landE.getCodigo_upzcodigo_upz()]);
+                land.setEquipementUtility(equipmentRepository.findById(getListOfEquipment(),Integer.parseInt(land.getId())).size());
+                land.setTransportUtility(transportNetworkRepository.findById(getListOfTransport(),Integer.parseInt(land.getId())).size());
                 divisions[landE.getCodigo_upzcodigo_upz()].addLand(land);
                 forSaleLand.add(land);
             }

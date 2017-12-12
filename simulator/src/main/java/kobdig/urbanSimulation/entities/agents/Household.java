@@ -100,9 +100,9 @@ public class Household extends AbstractAgentBuy implements IActionnable {
                     double equipUtility = 0.0;
                     double transportUtility = 0.0;
 
-                    equipUtility = entitiesCreator.equipmentRepository.findById(entitiesCreator.getListOfEquipment(), Integer.parseInt(purchasable.getLand().getId())).size();
+                    equipUtility = purchasable.getLand().getEquipementUtility();
 
-                    transportUtility = entitiesCreator.transportNetworkRepository.findById(entitiesCreator.getListOfTransport(), Integer.parseInt(purchasable.getLand().getId())).size();
+                    transportUtility = purchasable.getLand().getTransportUtility();
 
                     purchasable.setUtility(0.4*(equipUtility/(double)entitiesCreator.getEquipmentsLength()) + 0.6*(transportUtility/(double)entitiesCreator.getNetworkLength()));
 //                    purchasable.setUtility(0.0*(equipUtility/(double)equipmentsLength) + 1.0*(transportUtility/(double)networkLength));
@@ -129,9 +129,9 @@ public class Household extends AbstractAgentBuy implements IActionnable {
                     double equipUtility = 0.0;
                     double transportUtility = 0.0;
 
-                    equipUtility = entitiesCreator.equipmentRepository.findById(entitiesCreator.getListOfEquipment(), Integer.parseInt(purchasable.getLand().getId())).size();
+                    equipUtility = purchasable.getLand().getEquipementUtility();
 
-                    transportUtility = entitiesCreator.transportNetworkRepository.findById(entitiesCreator.getListOfTransport(), Integer.parseInt(purchasable.getLand().getId())).size();
+                    transportUtility = purchasable.getLand().getTransportUtility();
 
 
                     purchasable.setUtility(0.4*(equipUtility/(double)entitiesCreator.getEquipmentsLength()) + 0.6*(transportUtility/(double)entitiesCreator.getNetworkLength()));
@@ -282,9 +282,9 @@ public class Household extends AbstractAgentBuy implements IActionnable {
                 double transportUtility = 0.0;
                 if (purchasable.getDivision() != null && !purchasable.isUpdated()) {
 
-                    equipUtility = entitiesCreator.equipmentRepository.findById(entitiesCreator.getListOfEquipment(), Integer.parseInt(purchasable.getLand().getId())).size();
+                    equipUtility = purchasable.getLand().getEquipementUtility();
 
-                    transportUtility = entitiesCreator.transportNetworkRepository.findById(entitiesCreator.getListOfTransport(), Integer.parseInt(purchasable.getLand().getId())).size();
+                    transportUtility = purchasable.getLand().getTransportUtility();
 
 
                     purchasable.setUtility(0.4*(equipUtility/(double)entitiesCreator.getEquipmentsLength()) + 0.6*(transportUtility/(double)entitiesCreator.getNetworkLength()));

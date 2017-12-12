@@ -8,6 +8,24 @@ import org.postgis.PGgeometry;
  */
 public class Land extends AbstractEnvironment implements IActionnable{
     private double price;
+    private double transportUtility = 0.0;
+    private double equipementUtility = 0.0;
+
+    public double getTransportUtility() {
+        return transportUtility;
+    }
+
+    public void setTransportUtility(double transportUtility) {
+        this.transportUtility = transportUtility;
+    }
+
+    public double getEquipementUtility() {
+        return equipementUtility;
+    }
+
+    public void setEquipementUtility(double equipementUtility) {
+        this.equipementUtility = equipementUtility;
+    }
 
     public Land(String id, double latitude, double longitude, double price, PGgeometry geom) {
         super(id,latitude,longitude,geom);

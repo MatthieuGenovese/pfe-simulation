@@ -117,13 +117,8 @@ public class Promoter extends AbstractAgent implements IActionnable {
         for (Land purchasable : getPurchasableLand()) {
             //System.out.println(purchasable.getId());
                 if (purchasable.getDivision() != null && !purchasable.isUpdated()) {
-                    double equipUtility = 0.0;
-                    double transportUtility = 0.0;
-
-                    equipUtility = entitiesCreator.equipmentRepository.findById(entitiesCreator.getListOfEquipment(),Integer.parseInt(purchasable.getId())).size();
-
-                    transportUtility = entitiesCreator.transportNetworkRepository.findById(entitiesCreator.getListOfTransport(),Integer.parseInt(purchasable.getId())).size();
-
+                    double equipUtility = purchasable.getEquipementUtility();
+                    double transportUtility = purchasable.getTransportUtility();
                     purchasable.setUtility(0.4*(equipUtility/(double)entitiesCreator.getEquipmentsLength()) + 0.6*(transportUtility/(double)entitiesCreator.getNetworkLength()));
 //                    purchasable.setUtility(0.0*(equipUtility/(double)equipmentsLength) + 1.0*(transportUtility/(double)networkLength));
 //                    purchasable.setUtility(Math.random());
