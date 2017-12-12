@@ -96,20 +96,17 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
                     }
                     configurationMongoRepository.save(new ConfigurationMongo(date, message.getNum(), message.getNbrHousehold(), message.getNbrPromoter(), message.getNbrInvestor(), idSimulation));
                     simulation.start();
+                    while(simulation.isRunning()){
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    Date time2 = new Date();
                     log.writeData("------------------------------------------------------------------");
-                    log.writeData(("SIMULATION DU " + shortDateFormat.format(time)));
-                    log.writeData("simulation numéro " + idSimulation);
-                    log.writeData("household " + message.getNbrHousehold());
-                    log.writeData("investors " + message.getNbrInvestor() );
-                    log.writeData("promoters " + message.getNbrPromoter());
-                    log.writeData("CONTENU DU FICHIER HOUSEHOLD");
-                    log.writeFileInput( message.getFileHousehold());
-                    log.writeData("CONTENU DU FICHIER INVESTOR");
-                    log.writeFileInput(message.getFileInvestor());
-                    log.writeData("CONTENU DU FICHIER PROMOTER");
-                    log.writeFileInput(message.getFilePromoter());
-                    log.writeList("équipements utilisées ",message.getListOfEquipment());
-                    log.writeList("transports utilisés ", message.getListOfTransport());
+                    log.writeData("SIMULATION DU " + shortDateFormat.format(time)+ " NUMERO " + idSimulation);
+                    log.writeData("terminée en " +String.valueOf(time2.getTime()-time.getTime()));
                     log.writeData("------------------------------------------------------------------");
                 }
 
@@ -167,6 +164,11 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
                             e.printStackTrace();
                         }
                     }
+                    Date time2 = new Date();
+                    log.writeData("------------------------------------------------------------------");
+                    log.writeData("SIMULATION DU " + shortDateFormat.format(time)+ " NUMERO " + idSimulationBis);
+                    log.writeData("terminée en " +String.valueOf(time2.getTime()-time.getTime()));
+                    log.writeData("------------------------------------------------------------------");
                 }
 
                 break;

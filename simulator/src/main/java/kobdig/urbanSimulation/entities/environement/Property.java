@@ -12,7 +12,6 @@ public class Property extends AbstractEnvironment implements IActionnable {
     public static final String SEEKING_TENANT = "Seeking tenant";
     public static final String OCCUPIED = "Occupied";
     public static final String FOR_SALE = "For sale";
-    public static final String FOR_RENTED = "for rented";
     public final static double ABANDONMENT_FACTOR = 0.0125;
     public final static double TENANT_MOBILITY = 0.0561;
     public final static double DEPRECIATION_RATE = 0.0028;

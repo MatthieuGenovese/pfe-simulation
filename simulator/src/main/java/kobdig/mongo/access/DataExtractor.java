@@ -2,6 +2,7 @@ package kobdig.mongo.access;
 
 import kobdig.mongo.collections.*;
 import kobdig.mongo.repository.*;
+import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.util.List;
@@ -9,11 +10,9 @@ import java.util.List;
 /**
  * Created by Matthieu on 11/12/2017.
  */
+
+@Component
 public class DataExtractor {
-
-    public DataExtractor(){
-
-    }
 
     public String findPropertiesBySimulationId(PropertyMongoRepository repo, int idSimulation){
         List<PropertyMongo> res = repo.findByidSimulation(idSimulation);
@@ -23,16 +22,26 @@ public class DataExtractor {
             writer = new BufferedWriter(new FileWriter(new File(filename), false));
             writer.write("etape\t");
             writer.write("id\t");
-            writer.write("price\t");
-            writer.write("capitalizedRent\t");
-            writer.write("value\t");
+            writer.write("currentPrice\t");
+            writer.write("previousPrice\t");
+            writer.write("currentCapitalizedRent\t");
+            writer.write("previousCapitalizedRent\t");
+            writer.write("currentPotentialRent\t");
+            writer.write("previousPotentialRent\t");
+            writer.write("currentValue\t");
+            writer.write("previousValue\t");
             writer.write("state\t\n");
             for(PropertyMongo l : res){
                 writer.write(l.getStep()+"\t");
                 writer.write(l.getIdProperty() + "\t");
-                writer.write(l.getPrice() + "\t");
-                writer.write(l.getCapitalizedRent()+"\t");
-                writer.write(l.getValue()+"\t");
+                writer.write(l.getCurrentPrice() + "\t");
+                writer.write(l.getPreviousPrice() + "\t");
+                writer.write(l.getCurrentCapitalizedRent()+"\t");
+                writer.write(l.getPreviousCapitalizedRent() + "\t");
+                writer.write(l.getCurrentPotentialRent() + "\t");
+                writer.write(l.getPreviousPotentialRent() + "\t");
+                writer.write(l.getCurrentValue()+"\t");
+                writer.write(l.getPreviousValue() + "\t");
                 writer.write(l.getState() + "\t\n");
             }
             writer.close();

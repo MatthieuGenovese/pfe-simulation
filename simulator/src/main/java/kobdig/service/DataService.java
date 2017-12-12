@@ -16,8 +16,8 @@ import reactor.fn.Consumer;
 
 @Service
 public class DataService implements Consumer<Event<EventRessource>> {
-
-    private DataExtractor extractor = new DataExtractor();
+    @Autowired
+    DataExtractor extractor;
 
     @Autowired
     PropertyMongoRepository propertyMongoRepository;

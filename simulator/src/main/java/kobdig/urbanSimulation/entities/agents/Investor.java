@@ -250,13 +250,18 @@ public class Investor extends AbstractAgentBuy implements IActionnable {
 
             // If the goal is to sell
             // TODO: Improve this approach
-//            if (!goal.contains(Investor.BUY) && !goal.contains(Investor.LANDLORD) && !goal.contains(Investor.NOT_SELL)
-//                    && goal.contains(Investor.SELL)){
-//                if (investor.getProperty() != null) {
-//                    freeProperties.add(investor.getProperty());
-//                    investor.getProperty().setState(Property.FOR_SALE);
-//                }
-//            }
+            /*if (!goal.contains(Investor.BUY) && !goal.contains(Investor.LANDLORD) && !goal.contains(Investor.NOT_SELL)
+                    && goal.contains(Investor.SELL)){
+                if (getProperty() != null) {
+                    if(getProperty().getState().equalsIgnoreCase(Property.SEEKING_TENANT)){
+                        entitiesCreator.getForRentProperties().remove(getProperty());
+                        System.out.println("BLOUBLOUB");
+                    }
+                    System.out.println("C EST L HEURE DE VENDRE");
+                    getProperty().setState(Property.FOR_SALE);
+                    entitiesCreator.getFreeProperties().add(getProperty());
+                }
+            }*/
 
         }
     }

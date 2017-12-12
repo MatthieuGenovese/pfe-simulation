@@ -48,7 +48,7 @@ public class LandMongo {
     public LandMongo(int idSimulation, int step, Land l) {
         this.idSimulation = idSimulation;
         this.utility = l.getUtility();
-
+        this.id = l.getId();
         this.step = step;
         this.price = l.getPrice();
     }

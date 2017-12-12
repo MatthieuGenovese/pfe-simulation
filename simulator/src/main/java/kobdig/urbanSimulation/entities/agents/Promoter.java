@@ -113,7 +113,6 @@ public class Promoter extends AbstractAgent implements IActionnable {
     public Land buyLand(EntitiesCreator entitiesCreator){
         double maxUtility = 0.0;
         Land selection = null;
-        System.out.println(getPurchasableLand().size());
         for (Land purchasable : getPurchasableLand()) {
             //System.out.println(purchasable.getId());
                 if (purchasable.getDivision() != null && !purchasable.isUpdated()) {

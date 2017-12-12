@@ -16,11 +16,14 @@ public class PropertyMongo  {
 
     private String idProperty;
 
-    private double price;
-
-    private double capitalizedRent;
-
-    private double value;
+    private double currentPrice;
+    private double currentCapitalizedRent;
+    private double currentPotentialRent;
+    private double currentValue;
+    private double previousPrice;
+    private double previousCapitalizedRent;
+    private double previousPotentialRent;
+    private double previousValue;
 
     private String state;
 
@@ -41,16 +44,37 @@ public class PropertyMongo  {
         return idProperty;
     }
 
-    public double getPrice() {
-        return price;
+    public double getCurrentValue() {
+        return currentValue;
     }
 
-    public double getCapitalizedRent() {
-        return capitalizedRent;
+    public double getPreviousPrice() {
+        return previousPrice;
     }
 
-    public double getValue() {
-        return value;
+    public double getPreviousCapitalizedRent() {
+        return previousCapitalizedRent;
+    }
+
+    public double getPreviousPotentialRent() {
+        return previousPotentialRent;
+    }
+
+    public double getPreviousValue() {
+        return previousValue;
+    }
+
+    public double getCurrentPrice() {
+
+        return currentPrice;
+    }
+
+    public double getCurrentCapitalizedRent() {
+        return currentCapitalizedRent;
+    }
+
+    public double getCurrentPotentialRent() {
+        return currentPotentialRent;
     }
 
     public String getState() {
@@ -61,10 +85,14 @@ public class PropertyMongo  {
         this.idSimulation = idSimulation;
         this.step = step;
         this.idProperty = p.getId();
-        this.price = p.getCurrentPrice();
-
-        this.capitalizedRent = p.getCurrentCapitalizedRent();
-        this.value = p.getCurrentValue();
+        this.currentPrice = p.getCurrentPrice();
+        this.previousPrice = p.getPreviousPrice();
+        this.currentCapitalizedRent = p.getCurrentCapitalizedRent();
+        this.previousCapitalizedRent = p.getPreviousCapitalizedRent();
+        this.currentValue = p.getCurrentValue();
+        this.previousValue = p.getPreviousValue();
+        this.currentPotentialRent = p.getCurrentPotentialRent();
+        this.previousPotentialRent = p.getPreviousPotentialRent();
         this.state = p.getState();
     }
 }
