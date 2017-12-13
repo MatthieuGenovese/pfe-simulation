@@ -105,7 +105,6 @@ public class EntitiesCreator {
         agents = new ArrayList<>();
         divisions = new AdministrativeDivision[200];
         idManager = new int[5];
-        //config.parseConfFile();
         listOfEquipment = new ArrayList<>();
         listOfTransport = new ArrayList<>();
 
@@ -273,9 +272,9 @@ public class EntitiesCreator {
             createDivisions();
             createTransportNetwork();
             createEquipments();
-            createHouseholds();
-            createInvestors();
-            createPromoters();
+            generateHouseholds();
+            generateInvestors();
+            generatePromoters();
             createLand();
 
 
@@ -300,12 +299,77 @@ public class EntitiesCreator {
         }
     }
 
+    private void generateHouseholds(){
+        Household household = null;
+        double vingth = 0.0;
+        double quatre = 0.0;
+        double xM = 1000.0;
+        double intervale = xM / nbrHousehold;
+        for(int i = 0; i < nbrHousehold; i++){
+            try {
+                double x = xM + i * intervale;
+                double test = pareto(xM ,15, x);
+                if( i <= 19){
+                    vingth+= test;
+                }
+                else{
+                    quatre+= test;
+                }
+                double purchasingPower = (Math.random() * 1000) + 200;
+                double netMonthlyIncome = Math.random() * 100;
+                household = new Household(Integer.toString(i),purchasingPower, netMonthlyIncome, householdAgentFile );
+                household.updateBelief("not r:1");
+                household.updateBelief("not o:1");
+                agents.add(household);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("20% :" + vingth);
+        System.out.println("80% : " + quatre);
+    }
+
+
+    private double pareto(double xM, int k, double x){
+        return Math.pow((xM / x), k);
+    }
+
+    private void generateInvestors(){
+        Investor investor = null;
+        for(int i = 0; i < nbrInvestor; i++){
+            try {
+
+                double purchasingPower = (Math.random() * 1000) + 200;
+                investor = new Investor(Integer.toString(i), purchasingPower, 0.0, investorAgentFile);
+                investors.add(investor);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void generatePromoters(){
+        Promoter promoter = null;
+        for(int i = 0; i < nbrPromoter; i++){
+            try{
+
+                double purchasingPower = (Math.random() * 1000) + 200;
+                promoter = new Promoter(Integer.toString(i),purchasingPower, promoterAgentFile);
+                agents.add(promoter);
+            }
+            catch(IOException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
     private void createInvestors() {
 
         for(InvestorE investorE : investorRepository.findByNbr(nbrInvestor)){
             Investor investor = null;
             try {
                 investor = new Investor(Integer.toString(investorE.getId()), investorE.getPurchasingpower(), 0.0, investorAgentFile);
+                System.out.println("INVESTOR " + investorE.getPurchasingpower());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -331,11 +395,11 @@ public class EntitiesCreator {
     }
 
     private void createLand() throws SQLException {
-
         for(LandE landE : landRepository.findAll()){
             Geometry geo = PGgeometry.geomFromString(landE.getGeom());
+            double price = Math.random() * 1000;
             PGgeometry geom = new PGgeometry(geo);
-            Land land = new Land(Integer.toString(landE.getId()), landE.getLatitude(), landE.getLongitude(), landE.getPrice(), geom);
+            Land land = new Land(Integer.toString(landE.getId()), landE.getLatitude(), landE.getLongitude(), price, geom);
             if (landE.getCodigo_upzcodigo_upz() != 0) {
                 land.setDivision(divisions[landE.getCodigo_upzcodigo_upz()]);
                 land.setEquipementUtility(equipmentRepository.findById(getListOfEquipment(),Integer.parseInt(land.getId())).size());

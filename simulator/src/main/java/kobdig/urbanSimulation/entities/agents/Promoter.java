@@ -71,9 +71,9 @@ public class Promoter extends AbstractAgent implements IActionnable {
         // Updates ac
         // TODO: Improve this approach
 
-        double rnd = Math.random();
-        if (rnd < 0.5) updateBelief("ac:" + 1);
-        else updateBelief("not ac:" + 1);
+        double rnd = (Math.random() * 2.0) - 1;
+        if (rnd > 0.0) updateBelief("ac:" + rnd);
+        else updateBelief("not ac:" +  (-rnd));
     }
 
 

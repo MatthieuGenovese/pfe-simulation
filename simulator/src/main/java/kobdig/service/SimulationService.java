@@ -74,26 +74,6 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
                     entitiesCreator.setFileInvestor(message.getFileInvestor());
                     entitiesCreator.setFilePromoter(message.getFilePromoter());
                     entitiesCreator.createAll();
-                    Household h = null;
-                    Promoter p = null;
-                    Investor i = null;
-                    for(AbstractAgent a : entitiesCreator.getAgents()){
-                        if(p != null && h != null){
-                            break;
-                        }
-                        if(a instanceof  Household){
-                            h = (Household) a;
-                        }
-                        else if(a instanceof Promoter){
-                            p = (Promoter) a;
-                        }
-                    }
-                    try {
-                        i = entitiesCreator.getInvestors().get(0);
-                    }
-                    catch(IndexOutOfBoundsException e){
-                        e.printStackTrace();
-                    }
                     configurationMongoRepository.save(new ConfigurationMongo(date, message.getNum(), message.getNbrHousehold(), message.getNbrPromoter(), message.getNbrInvestor(), idSimulation));
                     simulation.start();
                     while(simulation.isRunning()){
@@ -105,8 +85,8 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
                     }
                     Date time2 = new Date();
                     log.writeData("------------------------------------------------------------------");
-                    log.writeData("SIMULATION DU " + shortDateFormat.format(time)+ " NUMERO " + idSimulation);
-                    log.writeData("terminée en " +String.valueOf(time2.getTime()-time.getTime()));
+                    log.writeData("SIMULATION DU " + date + " NUMERO " + idSimulation);
+                    log.writeData("terminée à " +shortDateFormat.format(time2));
                     log.writeData("------------------------------------------------------------------");
                 }
 
@@ -134,29 +114,8 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
                     entitiesCreator.setFileInvestor(simulationMessage.getFileInvestor());
                     entitiesCreator.setFilePromoter(simulationMessage.getFilePromoter());
                     entitiesCreator.createAll();
-                    Household h = null;
-                    Promoter p = null;
-                    Investor i = null;
-                    for(AbstractAgent a : entitiesCreator.getAgents()){
-                        if(p != null && h != null){
-                            break;
-                        }
-                        if(a instanceof  Household){
-                            h = (Household) a;
-                        }
-                        else if(a instanceof Promoter){
-                            p = (Promoter) a;
-                        }
-                    }
-                    try {
-                        i = entitiesCreator.getInvestors().get(0);
-                    }
-                    catch(IndexOutOfBoundsException e){
-                        e.printStackTrace();
-                    }
                     configurationMongoRepository.save(new ConfigurationMongo(date, simulationMessage.getNum(), simulationMessage.getNbrHousehold(), simulationMessage.getNbrPromoter(), simulationMessage.getNbrInvestor(), idSimulationBis));
                     simulation.start();
-
                     while(simulation.isRunning()){
                         try {
                             Thread.sleep(1000);
@@ -166,8 +125,8 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
                     }
                     Date time2 = new Date();
                     log.writeData("------------------------------------------------------------------");
-                    log.writeData("SIMULATION DU " + shortDateFormat.format(time)+ " NUMERO " + idSimulationBis);
-                    log.writeData("terminée en " +String.valueOf(time2.getTime()-time.getTime()));
+                    log.writeData("SIMULATION DU " + date + " NUMERO " + idSimulationBis);
+                    log.writeData("terminée à " +shortDateFormat.format(time2));
                     log.writeData("------------------------------------------------------------------");
                 }
 

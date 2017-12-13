@@ -125,11 +125,8 @@ public class Investor extends AbstractAgentBuy implements IActionnable {
                 if (purchasable.getDivision() != null && !purchasable.isUpdated()) {
                     double equipUtility = 0.0;
                     double transportUtility = 0.0;
-
                     equipUtility = purchasable.getLand().getEquipementUtility();
-
                     transportUtility = purchasable.getLand().getTransportUtility();
-
                     purchasable.setUtility(0.4*(equipUtility/(double)entitiesCreator.getEquipmentsLength()) + 0.6*(transportUtility/(double)entitiesCreator.getNetworkLength()));
 //                    purchasable.setUtility(0.0*(equipUtility/(double)equipmentsLength) + 1.0*(transportUtility/(double)networkLength));
 //                    purchasable.setUtility(Math.random());

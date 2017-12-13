@@ -94,7 +94,6 @@ public class Property extends AbstractEnvironment implements IActionnable {
         previousCapitalizedRent = currentCapitalizedRent;
         previousPotentialRent = currentPotentialRent;
         previousValue = currentValue;
-
         currentPotentialRent = (previousPotentialRent + Math.log(time + 1) < 0)? 0.0: previousPotentialRent +
                 Math.log(time + 1);
         currentCapitalizedRent = (previousCapitalizedRent - Math.log(time + 1) <= 0.1)? 0.1: previousCapitalizedRent -
