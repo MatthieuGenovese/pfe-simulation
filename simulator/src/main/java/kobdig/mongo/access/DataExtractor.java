@@ -52,20 +52,6 @@ public class DataExtractor {
         return filename;
     }
 
-    private int num;
-
-    private int nbrHousehold;
-
-    private int nbrPromoter;
-
-    private int nbrInvestor;
-
-    private int idSimulation;
-
-    private ArrayList<Integer> listOfEquipement;
-
-    private ArrayList<Integer> listOfNetwork;
-
     public String findConfigurationBySimulationId(ConfigurationMongoRepository repo, int idSimulation){
         ConfigurationMongo res = repo.findByidSimulation(idSimulation);
         BufferedWriter writer;
@@ -211,8 +197,8 @@ public class DataExtractor {
     }
 
     private String foundLastFile(String type, int idSimulation){
-        String res = "results/Simulation "+idSimulation + "/" + type + ".csv";
-        File dir = new File("results/Simulation "+idSimulation);
+        String res = "results/Simulation"+idSimulation + "/" + type + ".csv";
+        File dir = new File("results/Simulation"+idSimulation);
         if (!dir.isDirectory()){
             dir.mkdirs();
         }

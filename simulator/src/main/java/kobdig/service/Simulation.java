@@ -193,29 +193,21 @@ public class Simulation {
     }
 
     public void simulate() throws IOException {
-        /*iterations = builder.getConfig().getIterations();
-        if(iterations > actualIteration+1 && builder.getTime() > builder.getNumSim()){
-            builder.setTime(0);
-            actualIteration++;
-            builder.reset();
-            builder.getConfig().setActualIteration(actualIteration);
-            builder.createAll();
-            System.out.println("Iteration numéro : " + String.valueOf(actualIteration+1)+"\nUtilisation du fichier " + builder.getHouseholdAgentFile().getName());
-        }*/
-        if (builder.getTime() == 0) {
+        /*if (builder.getTime() == 0) {
 
             try {
                 writeIndicators(builder, 0);
                 writeResults(builder, 0);
-                builder.getIdManager()[0] = 100 + 1;
+                //builder.getIdManager()[0] = 100 + 1;
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        } else if (builder.getTime() > builder.getNumSim()) {
+        } else*/
+        if (builder.getTime() >= builder.getNumSim()) {
             System.err.println("SIMULATION FINISHED");
             running = false;
         } else {
-            System.err.println("STEP " + builder.getTime() + "/" + builder.getNumSim());
+            System.err.println("STEP " + (builder.getTime()+1) + "/" + builder.getNumSim());
             int occuped = 0;
             int rented = 0;
             int forsale = 0;
@@ -224,9 +216,9 @@ public class Simulation {
             for (int i = 0; i < builder.getDivisions().length; i++) {
                 if (builder.getDivisions()[i] != null) {
                     ArrayList<Land> landDiv = builder.getDivisions()[i].getLands();
-                    for (Land land : landDiv) land.step(builder.getTime() - 1);
+                    for (Land land : landDiv) land.step(builder.getTime());
                     for (Property property : builder.getDivisions()[i].getProperties())
-                        property.step(builder.getTime() - 1);
+                        property.step(builder.getTime());
                     occuped += builder.getDivisions()[i].getPropertiesOccuped();
                     rented += builder.getDivisions()[i].getPropertiesRented();
                     forsale += builder.getDivisions()[i].getPropertiesForSale();
@@ -240,14 +232,14 @@ public class Simulation {
             }
 
             for (Investor investor : builder.getInvestors()) {
-                investor.agentUpdateBeliefs(builder, builder.getTime() - 1);
+                investor.agentUpdateBeliefs(builder, builder.getTime());
                 investor.agentIntentionsStep(builder);
             }
 
 
             try {
-                writeIndicators(builder, builder.getTime() - 1);
-                writeResults(builder, builder.getTime() - 1);
+                writeIndicators(builder, builder.getTime());
+                writeResults(builder, builder.getTime());
             } catch (SQLException e) {
                 e.printStackTrace();
             }

@@ -66,5 +66,6 @@ public class Launcher implements CommandLineRunner {
         subscribe(EventTypes.StopSimulatorMessage, simulation);
         subscribe(EventTypes.TabStateSimulatorMessage, simulation);
         subscribe(EventTypes.ExtractDataMessage, dataService);
+        subscribe(EventTypes.RemoveSimulationMessage, dataService);
     }
 }

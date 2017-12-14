@@ -36,7 +36,7 @@ public class EntitiesCreator {
     //private SimulationSettings config;
     private ArrayList<AbstractAgent> agents;
     private int numSim, networkLength, equipmentsLength;
-    private int[] idManager;
+    private int idManager;
     File householdAgentFile;
     File investorAgentFile;
     File promoterAgentFile;
@@ -106,7 +106,7 @@ public class EntitiesCreator {
         forSaleLand = new ArrayList<>();
         agents = new ArrayList<>();
         divisions = new AdministrativeDivision[200];
-        idManager = new int[5];
+        idManager = 0;
         listOfEquipment = new ArrayList<>();
         listOfTransport = new ArrayList<>();
 
@@ -190,8 +190,12 @@ public class EntitiesCreator {
         return equipmentsLength;
     }
 
-    public int[] getIdManager() {
+    public int getIdManager() {
         return idManager;
+    }
+
+    public void setIdManager(int i){
+        idManager = i;
     }
 
     public int getTime(){
@@ -263,7 +267,7 @@ public class EntitiesCreator {
         forSaleLand.clear();
         agents.clear();
         divisions = new AdministrativeDivision[200];
-        idManager = new int[5];
+        idManager = 0;
     }
 
     public void createAll() {
@@ -306,26 +310,8 @@ public class EntitiesCreator {
         double vingth = 0.0;
         double quatre = 0.0;
         double xM = 1000.0;
-        double intervale = xM / nbrHousehold;
-        //x = x_m / [ (1 - rnd)^(1/k) ]
-        //où ( 1 - rnd )^(1/k) est la racine k-ième de (1 - rnd). N.B. : on peut écrire ça parce que rnd < 1, donc le dénominateur est toujours > 0.
         for(int i = 0; i < nbrHousehold; i++){
             try {
-                /*double rnd = Math.random();
-                double k = 10.0;
-                double pow2 = 1.0 / k;
-                double x = xM / Math.pow((1-rnd),pow2);
-                int alpha = i+1;
-                ParetoDistribution paretoDistribution = new ParetoDistribution(xM, k);
-                double res = paretoDistribution.cumulativeProbability(nbrHousehold - i +xM);
-                double kjgsd = (k * Math.pow(xM,k))/ Math.pow(i+1, k+1);
-                System.out.println("res : " +kjgsd);
-                if( i <= 19){
-                    vingth+= kjgsd;
-                }
-                else{
-                    quatre+= kjgsd;
-                }*/
                 double purchasingPower = (Math.random() * 1000) + 200;
                 double netMonthlyIncome = Math.random() * 100;
                 household = new Household(Integer.toString(i),purchasingPower, netMonthlyIncome, householdAgentFile );
@@ -339,7 +325,7 @@ public class EntitiesCreator {
     }
 
 
-    private double pareto(double xM, int k, double x){
+    private double pareto(double xM, double k, double x){
         return Math.pow((xM / x), k);
     }
 
@@ -361,7 +347,6 @@ public class EntitiesCreator {
         Promoter promoter = null;
         for(int i = 0; i < nbrPromoter; i++){
             try{
-
                 double purchasingPower = (Math.random() * 1000) + 200;
                 promoter = new Promoter(Integer.toString(i),purchasingPower, promoterAgentFile);
                 agents.add(promoter);

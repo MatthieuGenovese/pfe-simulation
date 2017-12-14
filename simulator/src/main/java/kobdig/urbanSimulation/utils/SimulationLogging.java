@@ -1,5 +1,7 @@
 package kobdig.urbanSimulation.utils;
 
+import org.springframework.stereotype.Component;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +9,7 @@ import java.util.List;
 /**
  * Created by Matthieu on 09/12/2017.
  */
+@Component
 public class SimulationLogging {
 
     public SimulationLogging(){

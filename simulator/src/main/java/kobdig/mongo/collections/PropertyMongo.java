@@ -81,6 +81,10 @@ public class PropertyMongo  {
         return state;
     }
 
+    public String getMongo_id() {
+        return mongo_id;
+    }
+
     public PropertyMongo(int idSimulation, int step, Property p){
         this.idSimulation = idSimulation;
         this.step = step;
@@ -93,6 +97,7 @@ public class PropertyMongo  {
         this.previousValue = p.getPreviousValue();
         this.currentPotentialRent = p.getCurrentPotentialRent();
         this.previousPotentialRent = p.getPreviousPotentialRent();
+
         this.state = p.getState();
     }
 }

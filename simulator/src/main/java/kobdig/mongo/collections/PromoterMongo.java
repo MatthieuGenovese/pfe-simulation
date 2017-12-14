@@ -20,8 +20,6 @@ public class PromoterMongo {
 
     private int idSimulation;
 
-    private ArrayList<String> landsId;
-
     private int landsSize;
 
     private double purchasingpower;
@@ -56,14 +54,6 @@ public class PromoterMongo {
         this.idSimulation = idSimulation;
     }
 
-    public ArrayList<String> getLandsId() {
-        return landsId;
-    }
-
-    public void setLandsId(ArrayList<String> landsId) {
-        this.landsId = landsId;
-    }
-
     public int getLandsSize() {
         return landsSize;
     }
@@ -81,15 +71,10 @@ public class PromoterMongo {
     }
 
     public PromoterMongo(int sumlationId, int step, Promoter p){
-        landsId = new ArrayList<>();
         this.step = step;
         this.idSimulation = sumlationId;
         this.id = p.getId();
         this.purchasingpower = p.getPurchasingPower();
         this.landsSize = p.getPurchasableLand().size();
-
-        for(Land l : p.getPurchasableLand()){
-            landsId.add(l.getId());
-        }
     }
 }

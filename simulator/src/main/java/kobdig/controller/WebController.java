@@ -2,10 +2,7 @@ package kobdig.controller;
 
 import bogota.eventbus.EventRessource;
 import bogota.eventbus.EventTypes;
-import bogota.eventbus.input.ExtractDataMessage;
-import bogota.eventbus.input.SimulationMessage;
-import bogota.eventbus.input.StopSimulationMessage;
-import bogota.eventbus.input.TabSimulationMessage;
+import bogota.eventbus.input.*;
 import org.springframework.aop.target.LazyInitTargetSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -163,6 +160,13 @@ public class WebController {
     public ResponseEntity<Void> extractData(@RequestBody EventRessource<ExtractDataMessage> extractDataMessageEventRessource){
         System.out.println("Send message to simulator");
         eventBus.notify(EventTypes.ExtractDataMessage, Event.wrap(extractDataMessageEventRessource));
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/remove")
+    public ResponseEntity<Void> deleteSimulation(@RequestBody EventRessource<RemoveSimulationMessage> removeSimulationMessageEventRessource){
+        System.out.println("Send message to simulator");
+        eventBus.notify(EventTypes.RemoveSimulationMessage, Event.wrap(removeSimulationMessageEventRessource));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

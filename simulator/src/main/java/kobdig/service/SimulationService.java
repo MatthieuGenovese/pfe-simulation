@@ -46,7 +46,8 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
     @Autowired
     ConfigurationMongoRepository configurationMongoRepository;
 
-    private SimulationLogging log = new SimulationLogging();
+    @Autowired
+    SimulationLogging log;
 
     @Override
     public void accept(Event<EventRessource> eventRessourceEvent) {

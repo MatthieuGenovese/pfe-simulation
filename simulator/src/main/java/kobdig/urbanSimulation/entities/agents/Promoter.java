@@ -89,7 +89,8 @@ public class Promoter extends AbstractAgent implements IActionnable {
                     entitiesCreator.getForSaleLand().remove(taken);
                     Property construction = null;
                     try {
-                        int id = entitiesCreator.getIdManager()[0]++;
+                        int id = entitiesCreator.getIdManager();
+                        entitiesCreator.setIdManager(entitiesCreator.getIdManager() + 1);
                         construction = new Property(Integer.toString(id),taken.getLatitude(),
                                 taken.getLongitude(),(taken.getPrice() + 150), taken.getPrice()/10, taken.getPrice(),
                                 taken.getGeom(), taken);
