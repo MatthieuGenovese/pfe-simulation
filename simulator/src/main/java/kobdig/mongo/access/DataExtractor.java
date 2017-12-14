@@ -5,6 +5,7 @@ import kobdig.mongo.repository.*;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,6 +50,62 @@ public class DataExtractor {
             e.printStackTrace();
         }
         return filename;
+    }
+
+    private int num;
+
+    private int nbrHousehold;
+
+    private int nbrPromoter;
+
+    private int nbrInvestor;
+
+    private int idSimulation;
+
+    private ArrayList<Integer> listOfEquipement;
+
+    private ArrayList<Integer> listOfNetwork;
+
+    public String findConfigurationBySimulationId(ConfigurationMongoRepository repo, int idSimulation){
+        ConfigurationMongo res = repo.findByidSimulation(idSimulation);
+        BufferedWriter writer;
+        String filename = foundLastFile("configuration", idSimulation);
+        try {
+            writer = new BufferedWriter(new FileWriter(new File(filename), false));
+            writer.write("id\t");
+            writer.write("nombreHouseholds\t");
+            writer.write("nombreInvestors\t");
+            writer.write("nombrePromoters\t");
+            writer.write("fileHouseholds\t");
+            writer.write("fileInvestors\t");
+            writer.write("filePromoters\t");
+            writer.write("listOfEquipement\t");
+            writer.write("listOfNetwork\t");
+            writer.write("time\t\n");
+            writer.write(res.getIdSimulation() + "\t");
+            writer.write(res.getNbrHousehold() + "\t");
+            writer.write(res.getNbrInvestor() + "\t");
+            writer.write(res.getNbrPromoter() + "\t");
+            writer.write(res.getFileHouseholds() + "\t");
+            writer.write(res.getFileInvestors() + "\t");
+            writer.write(res.getFilePromoters() + "\t");
+            writer.write(listToString(res.getListOfEquipement()) + "\t");
+            writer.write(listToString(res.getListOfNetwork()) + "\t");
+            writer.write(res.getTime() + "\t\n");
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return filename;
+    }
+
+    private String listToString(List<Integer> list){
+        String res = "[ ";
+        for(Integer i : list){
+            res+= i + " ";
+        }
+        res+= "]";
+        return res;
     }
 
     public String findLandsBySimulationId(LandMongoRepository repo, int idSimulation){

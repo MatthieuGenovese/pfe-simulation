@@ -7,6 +7,7 @@ import kobdig.urbanSimulation.entities.agents.Household;
 import kobdig.urbanSimulation.entities.agents.Investor;
 import kobdig.urbanSimulation.entities.agents.Promoter;
 import kobdig.urbanSimulation.entities.environement.*;
+import org.apache.commons.math3.distribution.ParetoDistribution;
 import org.postgis.Geometry;
 import org.postgis.PGgeometry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.math3.distribution.AbstractRealDistribution;
 
 import static org.postgis.PGgeometry.geomFromString;
 
@@ -305,16 +307,25 @@ public class EntitiesCreator {
         double quatre = 0.0;
         double xM = 1000.0;
         double intervale = xM / nbrHousehold;
+        //x = x_m / [ (1 - rnd)^(1/k) ]
+        //où ( 1 - rnd )^(1/k) est la racine k-ième de (1 - rnd). N.B. : on peut écrire ça parce que rnd < 1, donc le dénominateur est toujours > 0.
         for(int i = 0; i < nbrHousehold; i++){
             try {
-                double x = xM + i * intervale;
-                double test = pareto(xM ,15, x);
+                /*double rnd = Math.random();
+                double k = 10.0;
+                double pow2 = 1.0 / k;
+                double x = xM / Math.pow((1-rnd),pow2);
+                int alpha = i+1;
+                ParetoDistribution paretoDistribution = new ParetoDistribution(xM, k);
+                double res = paretoDistribution.cumulativeProbability(nbrHousehold - i +xM);
+                double kjgsd = (k * Math.pow(xM,k))/ Math.pow(i+1, k+1);
+                System.out.println("res : " +kjgsd);
                 if( i <= 19){
-                    vingth+= test;
+                    vingth+= kjgsd;
                 }
                 else{
-                    quatre+= test;
-                }
+                    quatre+= kjgsd;
+                }*/
                 double purchasingPower = (Math.random() * 1000) + 200;
                 double netMonthlyIncome = Math.random() * 100;
                 household = new Household(Integer.toString(i),purchasingPower, netMonthlyIncome, householdAgentFile );
@@ -325,8 +336,6 @@ public class EntitiesCreator {
                 e.printStackTrace();
             }
         }
-        System.out.println("20% :" + vingth);
-        System.out.println("80% : " + quatre);
     }
 
 

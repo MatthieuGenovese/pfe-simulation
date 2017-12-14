@@ -50,6 +50,7 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
 
     @Override
     public void accept(Event<EventRessource> eventRessourceEvent) {
+
         Date time = new Date();
         DateFormat shortDateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.YEAR_FIELD);
         String date = shortDateFormat.format(time);
@@ -74,7 +75,7 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
                     entitiesCreator.setFileInvestor(message.getFileInvestor());
                     entitiesCreator.setFilePromoter(message.getFilePromoter());
                     entitiesCreator.createAll();
-                    configurationMongoRepository.save(new ConfigurationMongo(date, message.getNum(), message.getNbrHousehold(), message.getNbrPromoter(), message.getNbrInvestor(), idSimulation));
+                    configurationMongoRepository.save(new ConfigurationMongo(date, message.getNum(), message.getNbrHousehold(), message.getNbrPromoter(), message.getNbrInvestor(), idSimulation, message.getFileHousehold(), message.getFileInvestor(), message.getFilePromoter(), message.getListOfEquipment(), message.getListOfTransport()));
                     simulation.start();
                     while(simulation.isRunning()){
                         try {
@@ -114,7 +115,7 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
                     entitiesCreator.setFileInvestor(simulationMessage.getFileInvestor());
                     entitiesCreator.setFilePromoter(simulationMessage.getFilePromoter());
                     entitiesCreator.createAll();
-                    configurationMongoRepository.save(new ConfigurationMongo(date, simulationMessage.getNum(), simulationMessage.getNbrHousehold(), simulationMessage.getNbrPromoter(), simulationMessage.getNbrInvestor(), idSimulationBis));
+                    configurationMongoRepository.save(new ConfigurationMongo(date, simulationMessage.getNum(), simulationMessage.getNbrHousehold(), simulationMessage.getNbrPromoter(), simulationMessage.getNbrInvestor(), idSimulationBis, simulationMessage.getFileHousehold(), simulationMessage.getFileInvestor(), simulationMessage.getFilePromoter(), simulationMessage.getListOfEquipment(), simulationMessage.getListOfTransport()));
                     simulation.start();
                     while(simulation.isRunning()){
                         try {

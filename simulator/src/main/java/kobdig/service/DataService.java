@@ -34,6 +34,9 @@ public class DataService implements Consumer<Event<EventRessource>> {
     @Autowired
     InvestorMongoRepository investorMongoRepository;
 
+    @Autowired
+    ConfigurationMongoRepository configurationMongoRepository;
+
 
     @Override
     public void accept(Event<EventRessource> eventRessourceEvent) {
@@ -55,6 +58,9 @@ public class DataService implements Consumer<Event<EventRessource>> {
                         break;
                     case "property":
                         extractor.findPropertiesBySimulationId(propertyMongoRepository, message.getValue().getIdSimulation());
+                        break;
+                    case "configuration":
+                        extractor.findConfigurationBySimulationId(configurationMongoRepository, message.getValue().getIdSimulation());
                         break;
                 }
                 break;
