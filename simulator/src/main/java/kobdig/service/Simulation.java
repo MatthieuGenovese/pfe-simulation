@@ -1,12 +1,10 @@
 package kobdig.service;
 
-import kobdig.mongo.access.DataExtractor;
 import kobdig.mongo.collections.*;
 import kobdig.mongo.repository.*;
 import kobdig.agent.Agent;
 import kobdig.sql.repository.IndicatorOneRepository;
 import kobdig.sql.repository.IndicatorTwoRepository;
-import kobdig.sql.repository.PropertyRepository;
 import kobdig.sql.tables.IndicatorOne;
 import kobdig.sql.tables.IndicatorTwo;
 import kobdig.urbanSimulation.EntitiesCreator;

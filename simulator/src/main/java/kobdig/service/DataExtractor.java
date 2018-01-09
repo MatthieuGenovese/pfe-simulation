@@ -1,4 +1,4 @@
-package kobdig.mongo.access;
+package kobdig.service;
 
 import kobdig.mongo.collections.*;
 import kobdig.mongo.repository.*;
