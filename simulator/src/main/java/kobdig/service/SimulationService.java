@@ -4,18 +4,10 @@ import bogota.eventbus.EventRessource;
 import bogota.eventbus.EventTypes;
 import bogota.eventbus.input.SimulationMessage;
 import bogota.eventbus.input.TabSimulationMessage;
-import kobdig.mongo.access.DataExtractor;
 import kobdig.sql.repository.PropertyRepository;
-import kobdig.sql.repository.SauvegardeRepository;
-import kobdig.sql.tables.PropertyE;
-import kobdig.sql.tables.Sauvegarde;
 import kobdig.mongo.collections.ConfigurationMongo;
 import kobdig.mongo.repository.ConfigurationMongoRepository;
 import kobdig.urbanSimulation.EntitiesCreator;
-import kobdig.urbanSimulation.entities.agents.AbstractAgent;
-import kobdig.urbanSimulation.entities.agents.Household;
-import kobdig.urbanSimulation.entities.agents.Investor;
-import kobdig.urbanSimulation.entities.agents.Promoter;
 import kobdig.urbanSimulation.utils.SimulationLogging;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
@@ -36,9 +28,6 @@ public class SimulationService implements Consumer<Event<EventRessource>> {
 
     @Autowired
     Simulation simulation;
-
-    @Autowired
-    SauvegardeRepository sauvegardeRepository;
 
     @Autowired
     PropertyRepository propertyRepository;

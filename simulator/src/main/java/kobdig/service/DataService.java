@@ -3,8 +3,6 @@ package kobdig.service;
 import bogota.eventbus.EventRessource;
 import bogota.eventbus.EventTypes;
 import bogota.eventbus.input.ExtractDataMessage;
-import bogota.eventbus.input.RemoveSimulationMessage;
-import kobdig.mongo.access.DataDeleter;
 import kobdig.mongo.access.DataExtractor;
 import kobdig.mongo.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +18,6 @@ import reactor.fn.Consumer;
 public class DataService implements Consumer<Event<EventRessource>> {
     @Autowired
     DataExtractor extractor;
-
-    @Autowired
-    DataDeleter deleter;
 
     @Autowired
     PropertyMongoRepository propertyMongoRepository;
@@ -68,10 +63,6 @@ public class DataService implements Consumer<Event<EventRessource>> {
                         extractor.findConfigurationBySimulationId(configurationMongoRepository, message.getValue().getIdSimulation());
                         break;
                 }
-                break;
-            case EventTypes.RemoveSimulationMessage:
-                EventRessource<RemoveSimulationMessage> messageRemove = (EventRessource<RemoveSimulationMessage>) eventRessourceEvent.getData();
-                deleter.deleteSimulation(messageRemove.getValue().getIdSimulation());
                 break;
         }
     }

@@ -163,13 +163,6 @@ public class WebController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/remove")
-    public ResponseEntity<Void> deleteSimulation(@RequestBody EventRessource<RemoveSimulationMessage> removeSimulationMessageEventRessource){
-        System.out.println("Send message to simulator");
-        eventBus.notify(EventTypes.RemoveSimulationMessage, Event.wrap(removeSimulationMessageEventRessource));
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
     @PostMapping("/statetab")
     public ResponseEntity<Void> startTabSimulation(@RequestBody EventRessource<TabSimulationMessage> stateEventRessource) {
 
