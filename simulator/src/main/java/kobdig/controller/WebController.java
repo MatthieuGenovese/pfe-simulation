@@ -1,9 +1,10 @@
 package kobdig.controller;
 
-import bogota.eventbus.EventRessource;
-import bogota.eventbus.EventTypes;
-import bogota.eventbus.input.*;
-import kobdig.service.DataExtractor;
+import kobdig.eventbus.EventRessource;
+import kobdig.eventbus.EventTypes;
+import kobdig.eventbus.input.SimulationMessage;
+import kobdig.eventbus.input.StopSimulationMessage;
+import kobdig.eventbus.input.TabSimulationMessage;
 import kobdig.mongo.collections.ConfigurationMongo;
 import kobdig.mongo.repository.*;
 import kobdig.service.Simulation;
@@ -74,26 +75,6 @@ public class WebController {
 
     @Autowired
     public SimulationLogging log;
-
-    /*extractor*/
-    @Autowired
-    public DataExtractor extractor;
-
-    @Autowired
-    public PropertyMongoRepository propertyMongoRepository;
-
-    @Autowired
-    public HouseholdMongoRepository householdMongoRepository;
-
-    @Autowired
-    public PromoterMongoRepository promoterMongoRepository;
-
-    @Autowired
-    public LandMongoRepository landMongoRepository;
-
-    @Autowired
-    public InvestorMongoRepository investorMongoRepository;
-
 
     @GetMapping("/interface")
     public String showInterface(){
@@ -261,33 +242,6 @@ public class WebController {
             log.writeData("SIMULATION DU " + date + " NUMERO " + idSimulation);
             log.writeData("terminée à " +shortDateFormat.format(time2));
             log.writeData("------------------------------------------------------------------");
-        }
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @PostMapping("/extract")
-    public ResponseEntity<Void> extractData(@RequestBody EventRessource<ExtractDataMessage> message){
-        switch(message.getValue().getEntity()){
-            case "household":
-                extractor.findHouseholdsBySimulationId(householdMongoRepository, message.getValue().getIdSimulation());
-                break;
-            case "promoter":
-                extractor.findPromotersBySimulationId(promoterMongoRepository, message.getValue().getIdSimulation());
-                break;
-            case "investor":
-                extractor.findInvestorsBySimulationId(investorMongoRepository, message.getValue().getIdSimulation());
-                break;
-            case "land":
-                extractor.findLandsBySimulationId(landMongoRepository, message.getValue().getIdSimulation());
-                break;
-            case "property":
-                extractor.findPropertiesBySimulationId(propertyMongoRepository, message.getValue().getIdSimulation());
-                break;
-            case "configuration":
-                extractor.findConfigurationBySimulationId(configurationMongoRepository, message.getValue().getIdSimulation());
-                break;
-            default:
-                break;
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
