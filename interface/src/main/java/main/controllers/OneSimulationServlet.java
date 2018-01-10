@@ -24,7 +24,7 @@ import java.util.List;
 
 public class OneSimulationServlet extends HttpServlet {
 
-    private static final String HTTP_LOCALHOST_8080_TRAFFIC_LIGHT = "http://localhost:8080/state";
+    private static final String HTTP_LOCALHOST_8080_TRAFFIC_LIGHT = "http://localhost:9090/state";
 
 
     @Override

@@ -15,7 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 public class ExtractionServlet extends HttpServlet {
 
-    private static final String HTTP_LOCALHOST_8080_TRAFFIC_LIGHT = "http://localhost:8080/extract";
+    private static final String HTTP_LOCALHOST_8080_TRAFFIC_LIGHT = "http://localhost:9092/extract";
 
 
     @Override
@@ -42,7 +42,6 @@ public class ExtractionServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
 
         this.getServletContext().getRequestDispatcher( "/WEB-INF/extraction.jsp" ).forward( req, resp );
     }
