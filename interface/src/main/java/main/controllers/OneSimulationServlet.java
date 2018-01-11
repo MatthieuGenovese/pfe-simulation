@@ -1,9 +1,6 @@
 package main.controllers;
 
 
-import main.controllers.eventbus.EventRessource;
-import main.controllers.eventbus.EventTypes;
-import main.controllers.eventbus.input.ExtractDataMessage;
 import main.controllers.eventbus.input.SimulationMessage;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -15,11 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class OneSimulationServlet extends HttpServlet {

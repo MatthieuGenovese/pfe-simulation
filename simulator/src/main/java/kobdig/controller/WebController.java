@@ -1,9 +1,6 @@
 package kobdig.controller;
 
-import kobdig.eventbus.EventRessource;
-import kobdig.eventbus.EventTypes;
 import kobdig.eventbus.input.SimulationMessage;
-import kobdig.eventbus.input.StopSimulationMessage;
 import kobdig.eventbus.input.TabSimulationMessage;
 import kobdig.mongo.collections.ConfigurationMongo;
 import kobdig.mongo.repository.*;
@@ -15,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.WebRequest;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -43,7 +39,7 @@ public class WebController {
     public SimulationLogging log;
 
     @PostMapping("/state")
-    public ResponseEntity<Void> startSimulation(@RequestBody EventRessource<SimulationMessage> stateEventRessource) {
+    public ResponseEntity<Void> startSimulation(@RequestBody SimulationMessage message) {
 
         Date time = new Date();
         DateFormat shortDateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.YEAR_FIELD);
@@ -53,7 +49,6 @@ public class WebController {
         while(configurationMongoRepository.findByidSimulation(idSimulation) != null){
               idSimulation++;
         }
-        SimulationMessage message = stateEventRessource.getValue();
 
         if(!simulation.isRunning()) {
             entitiesCreator.setNumSim(message.getNum());
@@ -86,13 +81,11 @@ public class WebController {
     }
 
     @PostMapping("/statetab")
-    public ResponseEntity<Void> startTabSimulation(@RequestBody EventRessource<TabSimulationMessage> stateEventRessource) {
+    public ResponseEntity<Void> startTabSimulation(@RequestBody TabSimulationMessage tabMessage) {
 
         Date time = new Date();
         DateFormat shortDateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.YEAR_FIELD);
         String date = shortDateFormat.format(time);
-
-        TabSimulationMessage tabMessage = stateEventRessource.getValue();
 
         for(SimulationMessage simulationMessage : tabMessage.getSimulationMessageList()){
             int idSimulationBis = 0;
@@ -130,7 +123,7 @@ public class WebController {
     }
 
     @PostMapping("/stop")
-    public ResponseEntity<Void> stopSimulation(@RequestBody EventRessource<StopSimulationMessage> stateEventRessource) {
+    public ResponseEntity<Void> stopSimulation() {
 
         simulation.stop();
 
