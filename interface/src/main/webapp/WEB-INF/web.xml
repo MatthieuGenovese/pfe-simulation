@@ -21,6 +21,14 @@
     <url-pattern>/extraction</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>multi</servlet-name>
+    <servlet-class>main.controllers.MultiSimulationServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>multi</servlet-name>
+    <url-pattern>/multi</url-pattern>
+  </servlet-mapping>
 
 
 </web-app>
