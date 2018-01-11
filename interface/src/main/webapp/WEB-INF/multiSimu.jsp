@@ -47,8 +47,8 @@
 <form method="post">
 <p>
         <label for="action">Entité:</label> <select name="action" id="type">
-                                            <option value="confirmer">household</option>
-                                            <option value="réinitialiser">promoter</option>
+                                            <option value="confirmer">confirmer</option>
+                                            <option value="réinitialiser">réinitlialiiser</option>
 
                                             </select>
     </p>
