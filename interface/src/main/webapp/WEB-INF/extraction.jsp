@@ -17,15 +17,15 @@
         <label for="entity">Entité:</label> <select name="entity" id="type">
                                             <option value="household">household</option>
                                             <option value="promoter">promoter</option>
-                                            <option value="investor">Demande</option>
-                                            <option value="land">Offre</option>
-                                            <option value="property">Demande</option>
-                                            <option value="configuration">Demande</option>
+                                            <option value="investor">investor</option>
+                                            <option value="land">land</option>
+                                            <option value="property">property</option>
+                                            <option value="configuration">configuration</option>
 
                                             </select>
     </p>
     <p>
-       <label  for="id">Identifiant:</label> <input type="number" name="id" />
+       <label  for="id">Identifiant:</label> <input type="text" name="id" />
     </p>
      <p>
         <input type="submit" value="Envoyer" />

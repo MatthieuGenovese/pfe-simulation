@@ -46,7 +46,7 @@
 </form>
 <form method="post">
 <p>
-        <label for="action">Entité:</label> <select name="action" id="type">
+        <label for="action">Action:</label> <select name="action" id="type">
                                             <option value="confirmer">confirmer</option>
                                             <option value="réinitialiser">réinitlialiiser</option>
 
