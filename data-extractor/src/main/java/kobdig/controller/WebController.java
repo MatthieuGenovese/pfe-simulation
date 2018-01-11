@@ -24,44 +24,27 @@ public class WebController {
     @Autowired
     public DataExtractor extractor;
 
-    @Autowired
-    public PropertyMongoRepository propertyMongoRepository;
-
-    @Autowired
-    public HouseholdMongoRepository householdMongoRepository;
-
-    @Autowired
-    public PromoterMongoRepository promoterMongoRepository;
-
-    @Autowired
-    public LandMongoRepository landMongoRepository;
-
-    @Autowired
-    public InvestorMongoRepository investorMongoRepository;
-
-    @Autowired
-    public ConfigurationMongoRepository configurationMongoRepository;
 
     @PostMapping("/extract")
     public ResponseEntity<Void> extractData(@RequestBody EventRessource<ExtractDataMessage> message){
         switch(message.getValue().getEntity()){
             case "household":
-                extractor.findHouseholdsBySimulationId(householdMongoRepository, message.getValue().getIdSimulation());
+                extractor.findHouseholdsBySimulationId(message.getValue().getIdSimulation());
                 break;
             case "promoter":
-                extractor.findPromotersBySimulationId(promoterMongoRepository, message.getValue().getIdSimulation());
+                extractor.findPromotersBySimulationId(message.getValue().getIdSimulation());
                 break;
             case "investor":
-                extractor.findInvestorsBySimulationId(investorMongoRepository, message.getValue().getIdSimulation());
+                extractor.findInvestorsBySimulationId(message.getValue().getIdSimulation());
                 break;
             case "land":
-                extractor.findLandsBySimulationId(landMongoRepository, message.getValue().getIdSimulation());
+                extractor.findLandsBySimulationId(message.getValue().getIdSimulation());
                 break;
             case "property":
-                extractor.findPropertiesBySimulationId(propertyMongoRepository, message.getValue().getIdSimulation());
+                extractor.findPropertiesBySimulationId(message.getValue().getIdSimulation());
                 break;
             case "configuration":
-                extractor.findConfigurationBySimulationId(configurationMongoRepository, message.getValue().getIdSimulation());
+                extractor.findConfigurationBySimulationId(message.getValue().getIdSimulation());
                 break;
             default:
                 break;

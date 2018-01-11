@@ -2,6 +2,7 @@ package kobdig.service;
 
 import kobdig.mongo.collections.*;
 import kobdig.mongo.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -15,8 +16,26 @@ import java.util.List;
 @Component
 public class DataExtractor {
 
-    public String findPropertiesBySimulationId(PropertyMongoRepository repo, int idSimulation){
-        List<PropertyMongo> res = repo.findByidSimulation(idSimulation);
+    @Autowired
+    private PropertyMongoRepository propertyMongoRepository;
+
+    @Autowired
+    private HouseholdMongoRepository householdMongoRepository;
+
+    @Autowired
+    private PromoterMongoRepository promoterMongoRepository;
+
+    @Autowired
+    private LandMongoRepository landMongoRepository;
+
+    @Autowired
+    private InvestorMongoRepository investorMongoRepository;
+
+    @Autowired
+    private ConfigurationMongoRepository configurationMongoRepository;
+
+    public String findPropertiesBySimulationId(int idSimulation){
+        List<PropertyMongo> res = propertyMongoRepository.findByidSimulation(idSimulation);
         BufferedWriter writer;
         String filename = foundLastFile("property", idSimulation);
         try {
@@ -52,8 +71,8 @@ public class DataExtractor {
         return filename;
     }
 
-    public String findConfigurationBySimulationId(ConfigurationMongoRepository repo, int idSimulation){
-        ConfigurationMongo res = repo.findByidSimulation(idSimulation);
+    public String findConfigurationBySimulationId(int idSimulation){
+        ConfigurationMongo res = configurationMongoRepository.findByidSimulation(idSimulation);
         BufferedWriter writer;
         String filename = foundLastFile("configuration", idSimulation);
         try {
@@ -94,8 +113,8 @@ public class DataExtractor {
         return res;
     }
 
-    public String findLandsBySimulationId(LandMongoRepository repo, int idSimulation){
-        List<LandMongo> res = repo.findByidSimulation(idSimulation);
+    public String findLandsBySimulationId(int idSimulation){
+        List<LandMongo> res = landMongoRepository.findByidSimulation(idSimulation);
         BufferedWriter writer;
         String filename = foundLastFile("land", idSimulation);
         try {
@@ -117,8 +136,8 @@ public class DataExtractor {
         return filename;
     }
 
-    public String findInvestorsBySimulationId(InvestorMongoRepository repo, int idSimulation){
-        List<InvestorMongo> res = repo.findByidSimulation(idSimulation);
+    public String findInvestorsBySimulationId(int idSimulation){
+        List<InvestorMongo> res = investorMongoRepository.findByidSimulation(idSimulation);
         BufferedWriter writer;
         String filename = foundLastFile("investor", idSimulation);
         try {
@@ -146,8 +165,8 @@ public class DataExtractor {
         return filename;
     }
 
-    public String findHouseholdsBySimulationId(HouseholdMongoRepository repo, int idSimulation){
-        List<HouseholdMongo> res = repo.findByidSimulation(idSimulation);
+    public String findHouseholdsBySimulationId(int idSimulation){
+        List<HouseholdMongo> res = householdMongoRepository.findByidSimulation(idSimulation);
         BufferedWriter writer;
         String filename = foundLastFile("household", idSimulation);
         try {
@@ -173,8 +192,8 @@ public class DataExtractor {
         return filename;
     }
 
-    public String findPromotersBySimulationId(PromoterMongoRepository repo, int idSimulation){
-        List<PromoterMongo> res = repo.findByidSimulation(idSimulation);
+    public String findPromotersBySimulationId(int idSimulation){
+        List<PromoterMongo> res = promoterMongoRepository.findByidSimulation(idSimulation);
         BufferedWriter writer;
         String filename = foundLastFile("promoter", idSimulation);
         try {
