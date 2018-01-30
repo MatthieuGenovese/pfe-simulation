@@ -1,7 +1,5 @@
 package kobdig.service;
 
-import kobdig.communication.Sender;
-import kobdig.eventbus.input.ExtractDataMessage;
 import kobdig.mongo.collections.*;
 import kobdig.mongo.repository.*;
 import kobdig.agent.Agent;
@@ -58,9 +56,6 @@ public class Simulation {
 
     @Autowired
     private HouseholdMongoRepository householdMongoRepository;
-
-    @Autowired
-    private Sender sender;
 
     /** Execution delay in milliseconds */
     private volatile int executionDelay = 10;
@@ -209,7 +204,6 @@ public class Simulation {
         if (builder.getTime() >= builder.getNumSim()) {
             System.err.println("SIMULATION FINISHED");
             running = false;
-            sender.send("extract", Integer.toString(builder.getId()));
         } else {
             System.err.println("STEP " + (builder.getTime()+1) + "/" + builder.getNumSim());
             int occuped = 0;
